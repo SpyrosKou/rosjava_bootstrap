@@ -39,12 +39,10 @@ buildscript {
         repositories {
             jcenter()
             maven {
-                url "http://repository.springsource.com/maven/bundles/release"
-                allowInsecureProtocol true
+                url "https://repository.springsource.com/maven/bundles/release"
             }
             maven {
-                url "http://repository.springsource.com/maven/bundles/external"
-                allowInsecureProtocol true
+                url "https://repository.springsource.com/maven/bundles/external"
             }
         }
 
