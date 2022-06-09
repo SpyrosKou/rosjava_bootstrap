@@ -14,53 +14,59 @@
  * the License.
  */
 
-apply from: project.file('gradle.gradle')
-
-allprojects {
-  group="org.ros.rosjava_bootstrap"
-  version = "0.3.3"
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
 }
 
-subprojects {
-  apply plugin: 'java'
-  apply plugin: 'maven'
-  apply plugin: 'maven-publish'
-  apply plugin: "idea"
-  apply plugin: "eclipse"
-
-  sourceCompatibility = 1.6
-  targetCompatibility = 1.6
-
-  // These external repositories are copied from bootstrap.gradle.
-  repositories {
-    jcenter()
-    maven {
-      url "http://repository.springsource.com/maven/bundles/release"
+    allprojects {
+        group = "org.ros.rosjava_bootstrap"
+        version = "0.3.4"
     }
-    maven {
-      url "http://repository.springsource.com/maven/bundles/external"
-    }
-  }
 
-  // Configuration of the deployment repository is copied from the RosPlugin.
-  String mavenDeploymentRepository = System.getenv("ROS_MAVEN_DEPLOYMENT_REPOSITORY")
-  if (mavenDeploymentRepository != null &&
-      mavenDeploymentRepository != "") {
-    publishing {
-      publications {
-        mavenJava(MavenPublication) {
-          from components.java
+    subprojects {
+        apply plugin: 'java'
+        apply plugin: 'maven-publish'
+        apply plugin: "idea"
+        apply plugin: "eclipse"
+
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+
+        // These external repositories are copied from bootstrap.gradle.
+        repositories {
+            jcenter()
+            maven {
+                url "http://repository.springsource.com/maven/bundles/release"
+                allowInsecureProtocol true
+            }
+            maven {
+                url "http://repository.springsource.com/maven/bundles/external"
+                allowInsecureProtocol true
+            }
         }
-      }
-      repositories {
-        maven {
-           url 'file://' + mavenDeploymentRepository
-        }
-      }
-    }
-  } else {
-    logger.warn("ROS_MAVEN_DEPLOYMENT_REPOSITORY is not set. Have you sourced setup.bash?")
-  }
-}
 
-defaultTasks 'publish', 'installDist'
+        // Configuration of the deployment repository is copied from the RosPlugin.
+        String mavenDeploymentRepository = System.getenv("ROS_MAVEN_DEPLOYMENT_REPOSITORY")
+        if (mavenDeploymentRepository != null &&
+                mavenDeploymentRepository != "") {
+            publishing {
+                publications {
+                    mavenJava(MavenPublication) {
+                        from components.java
+                    }
+                }
+                repositories {
+                    maven {
+                        url 'file://' + mavenDeploymentRepository
+                    }
+                }
+            }
+        } else {
+            logger.warn("ROS_MAVEN_DEPLOYMENT_REPOSITORY is not set. Have you sourced setup.bash?")
+        }
+    }
+
+    defaultTasks 'publish', 'installDist'
