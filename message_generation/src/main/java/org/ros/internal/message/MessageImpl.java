@@ -395,46 +395,7 @@ class MessageImpl implements RawMessage, GetInstance {
     messageFields.setFieldValue(name, value);
   }
 
-  @Override
-  public byte getByte(String name) {
-    return (Byte) messageFields.getFieldValue(name);
-  }
 
-  @Override
-  public short getChar(String name) {
-    return (Short) messageFields.getFieldValue(name);
-  }
-
-  @Override
-  public void setByte(String name, byte value) {
-    messageFields.setFieldValue(name, value);
-  }
-
-  @Override
-  public void setChar(String name, short value) {
-    messageFields.setFieldValue(name, value);
-  }
-
-  @Override
-  public void setByteArray(String name, byte[] value) {
-    messageFields.setFieldValue(name, value);
-  }
-
-  @Override
-  public void setCharArray(String name, short[] value) {
-    messageFields.setFieldValue(name, value);
-  }
-
-  @Override
-  public byte[] getByteArray(String name) {
-    return (byte[]) messageFields.getFieldValue(name);
-  }
-
-  @Override
-  public short[] getCharArray(String name) {
-    return (short[]) messageFields.getFieldValue(name);
-  }
-  
   @Override
   public ChannelBuffer getChannelBuffer(String name) {
     return (ChannelBuffer) messageFields.getFieldValue(name);
