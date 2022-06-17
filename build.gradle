@@ -37,13 +37,8 @@ buildscript {
 
         // These external repositories are copied from bootstrap.gradle.
         repositories {
-            jcenter()
-            maven {
-                url "https://repository.springsource.com/maven/bundles/release"
-            }
-            maven {
-                url "https://repository.springsource.com/maven/bundles/external"
-            }
+            mavenCentral()
+
         }
 
         // Configuration of the deployment repository is copied from the RosPlugin.

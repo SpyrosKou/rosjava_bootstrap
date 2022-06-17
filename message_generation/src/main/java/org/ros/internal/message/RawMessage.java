@@ -105,11 +105,6 @@ public interface RawMessage extends Message {
 
   void setBoolArray(String name, boolean[] value);
 
-
-
-
-
-
   void setDuration(String name, Duration value);
 
   void setDurationList(String name, List<Duration> value);
