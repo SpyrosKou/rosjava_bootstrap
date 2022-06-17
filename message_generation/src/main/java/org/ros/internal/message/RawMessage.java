@@ -36,21 +36,25 @@ public interface RawMessage extends Message {
   /**
    * @deprecated replaced by {@link #getInt8(String)}
    */
+  @Deprecated
   byte getByte(String name);
 
   /**
    * @deprecated replaced by {@link #getInt8Array(String)}
    */
+  @Deprecated
   byte[] getByteArray(String name);
 
   /**
    * @deprecated replaced by {@link #getUInt8(String)}
    */
+  @Deprecated
   short getChar(String name);
 
   /**
    * @deprecated replaced by {@link #getUInt8Array(String)}
    */
+  @Deprecated
   short[] getCharArray(String name);
 
   String getDefinition();
@@ -128,21 +132,25 @@ public interface RawMessage extends Message {
   /**
    * @deprecated replaced by {@link #setInt8(String, byte)}
    */
+  @Deprecated
   void setByte(String name, byte value);
 
   /**
    * @deprecated replaced by {@link #setInt8Array(String, byte[])}
    */
+  @Deprecated
   void setByteArray(String name, byte[] value);
 
   /**
    * @deprecated replaced by {@link #setUInt8(String, byte)}
    */
+  @Deprecated
   void setChar(String name, short value);
 
   /**
    * @deprecated replaced by {@link #setUInt8Array(String, byte[])}
    */
+  @Deprecated
   void setCharArray(String name, short[] value);
 
   void setDuration(String name, Duration value);
