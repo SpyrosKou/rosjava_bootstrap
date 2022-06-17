@@ -34,25 +34,15 @@ allprojects {
 
         }
 
-  // Configuration of the deployment repository is copied from the RosPlugin.
-  String mavenDeploymentRepository = System.getenv("ROS_MAVEN_DEPLOYMENT_REPOSITORY")
-  if (mavenDeploymentRepository != null &&
-      mavenDeploymentRepository != "") {
+
     publishing {
       publications {
         mavenJava(MavenPublication) {
           from components.java
         }
       }
-      repositories {
-        maven {
-           url 'file://' + mavenDeploymentRepository
-        }
-      }
     }
-  } else {
-    logger.warn("ROS_MAVEN_DEPLOYMENT_REPOSITORY is not set. Have you sourced setup.bash?")
-  }
+
 }
 
 defaultTasks 'publish', 'installDist'
