@@ -30,8 +30,8 @@ allprojects {
 
         // These external repositories are copied from bootstrap.gradle.
         repositories {
+            mavenLocal()
             mavenCentral()
-
         }
 
 
