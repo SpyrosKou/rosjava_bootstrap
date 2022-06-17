@@ -14,17 +14,10 @@
  * the License.
  */
 
-buildscript {
-    repositories {
-        mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
-    }
+allprojects {
+  group="org.ros.rosjava_bootstrap"
+  version = "noetic-0.1"
 }
-
-    allprojects {
-        group = "org.ros.rosjava_bootstrap"
-        version = "0.3.4"
-    }
 
     subprojects {
         apply plugin: 'java'
@@ -41,25 +34,25 @@ buildscript {
 
         }
 
-        // Configuration of the deployment repository is copied from the RosPlugin.
-        String mavenDeploymentRepository = System.getenv("ROS_MAVEN_DEPLOYMENT_REPOSITORY")
-        if (mavenDeploymentRepository != null &&
-                mavenDeploymentRepository != "") {
-            publishing {
-                publications {
-                    mavenJava(MavenPublication) {
-                        from components.java
-                    }
-                }
-                repositories {
-                    maven {
-                        url 'file://' + mavenDeploymentRepository
-                    }
-                }
-            }
-        } else {
-            logger.warn("ROS_MAVEN_DEPLOYMENT_REPOSITORY is not set. Have you sourced setup.bash?")
+  // Configuration of the deployment repository is copied from the RosPlugin.
+  String mavenDeploymentRepository = System.getenv("ROS_MAVEN_DEPLOYMENT_REPOSITORY")
+  if (mavenDeploymentRepository != null &&
+      mavenDeploymentRepository != "") {
+    publishing {
+      publications {
+        mavenJava(MavenPublication) {
+          from components.java
         }
+      }
+      repositories {
+        maven {
+           url 'file://' + mavenDeploymentRepository
+        }
+      }
     }
+  } else {
+    logger.warn("ROS_MAVEN_DEPLOYMENT_REPOSITORY is not set. Have you sourced setup.bash?")
+  }
+}
 
-    defaultTasks 'publish', 'installDist'
+defaultTasks 'publish', 'installDist'
