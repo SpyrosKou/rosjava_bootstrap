@@ -21,8 +21,18 @@ package org.ros.internal.message;
  */
 public interface Message {
 
-  /**
+    /**
    * @return returns this {@link Message} as a {@link RawMessage}
    */
   RawMessage toRawMessage();
+  /**
+   * Get the Definition in ROS
+   * @return
+   */
+  public java.lang.String getDefinition();
+  /**
+   * Get the type
+   * @return
+   */
+  public java.lang.String getType();
 }
