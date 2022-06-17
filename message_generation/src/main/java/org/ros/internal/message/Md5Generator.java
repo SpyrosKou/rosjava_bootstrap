@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class Md5Generator {
+public final class Md5Generator {
 
   private final MessageDefinitionProvider messageDefinitionProvider;
 
