@@ -33,26 +33,6 @@ public interface RawMessage extends Message {
 
   boolean[] getBoolArray(String name);
 
-  /**
-   * @deprecated replaced by {@link #getInt8(String)}
-   */
-  byte getByte(String name);
-
-  /**
-   * @deprecated replaced by {@link #getInt8Array(String)}
-   */
-  byte[] getByteArray(String name);
-
-  /**
-   * @deprecated replaced by {@link #getUInt8(String)}
-   */
-  short getChar(String name);
-
-  /**
-   * @deprecated replaced by {@link #getUInt8Array(String)}
-   */
-  short[] getCharArray(String name);
-
   String getDefinition();
 
   Duration getDuration(String name);
@@ -125,25 +105,10 @@ public interface RawMessage extends Message {
 
   void setBoolArray(String name, boolean[] value);
 
-  /**
-   * @deprecated replaced by {@link #setInt8(String, byte)}
-   */
-  void setByte(String name, byte value);
 
-  /**
-   * @deprecated replaced by {@link #setInt8Array(String, byte[])}
-   */
-  void setByteArray(String name, byte[] value);
 
-  /**
-   * @deprecated replaced by {@link #setUInt8(String, byte)}
-   */
-  void setChar(String name, short value);
 
-  /**
-   * @deprecated replaced by {@link #setUInt8Array(String, byte[])}
-   */
-  void setCharArray(String name, short[] value);
+
 
   void setDuration(String name, Duration value);
 
