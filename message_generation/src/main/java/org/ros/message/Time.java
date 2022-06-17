@@ -38,7 +38,7 @@ package org.ros.message;
  * @author Jason Wolfe
  * @author kwc@willowgarage.com (Ken Conley)
  */
-public class Time implements Comparable<Time> {
+public final class Time implements Comparable<Time> {
 
   public int secs;
   public int nsecs;

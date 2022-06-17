@@ -27,7 +27,7 @@ import java.util.List;
  * 
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class MessageDefinitionTupleParser {
+public final class MessageDefinitionTupleParser {
 
   private static final String SEPARATOR = "---";
 
@@ -41,11 +41,11 @@ public class MessageDefinitionTupleParser {
    *          the expected tuple size, or -1 to ignore this requirement
    * @return a {@link List} of the specified size
    */
-  public static List<String> parse(String definition, int size) {
+  public static final List<String> parse(String definition, int size) {
     Preconditions.checkNotNull(definition);
-    List<String> definitions = Lists.newArrayList();
+    final List<String> definitions = Lists.newArrayList();
     StringBuilder current = new StringBuilder();
-    for (String line : definition.split("\n")) {
+    for (final String line : definition.split("\n")) {
       if (line.startsWith(SEPARATOR)) {
         definitions.add(current.toString());
         current = new StringBuilder();
