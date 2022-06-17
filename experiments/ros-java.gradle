@@ -52,9 +52,6 @@
 /***********************
  * Plugins
  ***********************/
-if (!plugins.findPlugin('maven')) {
-  apply(plugin: 'maven')
-}
 if (!plugins.findPlugin('java')) {
   apply(plugin: 'java')
 }
@@ -89,10 +86,10 @@ repositories {
   }
   mavenLocal()
   maven {
-    url "http://repository.springsource.com/maven/bundles/release"
+    url "https://repository.springsource.com/maven/bundles/release"
   }
   maven {
-    url "http://repository.springsource.com/maven/bundles/external"
+    url "https://repository.springsource.com/maven/bundles/external"
   }
   jcenter()
 }
@@ -100,8 +97,8 @@ repositories {
 /***********************
  * Java
  ***********************/
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 /***********************
  * Maven Deployment
