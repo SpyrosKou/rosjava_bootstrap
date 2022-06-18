@@ -110,11 +110,10 @@ public class MessageInterfaceBuilder {
     }
     builder.append(String.format(
         "public interface %s extends org.ros.internal.message.Message {\n", interfaceName));
-    builder.append(String.format("  static final java.lang.String _TYPE = \"%s\";\n",messageDeclaration.getType()));
-    builder.append("  public java.lang.String getType(){return _TYPE;}\n");
+    builder.append(String.format("  static final java.lang.String _TYPE = \"%s\";\n",
+        messageDeclaration.getType()));
     builder.append(String.format("  static final java.lang.String _DEFINITION = \"%s\";\n",
         escapeJava(messageDeclaration.getDefinition())));
-    builder.append("  public java.lang.String getDefinition(){return _DEFINITION;}\n");
     if (addConstantsAndMethods) {
       MessageContextProvider messageContextProvider = new MessageContextProvider(messageFactory);
       MessageContext messageContext = messageContextProvider.get(messageDeclaration);
