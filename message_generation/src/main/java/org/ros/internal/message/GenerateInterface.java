@@ -18,6 +18,7 @@ package org.ros.internal.message;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -38,18 +39,17 @@ import com.google.common.collect.Lists;
 public class GenerateInterface {
 
   private static void writeInterface(MessageDeclaration messageDeclaration, File outputDirectory,
-      boolean addConstantsAndMethods, MessageFactory messageFactory) {
-    MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
+                                     boolean addConstantsAndMethods, MessageFactory messageFactory) {
+    final MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
     builder.setPackageName(messageDeclaration.getPackage());
     builder.setInterfaceName(messageDeclaration.getName());
     builder.setMessageDeclaration(messageDeclaration);
     builder.setAddConstantsAndMethods(addConstantsAndMethods);
     try {
-      String content;
-      content = builder.build(messageFactory);
-      File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
+      final String content = builder.build(messageFactory);
+      final File file = new File(outputDirectory, messageDeclaration.getType() + MessageConstants.JAVA);
       System.out.println("Output File: " + file.getAbsolutePath());
-      FileUtils.writeStringToFile(file, content);
+      FileUtils.writeStringToFile(file, content, Charset.defaultCharset());
     } catch (Exception e) {
       System.out.printf("Failed to generate interface for %s.\n", messageDeclaration.getType());
       e.printStackTrace();
@@ -87,17 +87,17 @@ public class GenerateInterface {
     MessageDefinitionReflectionProvider messageDefinitionProvider =
         new MessageDefinitionReflectionProvider();
     messageDefinitionProvider.add(messageIdentifier.getType(), definition);
-    MessageFactory messageFactory = new DefaultMessageFactory(messageDefinitionProvider);
-    if (extension.equals("msg")) {
+    final MessageFactory messageFactory = new DefaultMessageFactory(messageDefinitionProvider);
+    if (extension.equals(MessageConstants.MSG)) {
       writeInterface(messageDeclaration, outputDirectory, true, messageFactory);
-    } else if (extension.equals("srv")) {
+    } else if (extension.equals(MessageConstants.SRV)) {
       writeInterface(messageDeclaration, outputDirectory, false, messageFactory);
       List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
       MessageDeclaration requestDeclaration =
-          MessageDeclaration.of(messageIdentifier.getType() + "Request", requestAndResponse.get(0));
+          MessageDeclaration.of(messageIdentifier.getType() + MessageConstants.REQUEST, requestAndResponse.get(0));
       MessageDeclaration responseDeclaration =
           MessageDeclaration
-              .of(messageIdentifier.getType() + "Response", requestAndResponse.get(1));
+              .of(messageIdentifier.getType() + MessageConstants.RESPONSE, requestAndResponse.get(1));
       writeInterface(requestDeclaration, outputDirectory, true, messageFactory);
       writeInterface(responseDeclaration, outputDirectory, true, messageFactory);
     }
