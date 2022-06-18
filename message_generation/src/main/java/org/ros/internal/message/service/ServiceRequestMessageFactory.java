@@ -16,8 +16,10 @@
 
 package org.ros.internal.message.service;
 
+import com.google.common.base.Preconditions;
 import org.ros.internal.message.DefaultMessageFactory;
 import org.ros.internal.message.DefaultMessageInterfaceClassProvider;
+import org.ros.internal.message.Message;
 import org.ros.internal.message.MessageProxyFactory;
 import org.ros.message.MessageDeclaration;
 import org.ros.message.MessageDefinitionProvider;
@@ -26,13 +28,14 @@ import org.ros.message.MessageFactory;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class ServiceRequestMessageFactory implements MessageFactory {
+public final class ServiceRequestMessageFactory implements MessageFactory {
 
   private final ServiceDescriptionFactory serviceDescriptionFactory;
   private final MessageFactory messageFactory;
   private final MessageProxyFactory messageProxyFactory;
 
-  public ServiceRequestMessageFactory(MessageDefinitionProvider messageDefinitionProvider) {
+  public ServiceRequestMessageFactory(final MessageDefinitionProvider messageDefinitionProvider) {
+    Preconditions.checkNotNull(messageDefinitionProvider);
     serviceDescriptionFactory = new ServiceDescriptionFactory(messageDefinitionProvider);
     messageFactory = new DefaultMessageFactory(messageDefinitionProvider);
     messageProxyFactory =
@@ -40,7 +43,7 @@ public class ServiceRequestMessageFactory implements MessageFactory {
   }
 
   @Override
-  public <T> T newFromType(String serviceType) {
+  public final <T extends Message> T newFromType(String serviceType) {
     ServiceDescription serviceDescription = serviceDescriptionFactory.newFromType(serviceType);
     MessageDeclaration messageDeclaration =
         MessageDeclaration.of(serviceDescription.getRequestType(),

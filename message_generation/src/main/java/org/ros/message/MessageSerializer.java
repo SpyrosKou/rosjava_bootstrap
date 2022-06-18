@@ -17,6 +17,7 @@
 package org.ros.message;
 
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.ros.internal.message.Message;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -24,7 +25,7 @@ import org.jboss.netty.buffer.ChannelBuffer;
  * @param <T>
  *          the type of message that the {@link MessageSerializer} can serialize
  */
-public interface MessageSerializer<T> {
+public interface MessageSerializer<T extends Message> {
 
   void serialize(T message, ChannelBuffer buffer);
 }

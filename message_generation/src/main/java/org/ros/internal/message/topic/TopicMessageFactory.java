@@ -22,7 +22,7 @@ import org.ros.message.MessageDefinitionProvider;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class TopicMessageFactory extends DefaultMessageFactory {
+public final class TopicMessageFactory extends DefaultMessageFactory {
 
   public TopicMessageFactory(MessageDefinitionProvider messageDefinitionProvider) {
     super(messageDefinitionProvider);

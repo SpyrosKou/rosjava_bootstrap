@@ -16,6 +16,8 @@
 
 package org.ros.message;
 
+import org.ros.internal.message.Message;
+
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
@@ -27,7 +29,7 @@ public interface MessageSerializationFactory {
    *          serialize
    * @return a new {@link MessageSerializer} for the provided message type
    */
-  <T> MessageSerializer<T> newMessageSerializer(String messageType);
+  <T extends Message> MessageSerializer<T> newMessageSerializer(String messageType);
 
   /**
    * @param messageType
@@ -35,7 +37,7 @@ public interface MessageSerializationFactory {
    *          should deserialize
    * @return a new {@link MessageDeserializer} for the provided message type
    */
-  <T> MessageDeserializer<T> newMessageDeserializer(String messageType);
+  <T extends Message> MessageDeserializer<T> newMessageDeserializer(String messageType);
 
   /**
    * @param serviceType
@@ -44,7 +46,7 @@ public interface MessageSerializationFactory {
    * @return a new {@link MessageSerializer} for requests to the provided
    *         service type
    */
-  <T> MessageSerializer<T> newServiceRequestSerializer(String serviceType);
+  <T extends Message> MessageSerializer<T> newServiceRequestSerializer(String serviceType);
 
   /**
    * @param serviceType
@@ -53,7 +55,7 @@ public interface MessageSerializationFactory {
    * @return a new {@link MessageDeserializer} for requests to the provided
    *         service type
    */
-  <T> MessageDeserializer<T> newServiceRequestDeserializer(String serviceType);
+  <T extends Message> MessageDeserializer<T> newServiceRequestDeserializer(String serviceType);
 
   /**
    * @param serviceType
@@ -62,7 +64,7 @@ public interface MessageSerializationFactory {
    * @return a new {@link MessageSerializer} for responses from the provided
    *         service type
    */
-  <T> MessageSerializer<T> newServiceResponseSerializer(String serviceType);
+  <T extends Message> MessageSerializer<T> newServiceResponseSerializer(String serviceType);
 
   /**
    * @param serviceType
@@ -71,5 +73,5 @@ public interface MessageSerializationFactory {
    * @return a new {@link MessageDeserializer} for responses from the provided
    *         service type
    */
-  <T> MessageDeserializer<T> newServiceResponseDeserializer(String serviceType);
+  <T extends Message> MessageDeserializer<T> newServiceResponseDeserializer(String serviceType);
 }
