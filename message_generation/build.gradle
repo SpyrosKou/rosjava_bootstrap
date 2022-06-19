@@ -32,14 +32,14 @@ plugins{
 
 //noinspection GroovyAssignabilityCheck
 dependencies {
-  implementation 'io.netty:netty:3.5.2.Final'
+  implementation 'io.netty:netty:3.10.6.Final'
   implementation 'com.google.guava:guava:31.1-jre'
   implementation 'commons-codec:commons-codec:1.15'
   implementation 'commons-io:commons-io:2.11.0'
   implementation 'commons-pool:commons-pool:1.6'
   implementation 'org.apache.commons:commons-lang3:3.12.0'
 //  implementation project(':gradle_plugins')
-  testImplementation 'junit:junit:4.8.2'
+  testImplementation 'junit:junit:4.13.2'
 }
 
 
