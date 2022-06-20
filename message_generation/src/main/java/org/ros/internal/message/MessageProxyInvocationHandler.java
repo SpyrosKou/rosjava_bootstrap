@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class MessageProxyInvocationHandler implements InvocationHandler {
+public final class MessageProxyInvocationHandler implements InvocationHandler {
 
   private final MessageImpl messageImpl;
 
@@ -34,7 +34,7 @@ public class MessageProxyInvocationHandler implements InvocationHandler {
   }
 
   @Override
-  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+  public final Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     String methodName = method.getName();
     MessageFields mesageFields = messageImpl.getMessageFields();
     Field getterField = mesageFields.getGetterField(methodName);

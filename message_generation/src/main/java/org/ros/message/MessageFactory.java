@@ -28,5 +28,5 @@ public interface MessageFactory {
    *          the type of message to create
    * @return a new message
    */
-  <T extends Message> T newFromType(String messageType);
+  <T extends Message> T newFromType(final String messageType);
 }
