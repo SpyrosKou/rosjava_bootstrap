@@ -33,16 +33,28 @@ allprojects {
             mavenLocal()
             mavenCentral()
         }
-
-
+    String repositoryDirectory="ROS_MAVEN_DEPLOYMENT_REPOSITORY"
+    String mavenDeploymentRepository = System.getenv(repositoryDirectory)
     publishing {
       publications {
         mavenJava(MavenPublication) {
           from components.java
         }
       }
+        if (mavenDeploymentRepository != null && mavenDeploymentRepository != "") {
+            repositories {
+                maven {
+                    name "LocalHere"
+                    url 'file://' + mavenDeploymentRepository
+                }
+            }
+        }else{
+            logger.debug(repositoryDirectory+"not found")
+        }
     }
 
 }
+
+
 
 defaultTasks 'publish', 'installDist'
