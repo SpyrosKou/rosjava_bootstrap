@@ -16,3 +16,5 @@
 
 //include 'gradle_plugins'
 include 'message_generation'
+include 'gradle_plugins'
+include 'ros_packages_parser'
