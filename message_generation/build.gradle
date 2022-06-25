@@ -20,11 +20,7 @@
  *
  *   https://github.com/rosjava/rosjava_bootstrap/issues/40#issuecomment-75043854
  */
-/*
-compile 'org.apache.directory.studio:org.apache.commons.codec:1.8'
-compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
-compile 'org.apache.directory.studio:org.apache.commons.lang:2.6'
-*/
+
 plugins{
   id 'application'
 }
