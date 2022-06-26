@@ -1,4 +1,4 @@
-package org.ros.gradle_plugins
+package org.ros.catking_package_msg
 
 import groovy.xml.XmlParser
 
@@ -9,7 +9,11 @@ import java.util.concurrent.CopyOnWriteArraySet
 import java.util.stream.Collectors
 
 /*
- * Provides catkin information to the gradle build, defining properties:
+ * Generates ROS Java message definitions from all the the catkin packages found in the folders ROS_PACKAGE_PATH.
+ * For instance this in ROS Noetic this can be :
+ * - In Windows C:\opt\ros\noetic\x64\share
+ * - In Linux  /opt/ros/noetic/share
+ * But could also be different.
  *
  * - catkinPluginRoot.pkg : information about this package
  * - catkinPluginRoot.workspaces : list of Strings
@@ -35,11 +39,11 @@ import java.util.stream.Collectors
  * only generate the properties once and share them this way.
  */
 
-class CatkinPlugin {
+class JavaMsgGenerationManager {
 
     static void main(String[] args) {
         println("--Starting--")
-        final CatkinPlugin catkinPlugin = new CatkinPlugin();
+        final JavaMsgGenerationManager catkinPlugin = new JavaMsgGenerationManager();
         catkinPlugin.apply()
         println("--finished--")
     }
