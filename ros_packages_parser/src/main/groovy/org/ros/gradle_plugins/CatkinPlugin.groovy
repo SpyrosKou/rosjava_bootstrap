@@ -227,23 +227,25 @@ class CatkinPackages {
 }
 
 class CatkinPackage {
-    CatkinPluginRoot catkinPluginRoot
-    String name
-    String version
-    final Set<String> dependencies=new HashSet<>();
-    String directory
+    final CatkinPluginRoot catkinPluginRoot
+    final String name
+    final String version
+    final Set<String> dependencies
+    final String directory
 
     CatkinPackage(CatkinPluginRoot catkinPluginRoot, File packageXmlFilename) {
         this.catkinPluginRoot = catkinPluginRoot
         println "Loading " + packageXmlFilename
         def packageXml = new XmlParser().parse(packageXmlFilename)
-        directory = packageXmlFilename.parent
-        name = packageXml.name.text()
-        version = packageXml.version.text()
+        this.directory = packageXmlFilename.parent
+        this.name = packageXml.name.text()
+        this.version = packageXml.version.text()
         def build_dependencies = packageXml.build_depend.collect { it.text() }
         def just_dependencies= packageXml.depend.collect { it.text() }
-        dependencies.addAll(build_dependencies)
-        dependencies.addAll(just_dependencies)
+        def temp_dependencies=new HashSet<>()
+        temp_dependencies.addAll(build_dependencies)
+        temp_dependencies.addAll(just_dependencies)
+        this.dependencies=Collections.unmodifiableSet(temp_dependencies)
     }
 
     String toString() { "${name} ${version} ${dependencies}" }
