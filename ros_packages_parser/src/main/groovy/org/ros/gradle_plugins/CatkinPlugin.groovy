@@ -1,10 +1,12 @@
 package org.ros.gradle_plugins
 
+import groovy.xml.XmlParser
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.CopyOnWriteArraySet
+import java.util.stream.Collectors
 
 /*
  * Provides catkin information to the gradle build, defining properties:
@@ -36,10 +38,10 @@ import java.util.concurrent.CopyOnWriteArraySet
 class CatkinPlugin {
 
     static void main(String[] args) {
-        println("Starting")
+        println("--Starting--")
         final CatkinPlugin catkinPlugin = new CatkinPlugin();
         catkinPlugin.apply()
-        println("finished")
+        println("--finished--")
     }
     /*
      * Possibly should check for existence of these properties and
@@ -53,19 +55,46 @@ class CatkinPlugin {
         this.catkinPluginRoot.catkinPackagesTree = new CatkinPackages(this.catkinPluginRoot, catkinPluginRoot.workspaces)
         this.catkinPluginRoot.catkinPackagesTree.generate()
 
-        printPackages()
+        printAllPackages()
 
+        printInterfacePackages();
+
+        printAllInterfacePackagesWithMissingDependencies();
 
     }
 
-
-    def void printPackages() {
+    def void printInterfacePackages() {
+        println("All Interfaces of Catkin Workspaces........." + catkinPluginRoot.workspaces)
+        println("Catkin Interface Packages {")
+        this.catkinPluginRoot.catkinPackagesTree.catkinPackages.each { catkinPackage ->
+            if (this.catkinPluginRoot.catkinPackagesTree.isMessagePackage(catkinPackage.key))
+                    {println(" "+catkinPackage.value.toString())}
+        }
+        println("}")
+    }
+    def void printAllPackages() {
         println("Catkin Workspaces........." + catkinPluginRoot.workspaces)
         println("Catkin Packages")
         this.catkinPluginRoot.catkinPackagesTree.catkinPackages.each { catkinPackage -> println(catkinPackage.value.toString()
                 +" interfaces?: "+this.catkinPluginRoot.catkinPackagesTree.isMessagePackage(catkinPackage.key))
         }
     }
+
+    def void printAllInterfacePackagesWithMissingDependencies() {
+        println("All Interfaces of Catkin Workspaces........." + catkinPluginRoot.workspaces)
+        println("Catkin Interface Packages that miss interfaces{")
+        this.catkinPluginRoot.catkinPackagesTree.catkinPackages.each { catkinPackage ->
+
+            if (this.catkinPluginRoot.catkinPackagesTree.isMessagePackage(catkinPackage.key)
+               &&!this.catkinPluginRoot.catkinPackagesTree.catkinPackages.keySet().containsAll(catkinPackage.value.dependencies.stream().filter(name->this.catkinPluginRoot.catkinPackagesTree.isMessagePackage(name)).collect(Collectors.toSet())))
+            {
+                println(" "+catkinPackage.value.toString())
+            }
+        }
+        println("}")
+    }
+
+
 }
 
 class CatkinPluginRoot {
@@ -92,6 +121,7 @@ class CatkinPackages {
     }
 
     void generate() {
+        //create only once
         if (this.catkinPackages.size() == 0) {
             this.workspaces.each { workspace ->
                 println("Parsing Workspace:" + workspace)
@@ -116,6 +146,8 @@ class CatkinPackages {
                                     }
                                 });
             }
+        }else{
+            println("ROS Workspaces already parsed. Known packages:"+this.catkinPackages.size());
         }
     }
 
@@ -198,7 +230,7 @@ class CatkinPackage {
     CatkinPluginRoot catkinPluginRoot
     String name
     String version
-    Set<String> dependencies
+    final Set<String> dependencies=new HashSet<>();
     String directory
 
     CatkinPackage(CatkinPluginRoot catkinPluginRoot, File packageXmlFilename) {
@@ -208,7 +240,10 @@ class CatkinPackage {
         directory = packageXmlFilename.parent
         name = packageXml.name.text()
         version = packageXml.version.text()
-        dependencies = packageXml.build_depend.collect { it.text() }
+        def build_dependencies = packageXml.build_depend.collect { it.text() }
+        def just_dependencies= packageXml.depend.collect { it.text() }
+        dependencies.addAll(build_dependencies)
+        dependencies.addAll(just_dependencies)
     }
 
     String toString() { "${name} ${version} ${dependencies}" }
