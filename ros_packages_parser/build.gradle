@@ -18,6 +18,12 @@ plugins {
    id 'groovy'
 }
 
+
+application {
+   mainClass = 'org.ros.catking_package_msg.JavaMsgGenerationManager'
+}
+
+
 dependencies {
    implementation 'org.codehaus.groovy:groovy-all:3.0.9'
 }
