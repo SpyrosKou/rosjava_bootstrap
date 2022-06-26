@@ -31,36 +31,36 @@ import java.util.List;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-class MessageImpl implements RawMessage, GetInstance {
+final class MessageImpl implements RawMessage, GetInstance {
 
   private final MessageContext messageContext;
   private final MessageFields messageFields;
 
   public MessageImpl(MessageContext messageContext) {
     this.messageContext = messageContext;
-    messageFields = new MessageFields(messageContext);
+    this.messageFields = new MessageFields(messageContext);
   }
 
-  public MessageContext getMessageContext() {
+  public final MessageContext getMessageContext() {
     return messageContext;
   }
 
-  public MessageFields getMessageFields() {
+  public final MessageFields getMessageFields() {
     return messageFields;
   }
 
   @Override
-  public RawMessage toRawMessage() {
+  public final RawMessage toRawMessage() {
     return (RawMessage) this;
   }
 
   @Override
-  public MessageIdentifier getIdentifier() {
+  public final MessageIdentifier getIdentifier() {
     return messageContext.getMessageIdentifer();
   }
 
   @Override
-  public String getType() {
+  public final String getType() {
     return messageContext.getType();
   }
 
