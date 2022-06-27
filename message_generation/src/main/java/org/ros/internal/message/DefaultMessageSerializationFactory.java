@@ -28,7 +28,7 @@ import org.ros.message.MessageSerializer;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class DefaultMessageSerializationFactory implements MessageSerializationFactory {
+public final class DefaultMessageSerializationFactory implements MessageSerializationFactory {
 
   private final MessageFactory topicMessageFactory;
   private final ServiceRequestMessageFactory serviceRequestMessageFactory;

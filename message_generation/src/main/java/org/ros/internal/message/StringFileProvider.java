@@ -18,7 +18,6 @@ package org.ros.internal.message;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -31,17 +30,15 @@ import org.ros.exception.RosMessageRuntimeException;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
 public class StringFileProvider {
 
-  private final Collection<File> directories;
+  private final Set<File> directories;
   private final Map<File, String> strings;
   private final StringFileDirectoryWalker stringFileDirectoryWalker;
 
@@ -89,16 +86,16 @@ public class StringFileProvider {
   }
 
   public StringFileProvider(IOFileFilter ioFileFilter) {
-    directories = Lists.newArrayList();
-    strings = Maps.newConcurrentMap();
+    this.directories = new CopyOnWriteArraySet<>();
+    this.strings = Maps.newConcurrentMap();
     IOFileFilter directoryFilter = FileFilterUtils.directoryFileFilter();
     FileFilter fileFilter = FileFilterUtils.orFileFilter(directoryFilter, ioFileFilter);
     stringFileDirectoryWalker = new StringFileDirectoryWalker(fileFilter, -1);
   }
 
   public void update() {
-    for (File directory : directories) {
-      stringFileDirectoryWalker.update(directory);
+    for (final File directory : this.directories) {
+      this.stringFileDirectoryWalker.update(directory);
     }
   }
 
