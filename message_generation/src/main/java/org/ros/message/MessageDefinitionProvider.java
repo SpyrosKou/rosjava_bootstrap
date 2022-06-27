@@ -17,6 +17,7 @@
 package org.ros.message;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -38,7 +39,7 @@ public interface MessageDefinitionProvider {
    */
   boolean has(String messageType);
 
-  Collection<String> getPackages();
+  Set<String> getPackages();
 
   /**
    * @param pkg
@@ -46,5 +47,5 @@ public interface MessageDefinitionProvider {
    * @return the {@link MessageIdentifier}s for all messages defined in the
    *         specified package
    */
-  Collection<MessageIdentifier> getMessageIdentifiersByPackage(String pkg);
+  Set<MessageIdentifier> getMessageIdentifiersByPackage(String pkg);
 }

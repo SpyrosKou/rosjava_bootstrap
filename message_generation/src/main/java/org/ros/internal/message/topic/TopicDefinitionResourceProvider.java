@@ -23,6 +23,7 @@ import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageIdentifier;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -57,12 +58,12 @@ public class TopicDefinitionResourceProvider implements MessageDefinitionProvide
   }
 
   @Override
-  public Collection<String> getPackages() {
+  public Set<String> getPackages() {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public Collection<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
+  public Set<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
     throw new UnsupportedOperationException();
   }
 }

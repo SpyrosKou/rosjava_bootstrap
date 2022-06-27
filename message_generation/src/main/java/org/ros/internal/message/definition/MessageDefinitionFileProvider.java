@@ -25,9 +25,7 @@ import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageIdentifier;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -36,7 +34,7 @@ import java.util.Map.Entry;
 public class MessageDefinitionFileProvider implements MessageDefinitionProvider {
 
   private final StringFileProvider stringFileProvider;
-  private final Map<String, Collection<MessageIdentifier>> messageIdentifiers;
+  private final Map<String, Set<MessageIdentifier>> messageIdentifiers;
   private final Map<String, String> definitions;
 
   public MessageDefinitionFileProvider(StringFileProvider stringFileProvider) {
@@ -93,12 +91,12 @@ public class MessageDefinitionFileProvider implements MessageDefinitionProvider 
   }
 
   @Override
-  public Collection<String> getPackages() {
+  public Set<String> getPackages() {
     return messageIdentifiers.keySet();
   }
 
   @Override
-  public Collection<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
+  public Set<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
     return messageIdentifiers.get(pkg);
   }
 

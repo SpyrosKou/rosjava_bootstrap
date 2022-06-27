@@ -23,11 +23,12 @@ import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageIdentifier;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class ServiceDefinitionResourceProvider implements MessageDefinitionProvider {
+public final class ServiceDefinitionResourceProvider implements MessageDefinitionProvider {
 
   private final StringResourceProvider stringResourceProvider;
 
@@ -38,7 +39,7 @@ public class ServiceDefinitionResourceProvider implements MessageDefinitionProvi
   private String serviceTypeToResourceName(String serviceType) {
     Preconditions.checkArgument(serviceType.contains("/"), "Service type must be fully qualified: "
         + serviceType);
-    String[] packageAndType = serviceType.split("/", 2);
+    final String[] packageAndType = serviceType.split("/", 2);
     return String.format("/%s/srv/%s.srv", packageAndType[0], packageAndType[1]);
   }
 
@@ -58,12 +59,12 @@ public class ServiceDefinitionResourceProvider implements MessageDefinitionProvi
   }
 
   @Override
-  public Collection<String> getPackages() {
+  public Set<String> getPackages() {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public Collection<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
+  public Set<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
     throw new UnsupportedOperationException();
   }
 }

@@ -25,6 +25,7 @@ import org.ros.message.MessageIdentifier;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A {@link MessageDefinitionProvider} that uses reflection to load the message
@@ -72,12 +73,12 @@ public class MessageDefinitionReflectionProvider implements MessageDefinitionPro
   }
 
   @Override
-  public Collection<String> getPackages() {
+  public Set<String> getPackages() {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public Collection<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
+  public Set<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
     throw new UnsupportedOperationException();
   }
 

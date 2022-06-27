@@ -41,16 +41,19 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
+ * @author Spyros Koukas
  */
-public class GenerateInterfaces {
+public final class GenerateInterfaces {
 
-  private final TopicDefinitionFileProvider topicDefinitionFileProvider;
-  private final ServiceDefinitionFileProvider serviceDefinitionFileProvider;
-  private final ActionDefinitionFileProvider actionDefinitionFileProvider;
-  private final MessageDefinitionProviderChain messageDefinitionProviderChain;
+  private final TopicDefinitionFileProvider topicDefinitionFileProvider= new TopicDefinitionFileProvider();
+  private final ServiceDefinitionFileProvider serviceDefinitionFileProvider= new ServiceDefinitionFileProvider();
+  private final MessageDefinitionProviderChain messageDefinitionProviderChain=new MessageDefinitionProviderChain();
+  private final ActionDefinitionFileProvider actionDefinitionFileProvider = new ActionDefinitionFileProvider();
+
   private final MessageFactory messageFactory;
 
   private final MessageGenerationTemplate actionGenerationTemplateGoal     = new ActionGenerationTemplateGoal();
@@ -64,14 +67,10 @@ public class GenerateInterfaces {
   static private final String ROS_PACKAGE_PATH = "ROS_PACKAGE_PATH";
 
   public GenerateInterfaces() {
-    messageDefinitionProviderChain = new MessageDefinitionProviderChain();
-    topicDefinitionFileProvider = new TopicDefinitionFileProvider();
-    messageDefinitionProviderChain.addMessageDefinitionProvider(topicDefinitionFileProvider);
-    serviceDefinitionFileProvider = new ServiceDefinitionFileProvider();
-    messageDefinitionProviderChain.addMessageDefinitionProvider(serviceDefinitionFileProvider);
-    actionDefinitionFileProvider = new ActionDefinitionFileProvider();
-    messageDefinitionProviderChain.addMessageDefinitionProvider(actionDefinitionFileProvider);
-    messageFactory = new DefaultMessageFactory(messageDefinitionProviderChain);
+    this.messageDefinitionProviderChain.addMessageDefinitionProvider(topicDefinitionFileProvider);
+    this.messageDefinitionProviderChain.addMessageDefinitionProvider(serviceDefinitionFileProvider);
+    this.messageDefinitionProviderChain.addMessageDefinitionProvider(actionDefinitionFileProvider);
+    this.messageFactory = new DefaultMessageFactory(messageDefinitionProviderChain);
   }
 
   /**
@@ -84,12 +83,12 @@ public class GenerateInterfaces {
    */
   private void writeTopicInterfaces(File outputDirectory, Collection<String> packages)
       throws IOException {
-    Collection<MessageIdentifier> topicTypes = Sets.newHashSet();
+    Set<MessageIdentifier> topicTypes = Sets.newHashSet();
     if (packages.size() == 0) {
       packages = topicDefinitionFileProvider.getPackages();
     }
-    for (String pkg : packages) {
-      Collection<MessageIdentifier> messageIdentifiers =
+    for (final String pkg : packages) {
+      final Set<MessageIdentifier> messageIdentifiers =
           topicDefinitionFileProvider.getMessageIdentifiersByPackage(pkg);
       if (messageIdentifiers != null) {
         topicTypes.addAll(messageIdentifiers);
@@ -112,12 +111,12 @@ public class GenerateInterfaces {
    */
   private void writeServiceInterfaces(File outputDirectory, Collection<String> packages)
       throws IOException {
-    Collection<MessageIdentifier> serviceTypes = Sets.newHashSet();
+    final Set<MessageIdentifier> serviceTypes = Sets.newHashSet();
     if (packages.size() == 0) {
       packages = serviceDefinitionFileProvider.getPackages();
     }
     for (String pkg : packages) {
-      Collection<MessageIdentifier> messageIdentifiers =
+      Set<MessageIdentifier> messageIdentifiers =
           serviceDefinitionFileProvider.getMessageIdentifiersByPackage(pkg);
       if (messageIdentifiers != null) {
         serviceTypes.addAll(messageIdentifiers);
@@ -150,12 +149,12 @@ public class GenerateInterfaces {
    */
   private void writeActionInterfaces(File outputDirectory, Collection<String> packages)
           throws IOException {
-    Collection<MessageIdentifier> actionTypes = Sets.newHashSet();
+    final Set<MessageIdentifier> actionTypes = Sets.newHashSet();
     if (packages.size() == 0) {
       packages = actionDefinitionFileProvider.getPackages();
     }
     for (String pkg : packages) {
-      Collection<MessageIdentifier> messageIdentifiers =
+      final Set<MessageIdentifier> messageIdentifiers =
               actionDefinitionFileProvider.getMessageIdentifiersByPackage(pkg);
       if (messageIdentifiers != null) {
         actionTypes.addAll(messageIdentifiers);
@@ -222,27 +221,35 @@ public class GenerateInterfaces {
     }
   }
 
-  public void generate(File outputDirectory, Collection<String> packages,
-      Collection<File> packagePath) {
-    for (File directory : packagePath) {
-      topicDefinitionFileProvider.addDirectory(directory);
-      serviceDefinitionFileProvider.addDirectory(directory);
-      actionDefinitionFileProvider.addDirectory(directory);
+  /**
+   *
+   * @param outputDirectory
+   * @param packages
+   * @param packagePath
+   */
+  public final void generate(
+          final File outputDirectory
+          ,final Collection<String> packages
+          ,final Collection<File> packagePath) {
+    for (final File directory : packagePath) {
+      this.topicDefinitionFileProvider.addDirectory(directory);
+      this.serviceDefinitionFileProvider.addDirectory(directory);
+      this.actionDefinitionFileProvider.addDirectory(directory);
     }
-    topicDefinitionFileProvider.update();
-    serviceDefinitionFileProvider.update();
-    actionDefinitionFileProvider.update();
+    this.topicDefinitionFileProvider.update();
+    this.serviceDefinitionFileProvider.update();
+    this.actionDefinitionFileProvider.update();
     try {
       writeTopicInterfaces(outputDirectory, packages);
       writeServiceInterfaces(outputDirectory, packages);
       writeActionInterfaces(outputDirectory, packages);
-    } catch (IOException e) {
-      throw new RosMessageRuntimeException(e);
+    } catch (final IOException ioException) {
+      throw new RosMessageRuntimeException(ioException);
     }
   }
 
   public static void main(String[] args) {
-    List<String> arguments = Lists.newArrayList(args);
+    final List<String> arguments = Lists.newArrayList(args);
     if (arguments.size() == 0) {
       arguments.add(".");
     }
@@ -258,16 +265,16 @@ public class GenerateInterfaces {
       }
     }
 
-    Collection<File> packagePath = Lists.newArrayList();
-    for (String path : rosPackagePath.split(File.pathSeparator)) {
-      File packageDirectory = new File(path);
+    final List<File> packagePath = Lists.newArrayList();
+    for (final String path : rosPackagePath.split(File.pathSeparator)) {
+      final File packageDirectory = new File(path);
       if (packageDirectory.exists()) {
         packagePath.add(packageDirectory);
       }
     }
 
-    GenerateInterfaces generateInterfaces = new GenerateInterfaces();
-    File outputDirectory = new File(arguments.remove(0));
+    final GenerateInterfaces generateInterfaces = new GenerateInterfaces();
+    final File outputDirectory = new File(arguments.remove(0));
     generateInterfaces.generate(outputDirectory, arguments, packagePath);
   }
 }

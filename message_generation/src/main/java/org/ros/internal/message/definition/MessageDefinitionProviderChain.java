@@ -23,6 +23,7 @@ import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageIdentifier;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ import java.util.Set;
  */
 public class MessageDefinitionProviderChain implements MessageDefinitionProvider {
 
-  private final Collection<MessageDefinitionProvider> messageDefinitionProviders;
+  private final List<MessageDefinitionProvider> messageDefinitionProviders;
 
   public MessageDefinitionProviderChain() {
     messageDefinitionProviders = Lists.newArrayList();
@@ -62,19 +63,19 @@ public class MessageDefinitionProviderChain implements MessageDefinitionProvider
   }
 
   @Override
-  public Collection<String> getPackages() {
-    Set<String> result = Sets.newHashSet();
-    for (MessageDefinitionProvider messageDefinitionProvider : messageDefinitionProviders) {
-      Collection<String> packages = messageDefinitionProvider.getPackages();
+  public Set<String> getPackages() {
+    final Set<String> result = Sets.newHashSet();
+    for (final MessageDefinitionProvider messageDefinitionProvider : messageDefinitionProviders) {
+      Set<String> packages = messageDefinitionProvider.getPackages();
       result.addAll(packages);
     }
     return result;
   }
 
   @Override
-  public Collection<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
-    Set<MessageIdentifier> result = Sets.newHashSet();
-    for (MessageDefinitionProvider messageDefinitionProvider : messageDefinitionProviders) {
+  public Set<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
+    final Set<MessageIdentifier> result = Sets.newHashSet();
+    for (final MessageDefinitionProvider messageDefinitionProvider : messageDefinitionProviders) {
       Collection<MessageIdentifier> messageIdentifiers =
           messageDefinitionProvider.getMessageIdentifiersByPackage(pkg);
       if (messageIdentifiers != null) {
