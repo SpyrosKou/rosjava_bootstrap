@@ -7,7 +7,7 @@ import org.gradle.api.*;
 
 /*
  * Configures java for the ros build environment. Pretty elementary right now,
- * just applies the java plugin and defines the jdk compatibility level.
+ * just applies the ros, java and maven-publish plugins.
  */
 class RosJavaPlugin implements Plugin<Project> {
     Project project
@@ -24,9 +24,6 @@ class RosJavaPlugin implements Plugin<Project> {
             project.apply(plugin: 'maven-publish')
         }
         
-        project.sourceCompatibility = 1.7
-        project.targetCompatibility = 1.7
-
         if ( project.ros.mavenDeploymentRepository != 'null' && project.ros.mavenDeploymentRepository != '' ) {
             project.publishing {
                 publications {
