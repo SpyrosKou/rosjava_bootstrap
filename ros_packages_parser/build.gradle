@@ -26,6 +26,7 @@ application {
 
 dependencies {
    implementation 'org.codehaus.groovy:groovy-all:3.0.9'
+   implementation project(":message_generation")
 }
 
 repositories{
