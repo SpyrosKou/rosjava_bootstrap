@@ -23,6 +23,7 @@
 
 plugins{
   id 'application'
+  id 'java-library'
 }
 
 
@@ -34,10 +35,19 @@ dependencies {
   implementation 'commons-io:commons-io:2.11.0'
   implementation 'commons-pool:commons-pool:1.6'
   implementation 'org.apache.commons:commons-lang3:3.12.0'
+  implementation 'org.apache.commons:commons-text:1.9'
 //  implementation project(':gradle_plugins')
   testImplementation 'junit:junit:4.13.2'
 }
 
+compileJava {
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
+}
+java {
+  withSourcesJar()
+  withJavadocJar()
+}
 
 
 //noinspection GroovyUnusedAssignment
