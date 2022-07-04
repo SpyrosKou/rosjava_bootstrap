@@ -23,19 +23,19 @@ import com.google.common.base.Preconditions;
  * 
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class MessageIdentifier {
+public final class MessageIdentifier {
 
   private String type;
   private String pkg;
   private String name;
 
-  public static MessageIdentifier of(String pkg, String name) {
+  public static final MessageIdentifier of(String pkg, String name) {
     Preconditions.checkNotNull(pkg);
     Preconditions.checkNotNull(name);
     return new MessageIdentifier(pkg, name);
   }
 
-  public static MessageIdentifier of(String type) {
+  public static final MessageIdentifier of(String type) {
     Preconditions.checkNotNull(type);
     // We're not using Preconditions.checkArgument() here because we want a
     // useful error message without paying the performance penalty of
@@ -56,33 +56,33 @@ public class MessageIdentifier {
     this.name = name;
   }
 
-  public String getType() {
-    if (type == null) {
+  public final String getType() {
+    if (this.type == null) {
       // Using StringBuilder like this is about 40% faster than using the +
       // operator.
-      StringBuilder stringBuilder = new StringBuilder(pkg.length() + name.length() + 1);
+     final StringBuilder stringBuilder = new StringBuilder(pkg.length() + name.length() + 1);
       stringBuilder.append(pkg);
       stringBuilder.append("/");
       stringBuilder.append(name);
-      type = stringBuilder.toString();
+      this.type = stringBuilder.toString();
     }
     return type;
   }
 
-  private void splitType() {
-    String[] packageAndName = type.split("/", 2);
+  private final void splitType() {
+    final String[] packageAndName = type.split("/", 2);
     pkg = packageAndName[0];
     name = packageAndName[1];
   }
 
-  public String getPackage() {
+  public final String getPackage() {
     if (pkg == null) {
       splitType();
     }
     return pkg;
   }
 
-  public String getName() {
+  public final String getName() {
     if (name == null) {
       splitType();
     }
@@ -90,12 +90,12 @@ public class MessageIdentifier {
   }
 
   @Override
-  public String toString() {
+  public final String toString() {
     return String.format("MessageIdentifier<%s>", type);
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -103,7 +103,7 @@ public class MessageIdentifier {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public final  boolean equals(Object obj) {
     if (this == obj)
       return true;
     if (obj == null)

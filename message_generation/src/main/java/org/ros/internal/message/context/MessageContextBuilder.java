@@ -29,7 +29,7 @@ import org.ros.message.MessageIdentifier;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-class MessageContextBuilder implements MessageDefinitionVisitor {
+final class MessageContextBuilder implements MessageDefinitionVisitor {
 
   private final MessageContext messageContext;
 
@@ -37,23 +37,22 @@ class MessageContextBuilder implements MessageDefinitionVisitor {
     this.messageContext = context;
   }
 
-  private FieldType getFieldType(String type) {
+  private final FieldType getFieldType(final String type) {
     Preconditions.checkArgument(!type.equals(messageContext.getType()),
         "Message definitions may not be self-referential.");
-    FieldType fieldType;
+    final FieldType fieldType;
     if (PrimitiveFieldType.existsFor(type)) {
       fieldType = PrimitiveFieldType.valueOf(type.toUpperCase());
     } else {
-      fieldType =
-          new MessageFieldType(MessageIdentifier.of(type), messageContext.getMessageFactory());
+      fieldType = new MessageFieldType(MessageIdentifier.of(type), messageContext.getMessageFactory());
     }
     return fieldType;
   }
 
   @Override
-  public void variableValue(String type, final String name) {
+  public final void variableValue(final String type, final String name) {
     final FieldType fieldType = getFieldType(type);
-    messageContext.addFieldFactory(name, new FieldFactory() {
+    this.messageContext.addFieldFactory(name, new FieldFactory() {
       @Override
       public Field create() {
         return fieldType.newVariableValue(name);
@@ -62,22 +61,22 @@ class MessageContextBuilder implements MessageDefinitionVisitor {
   }
 
   @Override
-  public void variableList(String type, final int size, final String name) {
+  public final void variableList(final String type, final int size, final String name) {
     final FieldType fieldType = getFieldType(type);
-    messageContext.addFieldFactory(name, new FieldFactory() {
+    this.messageContext.addFieldFactory(name, new FieldFactory() {
       @Override
-      public Field create() {
+      public final Field create() {
         return fieldType.newVariableList(name, size);
       }
     });
   }
 
   @Override
-  public void constantValue(String type, final String name, final String value) {
+  public final void constantValue(String type, final String name, final String value) {
     final FieldType fieldType = getFieldType(type);
     messageContext.addFieldFactory(name, new FieldFactory() {
       @Override
-      public Field create() {
+      public final Field create() {
         return fieldType.newConstantValue(name, fieldType.parseFromString(value));
       }
     });

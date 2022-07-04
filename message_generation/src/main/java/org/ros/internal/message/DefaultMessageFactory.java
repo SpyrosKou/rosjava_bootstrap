@@ -38,7 +38,7 @@ public final class DefaultMessageFactory implements MessageFactory {
   }
 
   @Override
-  public  <T extends Message>  T newFromType(final String messageType) {
+  public final  <T extends Message>  T newFromType(final String messageType) {
     final String messageDefinition = messageDefinitionProvider.get(messageType);
     final MessageDeclaration messageDeclaration = MessageDeclaration.of(messageType, messageDefinition);
     return messageProxyFactory.newMessageProxy(messageDeclaration);

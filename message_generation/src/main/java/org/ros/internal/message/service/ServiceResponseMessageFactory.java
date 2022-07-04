@@ -41,9 +41,9 @@ public class ServiceResponseMessageFactory implements MessageFactory {
   }
 
   @Override
-  public <T extends Message> T newFromType(String serviceType) {
-    ServiceDescription serviceDescription = serviceDescriptionFactory.newFromType(serviceType);
-    MessageDeclaration messageDeclaration =
+  public final <T extends Message> T newFromType(final String serviceType) {
+    final ServiceDescription serviceDescription = serviceDescriptionFactory.newFromType(serviceType);
+    final MessageDeclaration messageDeclaration =
         MessageDeclaration.of(serviceDescription.getResponseType(),
             serviceDescription.getResponseDefinition());
     return messageProxyFactory.newMessageProxy(messageDeclaration);

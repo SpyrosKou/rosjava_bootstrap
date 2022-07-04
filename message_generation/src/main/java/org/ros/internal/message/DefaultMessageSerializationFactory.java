@@ -42,24 +42,24 @@ public final class DefaultMessageSerializationFactory implements MessageSerializ
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends Message> MessageSerializer<T> newMessageSerializer(String messageType) {
+  public final <T extends Message> MessageSerializer<T> newMessageSerializer(String messageType) {
     return (MessageSerializer<T>) new DefaultMessageSerializer();
   }
 
   @Override
-  public <T extends Message> MessageDeserializer<T> newMessageDeserializer(String messageType) {
+  public final  <T extends Message> MessageDeserializer<T> newMessageDeserializer(String messageType) {
     return new DefaultMessageDeserializer<T>(MessageIdentifier.of(messageType),
         topicMessageFactory);
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends Message> MessageSerializer<T> newServiceRequestSerializer(String serviceType) {
+  public final <T extends Message> MessageSerializer<T> newServiceRequestSerializer(String serviceType) {
     return (MessageSerializer<T>) new DefaultMessageSerializer();
   }
 
   @Override
-  public <T extends Message> org.ros.message.MessageDeserializer<T>
+  public final <T extends Message> org.ros.message.MessageDeserializer<T>
       newServiceRequestDeserializer(String serviceType) {
     return new DefaultMessageDeserializer<T>(MessageIdentifier.of(serviceType),
         serviceRequestMessageFactory);
@@ -67,12 +67,12 @@ public final class DefaultMessageSerializationFactory implements MessageSerializ
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends Message> org.ros.message.MessageSerializer<T> newServiceResponseSerializer(String serviceType) {
+  public final <T extends Message> org.ros.message.MessageSerializer<T> newServiceResponseSerializer(String serviceType) {
     return (MessageSerializer<T>) new DefaultMessageSerializer();
   }
 
   @Override
-  public <T extends Message> org.ros.message.MessageDeserializer<T> newServiceResponseDeserializer(
+  public final <T extends Message> org.ros.message.MessageDeserializer<T> newServiceResponseDeserializer(
       String serviceType) {
     return new DefaultMessageDeserializer<T>(MessageIdentifier.of(serviceType),
         serviceResponseMessageFactory);

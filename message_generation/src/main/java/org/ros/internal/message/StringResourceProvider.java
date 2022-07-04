@@ -38,7 +38,7 @@ public final class StringResourceProvider {
   private final Map<String, String> cache= new ConcurrentHashMap<>();
 
 
-  public final String get(String resourceName) {
+  public final String get(final String resourceName) {
     if (!has(resourceName)) {
       throw new NoSuchElementException("Resource does not exist: " + resourceName);
     }
@@ -59,11 +59,11 @@ public final class StringResourceProvider {
     return this.cache.get(resourceName);
   }
 
-  public final boolean has(String resourceName) {
+  public final boolean has(final String resourceName) {
     return this.cache.containsKey(resourceName) || getClass().getResource(resourceName) != null;
   }
 
-  public final void addStringToCache(String resourceName, String resourceContent) {
+  public final void addStringToCache(final String resourceName,final  String resourceContent) {
     this.cache.put(resourceName, resourceContent);
   }
 }

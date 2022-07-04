@@ -25,22 +25,22 @@ import org.ros.message.MessageIdentifier;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class DefaultMessageDeserializer<T> implements MessageDeserializer<T> {
+public final class DefaultMessageDeserializer<T extends Message> implements MessageDeserializer<T> {
 
   private final MessageIdentifier messageIdentifier;
   private final MessageFactory messageFactory;
 
-  public DefaultMessageDeserializer(MessageIdentifier messageIdentifier,
-      MessageFactory messageFactory) {
+  public DefaultMessageDeserializer(final MessageIdentifier messageIdentifier,
+                                    final MessageFactory messageFactory) {
     this.messageIdentifier = messageIdentifier;
     this.messageFactory = messageFactory;
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public T deserialize(ChannelBuffer buffer) {
-    Message message = messageFactory.newFromType(messageIdentifier.getType());
-    for (Field field : message.toRawMessage().getFields()) {
+  public final T deserialize(final ChannelBuffer buffer) {
+    final Message message = messageFactory.newFromType(messageIdentifier.getType());
+    for (final Field field : message.toRawMessage().getFields()) {
       if (!field.isConstant()) {
         field.deserialize(buffer);
       }

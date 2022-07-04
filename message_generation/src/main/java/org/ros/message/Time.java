@@ -65,48 +65,48 @@ public final class Time implements Comparable<Time> {
     this.nsecs = t.nsecs;
   }
 
-  public Time add(Duration d) {
+  public final Time add(Duration d) {
     return new Time(secs + d.secs, nsecs + d.nsecs);
   }
 
-  public Time subtract(Duration d) {
+  public final Time subtract(Duration d) {
     return new Time(secs - d.secs, nsecs - d.nsecs);
   }
 
-  public Duration subtract(Time t) {
+  public final Duration subtract(Time t) {
     return new Duration(secs - t.secs, nsecs - t.nsecs);
   }
 
-  public static Time fromMillis(long timeInMillis) {
+  public final static Time fromMillis(long timeInMillis) {
     int secs = (int) (timeInMillis / 1000);
     int nsecs = (int) (timeInMillis % 1000) * 1000000;
     return new Time(secs, nsecs);
   }
 
-  public static Time fromNano(long timeInNs) {
+  public final static Time fromNano(long timeInNs) {
     int secs = (int) (timeInNs / 1000000000);
     int nsecs = (int) (timeInNs % 1000000000);
     return new Time(secs, nsecs);
   }
 
   @Override
-  public String toString() {
+  public final String toString() {
     return secs + ":" + nsecs;
   }
 
-  public double toSeconds() {
+  public final double toSeconds() {
     return totalNsecs() / 1e9;
   }
 
-  public long totalNsecs() {
+  public final long totalNsecs() {
     return ((long) secs) * 1000000000 + nsecs;
   }
 
-  public boolean isZero() {
+  public final boolean isZero() {
     return totalNsecs() == 0;
   }
 
-  public void normalize() {
+  public final void normalize() {
     while (nsecs < 0) {
       nsecs += 1000000000;
       secs -= 1;
@@ -118,7 +118,7 @@ public final class Time implements Comparable<Time> {
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + nsecs;
@@ -133,7 +133,7 @@ public final class Time implements Comparable<Time> {
    * exactly.
    */
   @Override
-  public boolean equals(Object obj) {
+  public final boolean equals(Object obj) {
     if (this == obj) return true;
     if (obj == null) return false;
     if (getClass() != obj.getClass()) return false;
@@ -144,7 +144,7 @@ public final class Time implements Comparable<Time> {
   }
 
   @Override
-  public int compareTo(Time t) {
+  public final int compareTo(Time t) {
     if ((secs > t.secs) || ((secs == t.secs) && nsecs > t.nsecs)) {
       return 1;
     }

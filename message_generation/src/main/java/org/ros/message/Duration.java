@@ -45,7 +45,7 @@ package org.ros.message;
  * @author kwc@willowgarage.com (Ken Conley)
  * 
  */
-public class Duration implements Comparable<Duration> {
+public final class Duration implements Comparable<Duration> {
 
   public static final Duration MAX_VALUE = new Duration(Integer.MAX_VALUE, 999999999);
 
@@ -72,11 +72,11 @@ public class Duration implements Comparable<Duration> {
     this.nsecs = t.nsecs;
   }
 
-  public Duration add(Duration d) {
+  public final Duration add(Duration d) {
     return new Duration(secs + d.secs, nsecs + d.nsecs);
   }
 
-  public Duration subtract(Duration d) {
+  public final Duration subtract(Duration d) {
     return new Duration(secs - d.secs, nsecs - d.nsecs);
   }
 
@@ -86,13 +86,13 @@ public class Duration implements Comparable<Duration> {
     return new Duration(secs, nsecs);
   }
 
-  public static Duration fromNano(long durationInNs) {
+  public static final Duration fromNano(long durationInNs) {
     int secs = (int) (durationInNs / 1000000000);
     int nsecs = (int) (durationInNs % 1000000000);
     return new Duration(secs, nsecs);
   }
 
-  public void normalize() {
+  public final void normalize() {
     while (nsecs < 0) {
       nsecs += 1000000000;
       secs -= 1;
@@ -103,29 +103,29 @@ public class Duration implements Comparable<Duration> {
     }
   }
 
-  public long totalNsecs() {
+  public final long totalNsecs() {
     return ((long) secs) * 1000000000 + nsecs;
   }
 
-  public boolean isZero() {
+  public final boolean isZero() {
     return totalNsecs() == 0;
   }
 
-  public boolean isPositive() {
+  public final boolean isPositive() {
     return totalNsecs() > 0;
   }
 
-  public boolean isNegative() {
+  public final boolean isNegative() {
     return totalNsecs() < 0;
   }
 
   @Override
-  public String toString() {
+  public final String toString() {
     return secs + ":" + nsecs;
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + nsecs;
@@ -138,7 +138,7 @@ public class Duration implements Comparable<Duration> {
    * Check for equality between Time objects.  
    * equals() does not normalize Time representations, so fields must match exactly.
    */
-  public boolean equals(Object obj) {
+  public final boolean equals(Object obj) {
     if (this == obj)
       return true;
     if (obj == null)
@@ -154,7 +154,7 @@ public class Duration implements Comparable<Duration> {
   }
 
   @Override
-  public int compareTo(Duration d) {
+  public final int compareTo(Duration d) {
     if ((secs > d.secs) || ((secs == d.secs) && nsecs > d.nsecs)) {
       return 1;
     }

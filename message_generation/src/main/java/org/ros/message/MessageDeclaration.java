@@ -30,7 +30,7 @@ public class MessageDeclaration {
   private final MessageIdentifier messageIdentifier;
   private final String definition;
 
-  public static MessageDeclaration of(String type, String definition) {
+  public static final MessageDeclaration of(String type, String definition) {
     Preconditions.checkNotNull(type);
     Preconditions.checkNotNull(definition);
     return new MessageDeclaration(MessageIdentifier.of(type), definition);
@@ -53,19 +53,19 @@ public class MessageDeclaration {
     return messageIdentifier;
   }
 
-  public String getType() {
+  public final  String getType() {
     return messageIdentifier.getType();
   }
 
-  public String getPackage() {
+  public final  String getPackage() {
     return messageIdentifier.getPackage();
   }
 
-  public String getName() {
+  public final String getName() {
     return messageIdentifier.getName();
   }
 
-  public String getDefinition() {
+  public final String getDefinition() {
     Preconditions.checkNotNull(definition);
     return definition;
   }

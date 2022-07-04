@@ -36,7 +36,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class StringFileProvider {
+public final class StringFileProvider {
 
   private final Set<File> directories;
   private final Map<File, String> strings;

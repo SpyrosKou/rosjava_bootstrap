@@ -42,12 +42,12 @@ public final class Md5Generator {
     this.messageDefinitionProvider = messageDefinitionProvider;
   }
 
-  public final String generate(String messageType) {
-    String messageDefinition = messageDefinitionProvider.get(messageType);
+  public final String generate(final String messageType) {
+    final String messageDefinition = messageDefinitionProvider.get(messageType);
     Preconditions.checkNotNull(messageDefinition, "No definition for message type: " + messageType);
-    List<String> parts = MessageDefinitionTupleParser.parse(messageDefinition, -1);
-    StringBuilder text = new StringBuilder();
-    for (String part : parts) {
+    final List<String> parts = MessageDefinitionTupleParser.parse(messageDefinition, -1);
+    final StringBuilder text = new StringBuilder();
+    for (final String part : parts) {
       text.append(generateText(messageType, part));
     }
     return DigestUtils.md5Hex(text.toString());

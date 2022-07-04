@@ -28,7 +28,7 @@ import java.util.List;
  * 
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class ServiceDescription extends MessageDeclaration {
+public final class ServiceDescription extends MessageDeclaration {
 
   private final String requestType;
   private final String requestDefinition;
@@ -67,12 +67,12 @@ public class ServiceDescription extends MessageDeclaration {
   }
 
   @Override
-  public String toString() {
+  public final String toString() {
     return "ServiceDescription<" + getType() + ", " + md5Checksum + ">";
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
     result = prime * result + ((md5Checksum == null) ? 0 : md5Checksum.hashCode());
@@ -80,7 +80,7 @@ public class ServiceDescription extends MessageDeclaration {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public final boolean equals(Object obj) {
     if (this == obj)
       return true;
     if (!super.equals(obj))
