@@ -16,7 +16,7 @@
 
 allprojects {
   group="org.ros.rosjava_bootstrap"
-  version = "noetic-0.1"
+  version = "0.3.8"
 }
 
     subprojects {
@@ -44,7 +44,7 @@ allprojects {
         if (mavenDeploymentRepository != null && mavenDeploymentRepository != "") {
             repositories {
                 maven {
-                    name "LocalHere"
+                    name "GithubRepositoryLocation"
                     url 'file://' + mavenDeploymentRepository
                 }
             }
