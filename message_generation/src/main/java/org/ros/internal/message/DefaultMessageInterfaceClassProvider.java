@@ -26,16 +26,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class DefaultMessageInterfaceClassProvider implements MessageInterfaceClassProvider {
 
-    private final Map<String, Class<?>> cache = new ConcurrentHashMap<>();
+    private final Map<String, Class<? extends Message>> cache = new ConcurrentHashMap<>();
 
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <T> Class<T> get(final String messageType) {
+    public final <T extends Message> Class<T> get(final String messageType) {
         return (Class<T>) this.cache.computeIfAbsent(messageType, this::create);
     }
 
-    private final <T> Class<T> create(final String messageType) {
+    private final <T extends Message> Class<T> create(final String messageType) {
         try {
             final String className = messageType.replace("/", ".");
             final Class<T> messageInterfaceClass = (Class<T>) this.getClass().getClassLoader().loadClass(className);
@@ -46,7 +46,7 @@ public final class DefaultMessageInterfaceClassProvider implements MessageInterf
     }
 
     @VisibleForTesting
-    final <T> void add(final String messageType,final Class<T> messageInterfaceClass) {
+    final <T extends Message> void add(final String messageType,final Class<T> messageInterfaceClass) {
         this.cache.put(messageType, messageInterfaceClass);
     }
 }
