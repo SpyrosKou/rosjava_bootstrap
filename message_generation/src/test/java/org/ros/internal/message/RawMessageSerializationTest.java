@@ -17,6 +17,7 @@
 package org.ros.internal.message;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.google.common.collect.Lists;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.junit.Before;
 import org.junit.Test;
+import org.ros.internal.message.field.IntegerArrayField;
 import org.ros.internal.message.topic.TopicDefinitionResourceProvider;
 import org.ros.message.Duration;
 import org.ros.message.MessageFactory;
@@ -307,10 +309,15 @@ public class RawMessageSerializationTest {
   
   @Test
   public void testInt32FixedSizeArrayWithIncompleteInitialization() {
-    topicDefinitionResourceProvider.add("foo/foo", "int32[5] data");
-    RawMessage rawMessage = messageFactory.newFromType("foo/foo");
-    rawMessage.setInt32Array("data", new int[] { 1, 2, 3 });
-    checkSerializeAndDeserialize(rawMessage);
+    try {
+      topicDefinitionResourceProvider.add("foo/foo", "int32[5] data");
+      RawMessage rawMessage = messageFactory.newFromType("foo/foo");
+      rawMessage.setInt32Array("data", new int[]{1, 2, 3});
+      checkSerializeAndDeserialize(rawMessage);
+      fail("Should have failed due to the argument check in "+ IntegerArrayField.class+" in setValue method");
+    }catch (final Exception exception){
+    //expected
+    }
   }
 
   @Test
