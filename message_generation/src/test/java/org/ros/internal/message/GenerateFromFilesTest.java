@@ -35,7 +35,7 @@ public class GenerateFromFilesTest {
         Assume.assumeTrue(targetDirFile.exists());
         Assume.assumeTrue(!targetDirFile.isFile());
         Assume.assumeTrue(targetDirFile.isDirectory());
-        this.packageDirectories.addAll(Arrays.stream(file.listFiles(File::isDirectory)).collect(Collectors.toList()));
+        this.packageDirectories.addAll(Arrays.stream(file.listFiles(File::isDirectory)).toList());
     }
 
     @After

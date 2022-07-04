@@ -11,6 +11,7 @@ public final class MessageConstants {
     public static final String SRV = "srv";
     public static final String RESPONSE = "Response";
     public static final String MSG = "msg";
+    public static final String ACTION = "action";
     public static final String JAVA = ".java";
 
     private MessageConstants() {
