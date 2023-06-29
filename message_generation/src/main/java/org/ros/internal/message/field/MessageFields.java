@@ -39,7 +39,7 @@ public final class MessageFields {
   public MessageFields(final MessageContext messageContext) {
 
     for (final String name : messageContext.getFieldNames()) {
-      final Field field = messageContext.getFieldFactory(name).create();
+      final Field field = messageContext.getFieldFactory(name).get();
       this.fields.put(name, field);
       this.getters.put(messageContext.getFieldGetterName(name), field);
       this.setters.put(messageContext.getFieldSetterName(name), field);
