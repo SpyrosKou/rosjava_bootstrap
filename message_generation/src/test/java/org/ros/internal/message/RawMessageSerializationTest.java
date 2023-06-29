@@ -1,12 +1,12 @@
 /*
  * Copyright (C) 2011 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -16,20 +16,19 @@
 
 package org.ros.internal.message;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import com.google.common.collect.Lists;
-import java.util.Arrays;
-
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.junit.Before;
 import org.junit.Test;
-import org.ros.internal.message.field.IntegerArrayField;
 import org.ros.internal.message.topic.TopicDefinitionResourceProvider;
 import org.ros.message.Duration;
 import org.ros.message.MessageFactory;
 import org.ros.message.Time;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -142,7 +141,7 @@ public class RawMessageSerializationTest {
     rawMessage.setString("data", "Hello, ROS!");
     checkSerializeAndDeserialize(rawMessage);
   }
-  
+
   @Test
   public void testStringUTF8() {
     RawMessage rawMessage = messageFactory.newFromType("std_msgs/String");
@@ -269,7 +268,7 @@ public class RawMessageSerializationTest {
     rawMessage.setFloat64Array("data", new double[] { 1, 2, 3, 4, 5 });
     checkSerializeAndDeserialize(rawMessage);
   }
-  
+
   @Test
   public void testChannelBufferFixedSizeWithInitialization() {
     topicDefinitionResourceProvider.add("foo/foo", "uint8[5] data");
@@ -298,7 +297,7 @@ public class RawMessageSerializationTest {
     rawMessage.setChannelBuffer("data", buffer);
     checkSerializeAndDeserialize(rawMessage);
   }
-  
+
   @Test
   public void testInt32FixedSizeArrayWithInitialization() {
     topicDefinitionResourceProvider.add("foo/foo", "int32[5] data");
@@ -306,7 +305,7 @@ public class RawMessageSerializationTest {
     rawMessage.setInt32Array("data", new int[] { 1, 2, 3, 4, 5 });
     checkSerializeAndDeserialize(rawMessage);
   }
-  
+
   @Test
   public void testInt32FixedSizeArrayWithIncompleteInitialization() {
     try {
@@ -314,7 +313,7 @@ public class RawMessageSerializationTest {
       RawMessage rawMessage = messageFactory.newFromType("foo/foo");
       rawMessage.setInt32Array("data", new int[]{1, 2, 3});
       checkSerializeAndDeserialize(rawMessage);
-      fail("Should have failed due to the argument check in "+ IntegerArrayField.class+" in setValue method");
+      fail("Should have failed due to the argument check in IntegerArrayField.class in setValue method");
     }catch (final Exception exception){
     //expected
     }
@@ -342,7 +341,7 @@ public class RawMessageSerializationTest {
     rawMessage.setFloat64Array("data", new double[] { 1, 2, 3 });
     checkSerializeAndDeserialize(rawMessage);
   }
-  
+
   @Test
   public void testFloat64FixedSizeArrayNoInitialization() {
     topicDefinitionResourceProvider.add("foo/foo", "float64[5] data");
