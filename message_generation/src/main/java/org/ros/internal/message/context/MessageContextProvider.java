@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public final class MessageContextProvider {
 
-    private final Map<MessageDeclaration, MessageContext> cache = Maps.newConcurrentMap();
+    private final Map<MessageDeclarationImpl, MessageContext> cache = Maps.newConcurrentMap();
     private final MessageFactory messageFactory;
 
     public MessageContextProvider(final MessageFactory messageFactory) {
@@ -39,15 +39,15 @@ public final class MessageContextProvider {
         this.messageFactory = messageFactory;
     }
 
-    private final MessageContext createMessageContext(final MessageDeclaration messageDeclaration) {
-        final MessageContext messageContext = new MessageContext(messageDeclaration, this.messageFactory);
+    private final MessageContext createMessageContext(final MessageDeclarationImpl messageDeclarationImpl) {
+        final MessageContext messageContext = new MessageContext(messageDeclarationImpl, this.messageFactory);
         final MessageDefinitionVisitor visitor = new MessageContextBuilder(messageContext);
         final MessageDefinitionParser messageDefinitionParser = new MessageDefinitionParser(visitor);
-        messageDefinitionParser.parse(messageDeclaration.getType(), messageDeclaration.getDefinition());
+        messageDefinitionParser.parse(messageDeclarationImpl.getType(), messageDeclarationImpl.getDefinition());
         return messageContext;
     }
 
-    public final MessageContext get(final MessageDeclaration messageDeclaration) {
+    public final MessageContext get(final MessageDeclarationImpl messageDeclaration) {
         final MessageContext messageContext = this.cache.computeIfAbsent(messageDeclaration, this::createMessageContext);
 
         return messageContext;
