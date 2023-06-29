@@ -27,19 +27,19 @@ import org.apache.commons.io.FilenameUtils;
 import org.ros.exception.RosMessageRuntimeException;
 import org.ros.internal.message.definition.MessageDefinitionReflectionProvider;
 import org.ros.internal.message.definition.MessageDefinitionTupleParser;
-import org.ros.message.MessageDeclaration;
+import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
-import org.ros.message.MessageIdentifier;
 
 import com.google.common.collect.Lists;
+import org.ros.message.MessageIdentifierImpl;
 
 /**
  * @author d.stonier@gmail.com (Daniel Stonier)
  */
 public final class GenerateInterface {
 
-  private static final void writeInterface(final MessageDeclaration messageDeclaration, final File outputDirectory,
-                                     final boolean addConstantsAndMethods,final MessageFactory messageFactory) {
+  private static final void writeInterface(final MessageDeclarationImpl messageDeclaration, final File outputDirectory,
+                                           final boolean addConstantsAndMethods, final MessageFactory messageFactory) {
     final MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
     builder.setPackageName(messageDeclaration.getPackage());
     builder.setInterfaceName(messageDeclaration.getName());
@@ -82,8 +82,8 @@ public final class GenerateInterface {
     } catch (IOException e) {
       throw new RosMessageRuntimeException(e);
     }
-    final MessageIdentifier messageIdentifier = MessageIdentifier.of(pkg, name);
-    final MessageDeclaration messageDeclaration = new MessageDeclaration(messageIdentifier, definition);
+    final MessageIdentifierImpl messageIdentifier = MessageIdentifierImpl.of(pkg, name);
+    final MessageDeclarationImpl messageDeclaration = new MessageDeclarationImpl(messageIdentifier, definition);
     final MessageDefinitionReflectionProvider messageDefinitionProvider =
         new MessageDefinitionReflectionProvider();
     messageDefinitionProvider.add(messageIdentifier.getType(), definition);
@@ -93,10 +93,10 @@ public final class GenerateInterface {
     } else if (extension.equals(MessageConstants.SRV)) {
       writeInterface(messageDeclaration, outputDirectory, false, messageFactory);
       List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
-      final MessageDeclaration requestDeclaration =
-          MessageDeclaration.of(messageIdentifier.getType() + MessageConstants.REQUEST, requestAndResponse.get(0));
-      final MessageDeclaration responseDeclaration =
-          MessageDeclaration
+      final MessageDeclarationImpl requestDeclaration =
+          MessageDeclarationImpl.of(messageIdentifier.getType() + MessageConstants.REQUEST, requestAndResponse.get(0));
+      final MessageDeclarationImpl responseDeclaration =
+          MessageDeclarationImpl
               .of(messageIdentifier.getType() + MessageConstants.RESPONSE, requestAndResponse.get(1));
       writeInterface(requestDeclaration, outputDirectory, true, messageFactory);
       writeInterface(responseDeclaration, outputDirectory, true, messageFactory);

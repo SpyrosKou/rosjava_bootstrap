@@ -20,23 +20,20 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.ros.internal.message.DefaultMessageDeserializer;
 import org.ros.internal.message.DefaultMessageSerializer;
 import org.ros.internal.message.Message;
-import org.ros.message.MessageDeserializer;
-import org.ros.message.MessageFactory;
-import org.ros.message.MessageIdentifier;
-import org.ros.message.MessageSerializer;
+import org.ros.message.*;
 
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class MessageFieldType implements FieldType {
+public final class MessageFieldType implements FieldType {
 
-  private final MessageIdentifier messageIdentifier;
+  private final MessageIdentifierImpl messageIdentifier;
   private final MessageFactory messageFactory;
   private final MessageSerializer<Message> serializer;
   private final MessageDeserializer<Message> deserializer;
 
-  public MessageFieldType(MessageIdentifier messageIdentifier, MessageFactory messageFactory) {
+  public MessageFieldType(MessageIdentifierImpl messageIdentifier, MessageFactory messageFactory) {
     this.messageIdentifier = messageIdentifier;
     this.messageFactory = messageFactory;
     serializer = new DefaultMessageSerializer();
