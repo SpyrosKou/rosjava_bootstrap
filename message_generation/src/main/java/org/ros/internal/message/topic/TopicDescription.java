@@ -16,20 +16,20 @@
 
 package org.ros.internal.message.topic;
 
-import org.ros.message.MessageDeclaration;
-import org.ros.message.MessageIdentifier;
+import org.ros.message.MessageDeclarationImpl;
+import org.ros.message.MessageIdentifierImpl;
 
 /**
  * The description of a ROS topic.
  * 
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class TopicDescription extends MessageDeclaration {
+public class TopicDescription extends MessageDeclarationImpl {
 
   private final String md5Checksum;
 
   public TopicDescription(String type, String definition, String md5Checksum) {
-    super(MessageIdentifier.of(type), definition);
+    super(MessageIdentifierImpl.of(type), definition);
     this.md5Checksum = md5Checksum;
   }
 

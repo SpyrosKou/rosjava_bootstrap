@@ -29,6 +29,7 @@ import org.ros.internal.message.field.FieldType;
 import org.ros.internal.message.field.MessageFields;
 import org.ros.internal.message.field.PrimitiveFieldType;
 import org.ros.message.MessageDeclaration;
+import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
 
 import java.util.Set;
@@ -38,7 +39,7 @@ import java.util.Set;
  */
 public final class MessageInterfaceBuilder {
 
-  private MessageDeclaration messageDeclaration;
+  private MessageDeclarationImpl messageDeclaration;
   private String packageName;
   private String interfaceName;
   private boolean addConstantsAndMethods;
@@ -53,7 +54,7 @@ public final class MessageInterfaceBuilder {
     return messageDeclaration;
   }
 
-  public final MessageInterfaceBuilder setMessageDeclaration(MessageDeclaration messageDeclaration) {
+  public final MessageInterfaceBuilder setMessageDeclaration(MessageDeclarationImpl messageDeclaration) {
     Preconditions.checkNotNull(messageDeclaration);
     this.messageDeclaration = messageDeclaration;
     return this;

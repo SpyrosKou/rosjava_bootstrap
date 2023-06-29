@@ -35,7 +35,7 @@ public final class ServiceDescriptionFactory {
   public final ServiceDescription newFromType(String serviceType) {
     final String serviceDefinition = messageDefinitionProvider.get(serviceType);
     final String md5Checksum = md5Generator.generate(serviceType);
-    return new ServiceDescription(serviceType, serviceDefinition, md5Checksum);
+    return new ServiceDescriptionImpl(serviceType, serviceDefinition, md5Checksum);
   }
 
   public final boolean hasType(String serviceType) {

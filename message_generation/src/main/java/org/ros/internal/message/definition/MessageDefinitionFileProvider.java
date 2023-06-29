@@ -23,6 +23,7 @@ import org.ros.internal.message.StringFileProvider;
 import org.apache.commons.io.FilenameUtils;
 import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageIdentifier;
+import org.ros.message.MessageIdentifierImpl;
 
 import java.io.File;
 import java.util.*;
@@ -55,7 +56,7 @@ public class MessageDefinitionFileProvider implements MessageDefinitionProvider 
     String filename = file.getAbsolutePath();
     String name = FilenameUtils.getBaseName(filename);
     String pkg = getParentBaseName(getParent(filename));
-    return MessageIdentifier.of(pkg, name);
+    return MessageIdentifierImpl.of(pkg, name);
   }
 
   private void addDefinition(File file, String definition) {
@@ -66,7 +67,7 @@ public class MessageDefinitionFileProvider implements MessageDefinitionProvider 
     }
     definitions.put(topicType.getType(), definition);
     if (!messageIdentifiers.containsKey(topicType.getPackage())) {
-      messageIdentifiers.put(topicType.getPackage(), new HashSet<MessageIdentifier>());
+      messageIdentifiers.put(topicType.getPackage(), new HashSet<>());
     }
     messageIdentifiers.get(topicType.getPackage()).add(topicType);
   }
@@ -78,7 +79,7 @@ public class MessageDefinitionFileProvider implements MessageDefinitionProvider 
    */
   public void update() {
     stringFileProvider.update();
-    for (Entry<File, String> entry : stringFileProvider.getStrings().entrySet()) {
+    for (Entry<File, String> entry : stringFileProvider.getStringMap().entrySet()) {
       addDefinition(entry.getKey(), entry.getValue());
     }
   }

@@ -21,8 +21,8 @@ import com.google.common.annotations.VisibleForTesting;
 import org.ros.internal.message.StringResourceProvider;
 import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageIdentifier;
+import org.ros.message.MessageIdentifierImpl;
 
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -37,7 +37,7 @@ public class TopicDefinitionResourceProvider implements MessageDefinitionProvide
   }
 
   private String topicTypeToResourceName(String topicType) {
-    MessageIdentifier messageIdentifier = MessageIdentifier.of(topicType);
+    MessageIdentifier messageIdentifier = MessageIdentifierImpl.of(topicType);
     return String.format("/%s/msg/%s.msg", messageIdentifier.getPackage(),
         messageIdentifier.getName());
   }

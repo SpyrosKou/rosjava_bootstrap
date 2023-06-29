@@ -25,9 +25,10 @@ import org.ros.internal.message.definition.MessageDefinitionProviderChain;
 import org.ros.internal.message.definition.MessageDefinitionTupleParser;
 import org.ros.internal.message.service.ServiceDefinitionFileProvider;
 import org.ros.internal.message.topic.TopicDefinitionFileProvider;
-import org.ros.message.MessageDeclaration;
+import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
 import org.ros.message.MessageIdentifier;
+import org.ros.message.MessageIdentifierImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,9 +86,9 @@ public final class GenerateInterfaces {
                 topicTypes.addAll(messageIdentifiers);
             }
         }
-        for (MessageIdentifier topicType : topicTypes) {
+        for (final MessageIdentifier topicType : topicTypes) {
             final String definition = this.messageDefinitionProviderChain.get(topicType.getType());
-            final MessageDeclaration messageDeclaration = new MessageDeclaration(topicType, definition);
+            final MessageDeclarationImpl messageDeclaration = new MessageDeclarationImpl(topicType, definition);
             writeInterface(messageDeclaration, outputDirectory, true);
         }
     }
@@ -114,15 +115,15 @@ public final class GenerateInterfaces {
         }
         for (MessageIdentifier serviceType : serviceTypes) {
             String definition = messageDefinitionProviderChain.get(serviceType.getType());
-            MessageDeclaration serviceDeclaration =
-                    MessageDeclaration.of(serviceType.getType(), definition);
+            MessageDeclarationImpl serviceDeclaration =
+                    MessageDeclarationImpl.of(serviceType.getType(), definition);
             writeInterface(serviceDeclaration, outputDirectory, false);
             List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
 
-            MessageDeclaration requestDeclaration =
-                    MessageDeclaration.of(serviceType.getType() + "Request", requestAndResponse.get(0));
-            MessageDeclaration responseDeclaration =
-                    MessageDeclaration.of(serviceType.getType() + "Response", requestAndResponse.get(1));
+            MessageDeclarationImpl requestDeclaration =
+                    MessageDeclarationImpl.of(serviceType.getType() + "Request", requestAndResponse.get(0));
+            MessageDeclarationImpl responseDeclaration =
+                    MessageDeclarationImpl.of(serviceType.getType() + "Response", requestAndResponse.get(1));
 
             writeInterface(requestDeclaration, outputDirectory, true);
             writeInterface(responseDeclaration, outputDirectory, true);
@@ -151,33 +152,33 @@ public final class GenerateInterfaces {
         }
         for (MessageIdentifier actionType : actionTypes) {
             String definition = messageDefinitionProviderChain.get(actionType.getType());
-            MessageDeclaration actionDeclaration =
-                    MessageDeclaration.of(actionType.getType(), definition);
+            MessageDeclarationImpl actionDeclaration =
+                    MessageDeclarationImpl.of(actionType.getType(), definition);
             writeInterface(actionDeclaration, outputDirectory, false);
             List<String> goalResultAndFeedback = MessageDefinitionTupleParser.parse(definition, 3);
 
-            MessageDeclaration goalDeclaration = MessageDeclaration.of(
+            MessageDeclarationImpl goalDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "Goal",
                     actionGenerationTemplateGoal.applyTemplate(goalResultAndFeedback.get(0))
             );
-            MessageDeclaration resultDeclaration = MessageDeclaration.of(
+            MessageDeclarationImpl resultDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "Result",
                     actionGenerationTemplateResult.applyTemplate(goalResultAndFeedback.get(1))
             );
-            MessageDeclaration feedbackDeclaration = MessageDeclaration.of(
+            MessageDeclarationImpl feedbackDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "Feedback",
                     actionGenerationTemplateFeedback.applyTemplate(goalResultAndFeedback.get(2))
             );
 
-            MessageDeclaration actionGoalDeclaration = MessageDeclaration.of(
+            MessageDeclarationImpl actionGoalDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "ActionGoal",
                     actionGenerationTemplateActionGoal.applyTemplate(actionType.getType())
             );
-            MessageDeclaration actionResultDeclaration = MessageDeclaration.of(
+            MessageDeclarationImpl actionResultDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "ActionResult",
                     actionGenerationTemplateActionResult.applyTemplate(actionType.getType())
             );
-            MessageDeclaration actionFeedbackDeclaration = MessageDeclaration.of(
+            MessageDeclarationImpl actionFeedbackDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "ActionFeedback",
                     actionGenerationTemplateActionFeedback.applyTemplate(actionType.getType())
             );
@@ -192,7 +193,7 @@ public final class GenerateInterfaces {
         }
     }
 
-    private void writeInterface(MessageDeclaration messageDeclaration, File outputDirectory,
+    private void writeInterface(MessageDeclarationImpl messageDeclaration, File outputDirectory,
                                 boolean addConstantsAndMethods) {
         MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
         builder.setPackageName(messageDeclaration.getPackage());

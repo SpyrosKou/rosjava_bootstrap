@@ -19,12 +19,10 @@ package org.ros.internal.message.context;
 import com.google.common.base.Preconditions;
 
 import org.ros.internal.message.definition.MessageDefinitionParser.MessageDefinitionVisitor;
-import org.ros.internal.message.field.Field;
-import org.ros.internal.message.field.FieldFactory;
 import org.ros.internal.message.field.FieldType;
 import org.ros.internal.message.field.MessageFieldType;
 import org.ros.internal.message.field.PrimitiveFieldType;
-import org.ros.message.MessageIdentifier;
+import org.ros.message.MessageIdentifierImpl;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -44,7 +42,7 @@ final class MessageContextBuilder implements MessageDefinitionVisitor {
     if (PrimitiveFieldType.existsFor(type)) {
       fieldType = PrimitiveFieldType.valueOf(type.toUpperCase());
     } else {
-      fieldType = new MessageFieldType(MessageIdentifier.of(type), messageContext.getMessageFactory());
+      fieldType = new MessageFieldType(MessageIdentifierImpl.of(type), messageContext.getMessageFactory());
     }
     return fieldType;
   }
@@ -52,33 +50,18 @@ final class MessageContextBuilder implements MessageDefinitionVisitor {
   @Override
   public final void variableValue(final String type, final String name) {
     final FieldType fieldType = getFieldType(type);
-    this.messageContext.addFieldFactory(name, new FieldFactory() {
-      @Override
-      public Field create() {
-        return fieldType.newVariableValue(name);
-      }
-    });
+    this.messageContext.addFieldFactory(name, () -> fieldType.newVariableValue(name));
   }
 
   @Override
   public final void variableList(final String type, final int size, final String name) {
     final FieldType fieldType = getFieldType(type);
-    this.messageContext.addFieldFactory(name, new FieldFactory() {
-      @Override
-      public final Field create() {
-        return fieldType.newVariableList(name, size);
-      }
-    });
+    this.messageContext.addFieldFactory(name, () -> fieldType.newVariableList(name, size));
   }
 
   @Override
   public final void constantValue(String type, final String name, final String value) {
     final FieldType fieldType = getFieldType(type);
-    messageContext.addFieldFactory(name, new FieldFactory() {
-      @Override
-      public final Field create() {
-        return fieldType.newConstantValue(name, fieldType.parseFromString(value));
-      }
-    });
+    messageContext.addFieldFactory(name, () -> fieldType.newConstantValue(name, fieldType.parseFromString(value)));
   }
 }

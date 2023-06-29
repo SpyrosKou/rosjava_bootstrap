@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import org.ros.internal.message.definition.MessageDefinitionParser;
 import org.ros.internal.message.definition.MessageDefinitionParser.MessageDefinitionVisitor;
 import org.ros.message.MessageDeclaration;
+import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
 
 import java.util.Map;
@@ -39,7 +40,7 @@ public final class MessageContextProvider {
         cache = Maps.newConcurrentMap();
     }
 
-    public final MessageContext get(MessageDeclaration messageDeclaration) {
+    public final MessageContext get(MessageDeclarationImpl messageDeclaration) {
         MessageContext messageContext = cache.get(messageDeclaration);
         if (messageContext == null) {
             messageContext = new MessageContext(messageDeclaration, messageFactory);

@@ -18,12 +18,7 @@ package org.ros.internal.message;
 
 import org.ros.internal.message.service.ServiceRequestMessageFactory;
 import org.ros.internal.message.service.ServiceResponseMessageFactory;
-import org.ros.message.MessageDefinitionProvider;
-import org.ros.message.MessageDeserializer;
-import org.ros.message.MessageFactory;
-import org.ros.message.MessageIdentifier;
-import org.ros.message.MessageSerializationFactory;
-import org.ros.message.MessageSerializer;
+import org.ros.message.*;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -48,7 +43,7 @@ public final class DefaultMessageSerializationFactory implements MessageSerializ
 
   @Override
   public final  <T extends Message> MessageDeserializer<T> newMessageDeserializer(String messageType) {
-    return new DefaultMessageDeserializer<T>(MessageIdentifier.of(messageType),
+    return new DefaultMessageDeserializer<T>(MessageIdentifierImpl.of(messageType),
         topicMessageFactory);
   }
 
@@ -61,7 +56,7 @@ public final class DefaultMessageSerializationFactory implements MessageSerializ
   @Override
   public final <T extends Message> org.ros.message.MessageDeserializer<T>
       newServiceRequestDeserializer(String serviceType) {
-    return new DefaultMessageDeserializer<T>(MessageIdentifier.of(serviceType),
+    return new DefaultMessageDeserializer<T>(MessageIdentifierImpl.of(serviceType),
         serviceRequestMessageFactory);
   }
 
@@ -74,7 +69,7 @@ public final class DefaultMessageSerializationFactory implements MessageSerializ
   @Override
   public final <T extends Message> org.ros.message.MessageDeserializer<T> newServiceResponseDeserializer(
       String serviceType) {
-    return new DefaultMessageDeserializer<T>(MessageIdentifier.of(serviceType),
+    return new DefaultMessageDeserializer<T>(MessageIdentifierImpl.of(serviceType),
         serviceResponseMessageFactory);
   }
 }

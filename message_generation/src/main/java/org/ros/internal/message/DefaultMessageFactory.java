@@ -18,7 +18,7 @@ package org.ros.internal.message;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.ros.message.MessageDeclaration;
+import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageFactory;
 
@@ -40,7 +40,7 @@ public final class DefaultMessageFactory implements MessageFactory {
   @Override
   public final  <T extends Message>  T newFromType(final String messageType) {
     final String messageDefinition = messageDefinitionProvider.get(messageType);
-    final MessageDeclaration messageDeclaration = MessageDeclaration.of(messageType, messageDefinition);
+    final MessageDeclarationImpl messageDeclaration = MessageDeclarationImpl.of(messageType, messageDefinition);
     return messageProxyFactory.newMessageProxy(messageDeclaration);
   }
 

@@ -16,7 +16,6 @@
 
 package org.ros.message;
 
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -44,7 +43,7 @@ public interface MessageDefinitionProvider {
   /**
    * @param pkg
    *          the name of the package to filter on
-   * @return the {@link MessageIdentifier}s for all messages defined in the
+   * @return the {@link MessageIdentifierImpl}s for all messages defined in the
    *         specified package
    */
   Set<MessageIdentifier> getMessageIdentifiersByPackage(String pkg);
