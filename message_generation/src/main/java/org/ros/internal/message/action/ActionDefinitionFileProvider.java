@@ -34,13 +34,8 @@ public final class ActionDefinitionFileProvider extends MessageDefinitionFilePro
 
     private static final StringFileProvider newStringFileProvider() {
         final IOFileFilter extensionFilter = FileFilterUtils.suffixFileFilter(SUFFIX);
-        final IOFileFilter parentBaseNameFilter = FileFilterUtils.asFileFilter(new FileFilter() {
-            @Override
-            public final boolean accept(File file) {
-                return getParentBaseName(file.getAbsolutePath()).equals(PARENT);
-            }
-        });
-        final IOFileFilter fileFilter = FileFilterUtils.andFileFilter(extensionFilter, parentBaseNameFilter);
+        final IOFileFilter parentBaseNameFilter = FileFilterUtils.asFileFilter(file -> getParentBaseName(file.getAbsolutePath()).equals(PARENT));
+        final IOFileFilter fileFilter = parentBaseNameFilter.and(extensionFilter);
         return new StringFileProvider(fileFilter);
     }
 
