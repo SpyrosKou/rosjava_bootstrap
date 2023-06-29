@@ -25,7 +25,7 @@ import java.util.Arrays;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class LongArrayField extends Field {
+final class LongArrayField extends Field {
 
   private final int size;
 

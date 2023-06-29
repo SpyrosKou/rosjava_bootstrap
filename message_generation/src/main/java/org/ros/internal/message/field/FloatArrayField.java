@@ -25,7 +25,7 @@ import java.util.Arrays;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class FloatArrayField extends Field {
+final class FloatArrayField extends Field {
 
   private final int size;
 

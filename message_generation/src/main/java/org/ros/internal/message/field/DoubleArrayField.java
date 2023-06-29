@@ -25,7 +25,7 @@ import java.util.Arrays;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class DoubleArrayField extends Field {
+final class DoubleArrayField extends Field {
 
   private final int size;
 

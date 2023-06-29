@@ -29,7 +29,7 @@ import java.util.List;
  * @param <T>
  *          the value type
  */
-public class ListField<T> extends Field {
+final class ListField<T> extends Field {
 
   private List<T> value;
 

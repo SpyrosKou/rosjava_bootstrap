@@ -27,7 +27,7 @@ import java.nio.ByteOrder;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class ChannelBufferField extends Field {
+final class ChannelBufferField extends Field {
 
   private final int size;
 

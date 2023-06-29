@@ -25,7 +25,7 @@ import java.util.Arrays;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class BooleanArrayField extends Field {
+final class BooleanArrayField extends Field {
 
   private final int size;
 
