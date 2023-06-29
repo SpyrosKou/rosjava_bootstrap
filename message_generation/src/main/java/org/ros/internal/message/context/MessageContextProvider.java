@@ -31,25 +31,25 @@ import java.util.Map;
  */
 public final class MessageContextProvider {
 
-    private final Map<MessageDeclaration, MessageContext> cache;
+    private final Map<MessageDeclaration, MessageContext> cache = Maps.newConcurrentMap();
     private final MessageFactory messageFactory;
 
-    public MessageContextProvider(MessageFactory messageFactory) {
+    public MessageContextProvider(final MessageFactory messageFactory) {
         Preconditions.checkNotNull(messageFactory);
         this.messageFactory = messageFactory;
-        cache = Maps.newConcurrentMap();
     }
 
-    public final MessageContext get(MessageDeclarationImpl messageDeclaration) {
-        MessageContext messageContext = cache.get(messageDeclaration);
-        if (messageContext == null) {
-            messageContext = new MessageContext(messageDeclaration, messageFactory);
-            final MessageDefinitionVisitor visitor = new MessageContextBuilder(messageContext);
-            final MessageDefinitionParser messageDefinitionParser = new MessageDefinitionParser(visitor);
-            messageDefinitionParser.parse(messageDeclaration.getType(),
-                    messageDeclaration.getDefinition());
-            cache.put(messageDeclaration, messageContext);
-        }
+    private final MessageContext createMessageContext(final MessageDeclaration messageDeclaration) {
+        final MessageContext messageContext = new MessageContext(messageDeclaration, this.messageFactory);
+        final MessageDefinitionVisitor visitor = new MessageContextBuilder(messageContext);
+        final MessageDefinitionParser messageDefinitionParser = new MessageDefinitionParser(visitor);
+        messageDefinitionParser.parse(messageDeclaration.getType(), messageDeclaration.getDefinition());
+        return messageContext;
+    }
+
+    public final MessageContext get(final MessageDeclaration messageDeclaration) {
+        final MessageContext messageContext = this.cache.computeIfAbsent(messageDeclaration, this::createMessageContext);
+
         return messageContext;
     }
 }
