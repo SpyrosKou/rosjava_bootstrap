@@ -28,7 +28,7 @@ import java.io.FileFilter;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class ServiceDefinitionFileProvider extends MessageDefinitionFileProvider {
+public final class ServiceDefinitionFileProvider extends MessageDefinitionFileProvider {
 
   private static final String PARENT = "srv";
   private static final String SUFFIX = "srv";

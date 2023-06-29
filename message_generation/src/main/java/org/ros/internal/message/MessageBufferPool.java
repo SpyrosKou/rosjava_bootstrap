@@ -37,25 +37,26 @@ public final class MessageBufferPool {
     public MessageBufferPool() {
         this.pool = new StackObjectPool<>(new PoolableObjectFactory<>() {
             @Override
-            public final ChannelBuffer makeObject() throws Exception {
+            public final ChannelBuffer makeObject() {
                 return MessageBuffers.dynamicBuffer();
             }
 
             @Override
-            public final void destroyObject(ChannelBuffer channelBuffer) throws Exception {
+            public final void destroyObject(final ChannelBuffer channelBuffer) {
+
             }
 
             @Override
-            public final boolean validateObject(ChannelBuffer channelBuffer) {
+            public final boolean validateObject(final ChannelBuffer channelBuffer) {
                 return true;
             }
 
             @Override
-            public final void activateObject(ChannelBuffer channelBuffer) throws Exception {
+            public final void activateObject(final ChannelBuffer channelBuffer) {
             }
 
             @Override
-            public final void passivateObject(ChannelBuffer channelBuffer) throws Exception {
+            public final void passivateObject(final ChannelBuffer channelBuffer) {
                 channelBuffer.clear();
             }
         });
@@ -67,11 +68,11 @@ public final class MessageBufferPool {
      *
      * @return an unused {@link ChannelBuffer}
      */
-    public ChannelBuffer acquire() {
+    public final ChannelBuffer acquire() {
         try {
-            return pool.borrowObject();
-        } catch (Exception e) {
-            throw new RosMessageRuntimeException(e);
+            return this.pool.borrowObject();
+        } catch (Exception exception) {
+            throw new RosMessageRuntimeException(exception);
         }
     }
 
@@ -80,11 +81,11 @@ public final class MessageBufferPool {
      *
      * @param channelBuffer the {@link ChannelBuffer} to release
      */
-    public void release(ChannelBuffer channelBuffer) {
+    public void release(final ChannelBuffer channelBuffer) {
         try {
-            pool.returnObject(channelBuffer);
-        } catch (Exception e) {
-            throw new RosMessageRuntimeException(e);
+            this.pool.returnObject(channelBuffer);
+        } catch (final Exception exception) {
+            throw new RosMessageRuntimeException(exception);
         }
     }
 }

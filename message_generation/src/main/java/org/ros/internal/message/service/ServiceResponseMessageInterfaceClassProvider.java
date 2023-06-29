@@ -23,7 +23,7 @@ import org.ros.internal.message.RawMessage;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class ServiceResponseMessageInterfaceClassProvider implements MessageInterfaceClassProvider {
+public final class ServiceResponseMessageInterfaceClassProvider implements MessageInterfaceClassProvider {
 
   @SuppressWarnings("unchecked")
   @Override
