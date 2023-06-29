@@ -25,7 +25,7 @@ application {
 
 
 dependencies {
-   implementation 'org.codehaus.groovy:groovy-all:3.0.9'
+   implementation 'org.codehaus.groovy:groovy-all:3.0.16'
    implementation project(":message_generation")
    implementation 'com.google.guava:guava:31.1-jre'
    implementation 'commons-io:commons-io:2.11.0'
