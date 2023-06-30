@@ -18,7 +18,6 @@ package org.ros.internal.message.field;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import org.ros.exception.RosMessageRuntimeException;
 import org.ros.internal.message.context.MessageContext;
 

@@ -17,7 +17,6 @@
 package org.ros.internal.message;
 
 import com.google.common.annotations.VisibleForTesting;
-
 import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageFactory;

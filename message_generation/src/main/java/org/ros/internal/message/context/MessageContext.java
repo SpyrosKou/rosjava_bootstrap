@@ -18,7 +18,6 @@ package org.ros.internal.message.context;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import org.ros.internal.message.field.Field;
 import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;

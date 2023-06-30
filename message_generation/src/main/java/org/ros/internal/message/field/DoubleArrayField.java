@@ -17,7 +17,6 @@
 package org.ros.internal.message.field;
 
 import com.google.common.base.Preconditions;
-
 import org.jboss.netty.buffer.ChannelBuffer;
 
 import java.util.Arrays;

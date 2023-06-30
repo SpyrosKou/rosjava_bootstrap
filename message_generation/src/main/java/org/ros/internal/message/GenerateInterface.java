@@ -16,22 +16,20 @@
 
 package org.ros.internal.message;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-
 import org.ros.exception.RosMessageRuntimeException;
 import org.ros.internal.message.definition.MessageDefinitionReflectionProvider;
 import org.ros.internal.message.definition.MessageDefinitionTupleParser;
 import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
-
-import com.google.common.collect.Lists;
 import org.ros.message.MessageIdentifierImpl;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * @author d.stonier@gmail.com (Daniel Stonier)

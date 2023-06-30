@@ -18,8 +18,6 @@ package org.ros.internal.message;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-
-
 import org.apache.commons.text.StringEscapeUtils;
 import org.ros.exception.RosMessageRuntimeException;
 import org.ros.internal.message.context.MessageContext;

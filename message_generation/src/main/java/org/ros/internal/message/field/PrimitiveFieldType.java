@@ -18,7 +18,6 @@ package org.ros.internal.message.field;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.ros.message.Duration;
 import org.ros.message.Time;

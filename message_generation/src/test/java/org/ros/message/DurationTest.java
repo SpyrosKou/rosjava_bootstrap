@@ -16,19 +16,17 @@
 
 package org.ros.message;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author kwc@willowgarage.com (Ken Conley)
  */
 public class DurationTest {
 
-  @Before
+  @BeforeEach
   public void setUp()  {
   }
 

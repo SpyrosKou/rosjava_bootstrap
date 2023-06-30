@@ -1,15 +1,14 @@
 package org.ros.internal.message;
 
-import org.junit.After;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created at 2022-06-18 on 01:52
@@ -23,22 +22,22 @@ public class GenerateFromFilesTest {
 
     private final List<File> packageDirectories = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final File file = new File(sourcesDir);
-        Assume.assumeTrue(file.exists());
-        Assume.assumeTrue(!file.isFile());
-        Assume.assumeTrue(file.isDirectory());
+        Assumptions.assumeTrue(file.exists());
+        Assumptions.assumeTrue(!file.isFile());
+        Assumptions.assumeTrue(file.isDirectory());
 
         this.targetDirFile = new File(targetDir);
         targetDirFile.mkdirs();
-        Assume.assumeTrue(targetDirFile.exists());
-        Assume.assumeTrue(!targetDirFile.isFile());
-        Assume.assumeTrue(targetDirFile.isDirectory());
+        Assumptions.assumeTrue(targetDirFile.exists());
+        Assumptions.assumeTrue(!targetDirFile.isFile());
+        Assumptions.assumeTrue(targetDirFile.isDirectory());
         this.packageDirectories.addAll(Arrays.stream(file.listFiles(File::isDirectory)).toList());
     }
 
-    @After
+    @AfterEach
     public void clear() {
         this.packageDirectories.clear();
         this.targetDirFile = null;

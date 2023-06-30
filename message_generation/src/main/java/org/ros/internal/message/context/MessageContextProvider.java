@@ -20,7 +20,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.ros.internal.message.definition.MessageDefinitionParser;
 import org.ros.internal.message.definition.MessageDefinitionParser.MessageDefinitionVisitor;
-import org.ros.message.MessageDeclaration;
 import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
 

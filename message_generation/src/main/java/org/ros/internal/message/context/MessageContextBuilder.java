@@ -17,7 +17,6 @@
 package org.ros.internal.message.context;
 
 import com.google.common.base.Preconditions;
-
 import org.ros.internal.message.definition.MessageDefinitionParser.MessageDefinitionVisitor;
 import org.ros.internal.message.field.FieldType;
 import org.ros.internal.message.field.MessageFieldType;

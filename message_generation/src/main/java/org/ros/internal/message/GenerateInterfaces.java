@@ -28,7 +28,6 @@ import org.ros.internal.message.topic.TopicDefinitionFileProvider;
 import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
 import org.ros.message.MessageIdentifier;
-import org.ros.message.MessageIdentifierImpl;
 
 import java.io.File;
 import java.io.IOException;

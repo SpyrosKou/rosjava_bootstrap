@@ -21,9 +21,6 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.ros.internal.message.StringFileProvider;
 import org.ros.internal.message.definition.MessageDefinitionFileProvider;
 
-import java.io.File;
-import java.io.FileFilter;
-
 /**
  * @author arne.peters@tum.de (Arne Peters)
  */

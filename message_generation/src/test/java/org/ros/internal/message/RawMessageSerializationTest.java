@@ -18,9 +18,8 @@ package org.ros.internal.message;
 
 import com.google.common.collect.Lists;
 import org.jboss.netty.buffer.ChannelBuffer;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ros.internal.message.topic.TopicDefinitionResourceProvider;
 import org.ros.message.Duration;
 import org.ros.message.MessageFactory;
@@ -28,8 +27,10 @@ import org.ros.message.Time;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -40,7 +41,7 @@ public class RawMessageSerializationTest {
   private TopicDefinitionResourceProvider topicDefinitionResourceProvider;
   private MessageFactory messageFactory;
 
-  @Before
+  @BeforeEach
   public void before() {
     topicDefinitionResourceProvider = new TopicDefinitionResourceProvider();
     messageFactory = new DefaultMessageFactory(topicDefinitionResourceProvider);
@@ -51,10 +52,10 @@ public class RawMessageSerializationTest {
     final DefaultMessageSerializer serializer = new DefaultMessageSerializer();
     serializer.serialize(message, buffer);
     final DefaultMessageDeserializer<RawMessage> deserializer =
-        new DefaultMessageDeserializer<RawMessage>(message.toRawMessage().getIdentifier(),
-            messageFactory);
+            new DefaultMessageDeserializer<>(message.toRawMessage().getIdentifier(),
+                    messageFactory);
     final RawMessage deserializedMessage = deserializer.deserialize(buffer);
-    assertTrue(message.equals(deserializedMessage));
+    assertEquals(message, deserializedMessage);
   }
 
   @Test
@@ -144,7 +145,6 @@ public class RawMessageSerializationTest {
   }
 
   @Test
-  @Ignore
   public void testStringUTF8() {
     RawMessage rawMessage = messageFactory.newFromType("std_msgs/String");
     rawMessage.setString("data", "éêè €àáßëœ 文字化け");
@@ -241,7 +241,7 @@ public class RawMessageSerializationTest {
     stringMessageA.setString("data", "Hello, ROS!");
     RawMessage stringMessageB = messageFactory.newFromType("std_msgs/String");
     stringMessageB.setString("data", "Goodbye, ROS!");
-    fooMessage.setMessageList("data", Lists.<Message>newArrayList(stringMessageA, stringMessageB));
+    fooMessage.setMessageList("data", Lists.newArrayList(stringMessageA, stringMessageB));
     checkSerializeAndDeserialize(fooMessage);
   }
 

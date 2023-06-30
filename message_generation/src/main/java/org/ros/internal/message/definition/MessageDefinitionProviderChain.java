@@ -18,7 +18,6 @@ package org.ros.internal.message.definition;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageIdentifier;
 

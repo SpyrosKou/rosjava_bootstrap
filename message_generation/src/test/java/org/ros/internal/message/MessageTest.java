@@ -16,18 +16,17 @@
 
 package org.ros.internal.message;
 
-import static org.junit.Assert.assertEquals;
-
 import com.google.common.collect.Lists;
-
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ros.internal.message.topic.TopicDefinitionResourceProvider;
 import org.ros.message.MessageFactory;
 
 import java.nio.ByteOrder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -37,7 +36,7 @@ public class MessageTest {
   private TopicDefinitionResourceProvider topicDefinitionResourceProvider;
   private MessageFactory messageFactory;
 
-  @Before
+  @BeforeEach
   public void before() {
     topicDefinitionResourceProvider = new TopicDefinitionResourceProvider();
     messageFactory = new DefaultMessageFactory(topicDefinitionResourceProvider);

@@ -20,7 +20,10 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.ros.internal.message.DefaultMessageDeserializer;
 import org.ros.internal.message.DefaultMessageSerializer;
 import org.ros.internal.message.Message;
-import org.ros.message.*;
+import org.ros.message.MessageDeserializer;
+import org.ros.message.MessageFactory;
+import org.ros.message.MessageIdentifierImpl;
+import org.ros.message.MessageSerializer;
 
 
 /**

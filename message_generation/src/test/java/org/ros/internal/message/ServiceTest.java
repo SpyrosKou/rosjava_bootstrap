@@ -16,8 +16,8 @@
 
 package org.ros.internal.message;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ros.internal.message.service.ServiceDefinitionResourceProvider;
 import org.ros.internal.message.service.ServiceRequestMessageFactory;
 import org.ros.internal.message.service.ServiceResponseMessageFactory;
@@ -31,7 +31,7 @@ public class ServiceTest {
   private ServiceRequestMessageFactory serviceRequestMessageFactory;
   private ServiceResponseMessageFactory serviceResponseMessageFactory;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     serviceDefinitionResourceProvider = new ServiceDefinitionResourceProvider();
     serviceDefinitionResourceProvider.add("foo/Echo", "string data\n---\nstring data");

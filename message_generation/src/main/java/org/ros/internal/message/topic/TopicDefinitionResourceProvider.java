@@ -17,7 +17,6 @@
 package org.ros.internal.message.topic;
 
 import com.google.common.annotations.VisibleForTesting;
-
 import org.ros.internal.message.StringResourceProvider;
 import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageIdentifier;
