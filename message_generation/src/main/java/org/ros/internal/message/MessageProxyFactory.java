@@ -24,6 +24,7 @@ import org.ros.message.MessageFactory;
 
 import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -69,7 +70,7 @@ public final class MessageProxyFactory {
     @SuppressWarnings("unchecked")
     private final <T extends Message> T newProxy(Class<T> interfaceClass, final MessageImpl messageImpl) {
         final ClassLoader classLoader = messageImpl.getClass().getClassLoader();
-        final Class<?>[] interfaces = new Class<?>[]{interfaceClass, GetInstance.class};
+        final Class<?>[] interfaces = new Class<?>[]{interfaceClass, Supplier.class};
         final MessageProxyInvocationHandler invocationHandler = new MessageProxyInvocationHandler(messageImpl);
         return (T) Proxy.newProxyInstance(classLoader, interfaces, invocationHandler);
     }

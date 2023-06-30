@@ -27,11 +27,12 @@ import org.ros.message.MessageIdentifier;
 import org.ros.message.Time;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-final class MessageImpl implements RawMessage, GetInstance {
+final class MessageImpl implements RawMessage, Supplier<Object> {
 
   private final MessageContext messageContext;
   private final MessageFields messageFields;
@@ -407,7 +408,7 @@ final class MessageImpl implements RawMessage, GetInstance {
   }
   
   @Override
-  public final Object getInstance() {
+  public final Object get() {
     return this;
   }
 
@@ -431,9 +432,9 @@ final class MessageImpl implements RawMessage, GetInstance {
       return true;
     if (obj == null)
       return false;
-    if (!(obj instanceof GetInstance))
+    if (!(obj instanceof Supplier<?>))
       return false;
-    obj = ((GetInstance) obj).getInstance();
+    obj = ((Supplier<Object>) obj).get();
     if (getClass() != obj.getClass())
       return false;
     MessageImpl other = (MessageImpl) obj;
