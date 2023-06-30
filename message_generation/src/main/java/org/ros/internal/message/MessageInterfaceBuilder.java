@@ -99,7 +99,7 @@ public final class MessageInterfaceBuilder {
     this.nestedContent = nestedContent;
   }
 
-  public final String build(MessageFactory messageFactory) {
+  public final String build(final MessageFactory messageFactory) {
     Preconditions.checkNotNull(messageDeclaration);
     Preconditions.checkNotNull(interfaceName);
     final StringBuilder builder = new StringBuilder();

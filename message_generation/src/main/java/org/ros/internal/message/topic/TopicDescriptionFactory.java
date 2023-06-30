@@ -22,7 +22,7 @@ import org.ros.message.MessageDefinitionProvider;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class TopicDescriptionFactory {
+public final class TopicDescriptionFactory {
 
   private final MessageDefinitionProvider messageDefinitionProvider;
   private final Md5Generator md5Generator;
@@ -32,13 +32,13 @@ public class TopicDescriptionFactory {
     md5Generator = new Md5Generator(messageDefinitionProvider);
   }
 
-  public TopicDescription newFromType(String topicType) {
+  public final TopicDescription newFromType(String topicType) {
     String md5Checksum = md5Generator.generate(topicType);
     String topicDefinition = messageDefinitionProvider.get(topicType);
     return new TopicDescription(topicType, topicDefinition, md5Checksum);
   }
 
-  public boolean hasType(String topicType) {
+  public final boolean hasType(String topicType) {
     return messageDefinitionProvider.has(topicType);
   }
 }
