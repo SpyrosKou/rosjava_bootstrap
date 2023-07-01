@@ -28,13 +28,10 @@ import java.util.function.Supplier;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
+ * @author Spyros Koukas
  */
 public final class MessageProxyFactory {
 
-    // We can't use the constant here since the rosjava_messages package depends
-    // on rosjava_bootstrap.
-    private static final String HEADER_MESSAGE_TYPE = "std_msgs/Header";
-    private static final String SEQUENCE_FIELD_NAME = "seq";
     private static final AtomicInteger SEQUENCE_NUMBER = new AtomicInteger(0);
 
     private final MessageInterfaceClassProvider messageInterfaceClassProvider;
@@ -53,8 +50,8 @@ public final class MessageProxyFactory {
         final MessageImpl messageImpl = new MessageImpl(messageContext);
         // Header messages are automatically populated with a monotonically
         // increasing sequence number.
-        if (messageImpl.getType().equals(HEADER_MESSAGE_TYPE)) {
-            messageImpl.setUInt32(SEQUENCE_FIELD_NAME, SEQUENCE_NUMBER.getAndIncrement());
+        if (messageImpl.getType().equals(MessageConstants.HEADER_MESSAGE_TYPE)) {
+            messageImpl.setUInt32(MessageConstants.SEQUENCE_FIELD_NAME, SEQUENCE_NUMBER.getAndIncrement());
         }
         final Class<T> messageInterfaceClass = messageInterfaceClassProvider.get(messageDeclaration.getType());
         return newProxy(messageInterfaceClass, messageImpl);

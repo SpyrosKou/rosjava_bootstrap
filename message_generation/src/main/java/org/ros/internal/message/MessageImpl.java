@@ -31,6 +31,7 @@ import java.util.function.Supplier;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
+ * @author Spyros Koukas
  */
 final class MessageImpl implements RawMessage, Supplier<Object> {
 

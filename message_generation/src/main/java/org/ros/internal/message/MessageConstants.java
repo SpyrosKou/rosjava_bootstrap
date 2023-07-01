@@ -12,7 +12,9 @@ public final class MessageConstants {
     public static final String RESPONSE = "Response";
     public static final String MSG = "msg";
     public static final String ACTION = "action";
-    public static final String JAVA = ".java";
+    static final String JAVA = ".java";
+    static final String HEADER_MESSAGE_TYPE = "std_msgs/Header";
+    static final String SEQUENCE_FIELD_NAME = "seq";
 
     private MessageConstants() {
         throw new UnsupportedOperationException();
