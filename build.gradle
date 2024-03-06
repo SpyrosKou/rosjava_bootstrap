@@ -16,7 +16,7 @@
 
 allprojects {
   group="org.ros.rosjava_bootstrap"
-  version = "0.3.8"
+  version = "0.3.8.2023.07.03"
 }
 
     subprojects {
@@ -45,7 +45,7 @@ allprojects {
             repositories {
                 maven {
                     name "GithubRepositoryLocation"
-                    url 'file://' + mavenDeploymentRepository
+                    url 'file:////' + mavenDeploymentRepository
                 }
             }
         }else{
