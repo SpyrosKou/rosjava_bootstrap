@@ -132,7 +132,7 @@ final class JavaMsgGenerationManager {
             final String licence =
                     """
         /*
-         * Copyright (C) 2022 Spyros Koukas.
+         *  Copyright (C) 2011 Google Inc. 
          *
          * Licensed under the Apache License, Version 2.0 (the "License"); you may not
          * use this file except in compliance with the License. You may obtain a copy of
@@ -206,7 +206,7 @@ final class JavaMsgGenerationManager {
             final String licence =
                     """
 /*
- * Copyright (C) 2022 Spyros Koukas.
+ *  Copyright (C) 2011 Google Inc. 
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -327,7 +327,7 @@ In particular, a maven repository named `FileSystemMaven`will be added together 
         final String licence =
                 """
 /*
- * Copyright (C) 2022 Spyros Koukas.
+ *  Copyright (C) 2011 Google Inc. 
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
