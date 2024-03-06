@@ -192,7 +192,7 @@ public final class GenerateInterfaces {
         }
     }
 
-    private void writeInterface(MessageDeclarationImpl messageDeclaration, File outputDirectory,
+    private final void writeInterface(MessageDeclarationImpl messageDeclaration, File outputDirectory,
                                 boolean addConstantsAndMethods) {
         MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
         builder.setPackageName(messageDeclaration.getPackage());
@@ -236,7 +236,7 @@ public final class GenerateInterfaces {
         }
     }
 
-    public static void main(String[] args) {
+    public static final void main(String[] args) {
         final List<String> arguments = Lists.newArrayList(args);
         if (arguments.size() == 0) {
             arguments.add(".");
@@ -244,11 +244,9 @@ public final class GenerateInterfaces {
 
         String rosPackagePath = System.getenv(ROS_PACKAGE_PATH);
         // Overwrite with a supplied package path if specified (--package-path=)
-        for (ListIterator<String> iter = arguments.listIterator(); iter.hasNext(); ) {
-            String arg = iter.next();
-            if (arg.contains("--package-path=")) {
-                rosPackagePath = arg.replace("--package-path=", "");
-                iter.remove();
+        for (final String argument : arguments ) {
+            if (argument.contains("--package-path=")) {
+                rosPackagePath = argument.replace("--package-path=", "");
                 break;
             }
         }
