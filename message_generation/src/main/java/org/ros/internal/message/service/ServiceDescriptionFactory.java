@@ -31,7 +31,9 @@ public final class ServiceDescriptionFactory {
     this.messageDefinitionProvider = messageDefinitionProvider;
     md5Generator = new Md5Generator(messageDefinitionProvider);
   }
-
+  public static final ServiceDescription newCreate(final String type, final String definition, final String md5Checksum){
+    return new ServiceDescriptionImpl(type,definition,md5Checksum);
+  }
   public final ServiceDescription newFromType(String serviceType) {
     final String serviceDefinition = messageDefinitionProvider.get(serviceType);
     final String md5Checksum = md5Generator.generate(serviceType);

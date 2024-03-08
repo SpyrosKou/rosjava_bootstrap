@@ -40,6 +40,7 @@ public final class ServiceResponseMessageFactory implements MessageFactory {
         new MessageProxyFactory(new DefaultMessageInterfaceClassProvider(), messageFactory);
   }
 
+
   @Override
   public final <T extends Message> T newFromType(final String serviceType) {
     final ServiceDescription serviceDescription = serviceDescriptionFactory.newFromType(serviceType);
