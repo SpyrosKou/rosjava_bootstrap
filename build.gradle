@@ -33,12 +33,12 @@ subprojects {
         mavenCentral()
     }
 
-    final repositoryDirectory = "ROS_MAVEN_DEPLOYMENT_REPOSITORY"
-    final mavenDeploymentRepositoryProvider = providers.gradleProperty(repositoryDirectory)
-    final mavenDeploymentRepository  = mavenDeploymentRepositoryProvider.getOrElse(null)
-//    println(repositoryDirectory + " = " + mavenDeploymentRepository);
-    publishing {
 
+    publishing {
+        final repositoryDirectory = "ROS_MAVEN_DEPLOYMENT_REPOSITORY"
+        final mavenDeploymentRepositoryProvider = providers.gradleProperty(repositoryDirectory)
+        final mavenDeploymentRepository  = mavenDeploymentRepositoryProvider.getOrElse(null)
+        //    println(repositoryDirectory + " = " + mavenDeploymentRepository);
 
         publications {
             mavenJava(MavenPublication) {
