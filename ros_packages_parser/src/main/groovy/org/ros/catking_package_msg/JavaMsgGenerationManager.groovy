@@ -158,7 +158,7 @@ final class JavaMsgGenerationManager {
              apply plugin: 'java-library'
 
             dependencies {
-                compileOnly 'org.ros.rosjava_bootstrap:message_generation:noetic-0.3.8'
+                compileOnly 'org.ros.rosjava_bootstrap:message_generation:0.3.8'
                 compileOnly 'io.netty:netty:3.10.6.Final'
             }
             
