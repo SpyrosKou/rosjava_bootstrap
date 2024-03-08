@@ -47,6 +47,9 @@ public final class GenerateInterfaces {
 
     private final MessageFactory messageFactory;
 
+    private int successfulInterfaceGenerations = 0;
+    private int failedInterfaceGenerations = 0;
+
     private final MessageGenerationTemplate actionGenerationTemplateGoal = new ActionGenerationTemplateGoal();
     private final MessageGenerationTemplate actionGenerationTemplateResult = new ActionGenerationTemplateResult();
     private final MessageGenerationTemplate actionGenerationTemplateFeedback = new ActionGenerationTemplateFeedback();
@@ -55,7 +58,7 @@ public final class GenerateInterfaces {
     private final MessageGenerationTemplate actionGenerationTemplateActionResult = new ActionGenerationTemplateActionResult();
     private final MessageGenerationTemplate actionGenerationTemplateActionFeedback = new ActionGenerationTemplateActionFeedback();
 
-    static private final String ROS_PACKAGE_PATH = "ROS_PACKAGE_PATH";
+
 
     public GenerateInterfaces() {
         this.messageDefinitionProviderChain.addMessageDefinitionProvider(topicDefinitionFileProvider);
@@ -68,11 +71,9 @@ public final class GenerateInterfaces {
      * @param packages        a list of packages containing the topic types to generate
      *                        interfaces for
      * @param outputDirectory the directory to write the generated interfaces to
-     *
      * @throws IOException
      */
-    private void writeTopicInterfaces(File outputDirectory, final Collection<String> packages)
-            throws IOException {
+    private void writeTopicInterfaces(File outputDirectory, final Collection<String> packages) throws IOException {
         final Set<MessageIdentifier> topicTypes = new HashSet<>();
         final Set<String> actualPackages = new HashSet<>(packages);
         if (actualPackages.isEmpty()) {
@@ -88,7 +89,7 @@ public final class GenerateInterfaces {
         for (final MessageIdentifier topicType : topicTypes) {
             final String definition = this.messageDefinitionProviderChain.get(topicType.getType());
             final MessageDeclarationImpl messageDeclaration = new MessageDeclarationImpl(topicType, definition);
-            writeInterface(messageDeclaration, outputDirectory, true);
+            this.writeInterface(messageDeclaration, outputDirectory, true);
         }
     }
 
@@ -96,7 +97,6 @@ public final class GenerateInterfaces {
      * @param packages        a list of packages containing the topic types to generate
      *                        interfaces for
      * @param outputDirectory the directory to write the generated interfaces to
-     *
      * @throws IOException
      */
     private void writeServiceInterfaces(File outputDirectory, Collection<String> packages)
@@ -116,7 +116,7 @@ public final class GenerateInterfaces {
             String definition = messageDefinitionProviderChain.get(serviceType.getType());
             MessageDeclarationImpl serviceDeclaration =
                     MessageDeclarationImpl.of(serviceType.getType(), definition);
-            writeInterface(serviceDeclaration, outputDirectory, false);
+            this.writeInterface(serviceDeclaration, outputDirectory, false);
             List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
 
             MessageDeclarationImpl requestDeclaration =
@@ -124,8 +124,8 @@ public final class GenerateInterfaces {
             MessageDeclarationImpl responseDeclaration =
                     MessageDeclarationImpl.of(serviceType.getType() + "Response", requestAndResponse.get(1));
 
-            writeInterface(requestDeclaration, outputDirectory, true);
-            writeInterface(responseDeclaration, outputDirectory, true);
+            this.writeInterface(requestDeclaration, outputDirectory, true);
+            this.writeInterface(responseDeclaration, outputDirectory, true);
         }
     }
 
@@ -133,7 +133,6 @@ public final class GenerateInterfaces {
      * @param packages        a list of packages containing the topic types to generate
      *                        interfaces for
      * @param outputDirectory the directory to write the generated interfaces to
-     *
      * @throws IOException
      */
     private void writeActionInterfaces(File outputDirectory, Collection<String> packages)
@@ -149,62 +148,63 @@ public final class GenerateInterfaces {
                 actionTypes.addAll(messageIdentifiers);
             }
         }
-        for (MessageIdentifier actionType : actionTypes) {
-            String definition = messageDefinitionProviderChain.get(actionType.getType());
-            MessageDeclarationImpl actionDeclaration =
+        for (final MessageIdentifier actionType : actionTypes) {
+            final String definition = messageDefinitionProviderChain.get(actionType.getType());
+            final MessageDeclarationImpl actionDeclaration =
                     MessageDeclarationImpl.of(actionType.getType(), definition);
-            writeInterface(actionDeclaration, outputDirectory, false);
-            List<String> goalResultAndFeedback = MessageDefinitionTupleParser.parse(definition, 3);
+            this.writeInterface(actionDeclaration, outputDirectory, false);
+            final List<String> goalResultAndFeedback = MessageDefinitionTupleParser.parse(definition, 3);
 
-            MessageDeclarationImpl goalDeclaration = MessageDeclarationImpl.of(
+            final MessageDeclarationImpl goalDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "Goal",
                     actionGenerationTemplateGoal.applyTemplate(goalResultAndFeedback.get(0))
             );
-            MessageDeclarationImpl resultDeclaration = MessageDeclarationImpl.of(
+            final MessageDeclarationImpl resultDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "Result",
                     actionGenerationTemplateResult.applyTemplate(goalResultAndFeedback.get(1))
             );
-            MessageDeclarationImpl feedbackDeclaration = MessageDeclarationImpl.of(
+            final MessageDeclarationImpl feedbackDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "Feedback",
                     actionGenerationTemplateFeedback.applyTemplate(goalResultAndFeedback.get(2))
             );
 
-            MessageDeclarationImpl actionGoalDeclaration = MessageDeclarationImpl.of(
+            final MessageDeclarationImpl actionGoalDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "ActionGoal",
                     actionGenerationTemplateActionGoal.applyTemplate(actionType.getType())
             );
-            MessageDeclarationImpl actionResultDeclaration = MessageDeclarationImpl.of(
+            final MessageDeclarationImpl actionResultDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "ActionResult",
                     actionGenerationTemplateActionResult.applyTemplate(actionType.getType())
             );
-            MessageDeclarationImpl actionFeedbackDeclaration = MessageDeclarationImpl.of(
+            final MessageDeclarationImpl actionFeedbackDeclaration = MessageDeclarationImpl.of(
                     actionType.getType() + "ActionFeedback",
                     actionGenerationTemplateActionFeedback.applyTemplate(actionType.getType())
             );
 
-            writeInterface(goalDeclaration, outputDirectory, true);
-            writeInterface(resultDeclaration, outputDirectory, true);
-            writeInterface(feedbackDeclaration, outputDirectory, true);
+            this.writeInterface(goalDeclaration, outputDirectory, true);
+            this.writeInterface(resultDeclaration, outputDirectory, true);
+            this.writeInterface(feedbackDeclaration, outputDirectory, true);
 
-            writeInterface(actionGoalDeclaration, outputDirectory, true);
-            writeInterface(actionResultDeclaration, outputDirectory, true);
-            writeInterface(actionFeedbackDeclaration, outputDirectory, true);
+            this.writeInterface(actionGoalDeclaration, outputDirectory, true);
+            this.writeInterface(actionResultDeclaration, outputDirectory, true);
+            this.writeInterface(actionFeedbackDeclaration, outputDirectory, true);
         }
     }
 
     private final void writeInterface(MessageDeclarationImpl messageDeclaration, File outputDirectory,
-                                boolean addConstantsAndMethods) {
-        MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
+                                      boolean addConstantsAndMethods) {
+        final MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
         builder.setPackageName(messageDeclaration.getPackage());
         builder.setInterfaceName(messageDeclaration.getName());
         builder.setMessageDeclaration(messageDeclaration);
         builder.setAddConstantsAndMethods(addConstantsAndMethods);
         try {
-            String content;
-            content = builder.build(messageFactory);
-            File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
+            final String content = builder.build(this.messageFactory);
+            final File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
             FileUtils.writeStringToFile(file, content, Charset.defaultCharset());
+            this.successfulInterfaceGenerations++;
         } catch (Exception e) {
+            this.failedInterfaceGenerations++;
             System.out.printf("Failed to generate interface for %s.\n", messageDeclaration.getType());
             e.printStackTrace();
         }
@@ -219,6 +219,7 @@ public final class GenerateInterfaces {
             final File outputDirectory
             , final Collection<String> packages
             , final Collection<File> packagePath) {
+
         for (final File directory : packagePath) {
             this.topicDefinitionFileProvider.addDirectory(directory);
             this.serviceDefinitionFileProvider.addDirectory(directory);
@@ -228,39 +229,25 @@ public final class GenerateInterfaces {
         this.serviceDefinitionFileProvider.update();
         this.actionDefinitionFileProvider.update();
         try {
-            writeTopicInterfaces(outputDirectory, packages);
-            writeServiceInterfaces(outputDirectory, packages);
-            writeActionInterfaces(outputDirectory, packages);
+            this.writeTopicInterfaces(outputDirectory, packages);
+            this.writeServiceInterfaces(outputDirectory, packages);
+            this.writeActionInterfaces(outputDirectory, packages);
         } catch (final IOException ioException) {
             throw new RosMessageRuntimeException(ioException);
         }
     }
 
-    public static final void main(String[] args) {
-        final List<String> arguments = Lists.newArrayList(args);
-        if (arguments.size() == 0) {
-            arguments.add(".");
-        }
 
-        String rosPackagePath = System.getenv(ROS_PACKAGE_PATH);
-        // Overwrite with a supplied package path if specified (--package-path=)
-        for (final String argument : arguments ) {
-            if (argument.contains("--package-path=")) {
-                rosPackagePath = argument.replace("--package-path=", "");
-                break;
-            }
-        }
 
-        final List<File> packagePath = Lists.newArrayList();
-        for (final String path : rosPackagePath.split(File.pathSeparator)) {
-            final File packageDirectory = new File(path);
-            if (packageDirectory.exists()) {
-                packagePath.add(packageDirectory);
-            }
-        }
+    public final int getSuccessfulInterfaceGenerations() {
+        return this.successfulInterfaceGenerations;
+    }
 
-        final GenerateInterfaces generateInterfaces = new GenerateInterfaces();
-        final File outputDirectory = new File(arguments.remove(0));
-        generateInterfaces.generate(outputDirectory, arguments, packagePath);
+    public final int getFailedInterfaceGenerations() {
+        return this.failedInterfaceGenerations;
+    }
+
+    public final int getTotalInterfaceGenerations() {
+        return this.getSuccessfulInterfaceGenerations() + this.getFailedInterfaceGenerations();
     }
 }

@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils
 import org.ros.internal.message.MessageConstants
 
 import java.nio.charset.Charset
+import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -45,10 +46,10 @@ import java.util.stream.Collectors
  */
 
 final class JavaMsgGenerationManager {
-    private static final Set<String> INTERFACE_DIRECTORIES = CopyOnWriteArraySet.of(MessageConstants.MSG, MessageConstants.SRV, MessageConstants.ACTION)
+//    private static final Set<String> INTERFACE_DIRECTORIES = CopyOnWriteArraySet.of(MessageConstants.MSG, MessageConstants.SRV, MessageConstants.ACTION)
     public static final String MESSAGE_INTERFACES_GROUP_ID = "org.ros.rosjava_messages"
-    private static final String TARGET_PATH = "D:\\UsersStandalone\\Spyros\\Personal\\Projects\\Java\\rosjava_core\\rosjava_bootstrap\\ros_packages_parser\\build\\project";
-    private static final String RELATIVE_GENERATED_SRC_PATH = "src" + File.separator + "generated-sources" + File.separator + "java"
+    private static final String TARGET_PATH = System.getProperty("user.dir") + File.separator + "build" + File.separator + "project";
+    private static final String RELATIVE_GENERATED_SRC_PATH =  "src" + File.separator + "generated-sources" + File.separator + "java"
     private static final String BUILD_GRADLE = "build.gradle"
     private static final String SETTINGS_GRADLE = "settings.gradle"
     private static final String README_MD = "README.md"
@@ -60,7 +61,6 @@ final class JavaMsgGenerationManager {
     final CatkinPluginRoot catkinPluginRoot = new CatkinPluginRoot();
 
     static final void main(String[] args) {
-
         final JavaMsgGenerationManager javaMsgGenerationManager = new JavaMsgGenerationManager();
         javaMsgGenerationManager.apply(TARGET_PATH)
 
@@ -85,6 +85,7 @@ final class JavaMsgGenerationManager {
 
     def void apply(final String targetPath) {
         new File(targetPath).mkdirs();
+        println("Generating files at:" + targetPath)
         this.catkinPluginRoot.workspaces.addAll("$System.env.ROS_PACKAGE_PATH".split(File.pathSeparator))
         this.catkinPluginRoot.catkinPackagesTree = new CatkinPackages(this.catkinPluginRoot, catkinPluginRoot.workspaces)
         this.catkinPluginRoot.catkinPackagesTree.generate()
@@ -123,7 +124,7 @@ final class JavaMsgGenerationManager {
 //        assert allSourcesOk "Some sources do not exist"
         def org.ros.internal.message.GenerateInterfaces interfacesGenerator = new org.ros.internal.message.GenerateInterfaces();
         interfacesGenerator.generate(targetDir, packages, sources);
-
+        //println("Successes:" + interfacesGenerator.getSuccessfulInterfaceGenerations() + " Failures:" + interfacesGenerator.getFailedInterfaceGenerations() + " Total:" + interfacesGenerator.getTotalInterfaceGenerations());
         getProjectGradleBuild(catkinPackage, basePackagePath)
     }
 
@@ -236,7 +237,7 @@ final class JavaMsgGenerationManager {
 
         {
             final String prePackages =
-"""
+                    """
 # ROS Java Messages, Services and Actions for [ROS Noetic Ninjemys](http://wiki.ros.org/noetic) 
 This repository contains the source code for building the ROS Java interfaces for ROS Java Noetic.
 
@@ -275,8 +276,8 @@ Package Name | Version | Dependencies | Url | Description
 //Package Name | Version | Dependencies | Url | Description| Messages |Services|Actions
 //--- | --- | --- |---|---|---  |---|---"""
 
-final String postTable=
-"""
+            final String postTable =
+                    """
 # Publishing to a Maven Repository in the filesystem.
 If an environment variable named `ROS_MAVEN_DEPLOYMENT_REPOSITORY` exists and is not blank, then 
 the rosjava interfaces artifacts can be deployed in this file system repository.
@@ -356,8 +357,8 @@ In particular, a maven repository named `FileSystemMaven`will be added together 
         dependencyLines.forEach(dependenciesJoiner::add)
         final StringJoiner bodyDefinitionsJoiner = new StringJoiner("\n", "", "\n")
         bodyDefinitions.forEach(bodyDefinitionsJoiner::add)
-        def dependenciesPart= dependencyLines.isEmpty()? "" :dependenciesJoiner.toString()
-        final String content = licence  + "\n" + bodyDefinitionsJoiner.toString() + "\n" +dependenciesPart + "\n"
+        def dependenciesPart = dependencyLines.isEmpty() ? "" : dependenciesJoiner.toString()
+        final String content = licence + "\n" + bodyDefinitionsJoiner.toString() + "\n" + dependenciesPart + "\n"
         (new File(basePackagePath)).mkdirs()
         final File gradleFile = new File(basePackagePath + File.separator + BUILD_GRADLE)
         FileUtils.writeStringToFile(gradleFile, content, Charset.defaultCharset());
