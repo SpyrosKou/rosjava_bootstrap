@@ -16,7 +16,7 @@
 
 allprojects {
     group = "org.ros.rosjava_bootstrap"
-    version = "0.3.8"
+    version = "noetic-0.3.8"
 }
 
 subprojects {

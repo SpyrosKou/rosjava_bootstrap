@@ -2,6 +2,7 @@ package org.ros.catking_package_msg
 
 import groovy.xml.XmlParser
 import org.apache.commons.io.FileUtils
+import org.codehaus.groovy.util.StringUtil
 import org.ros.internal.message.MessageConstants
 
 import java.nio.charset.Charset
@@ -49,7 +50,7 @@ final class JavaMsgGenerationManager {
 //    private static final Set<String> INTERFACE_DIRECTORIES = CopyOnWriteArraySet.of(MessageConstants.MSG, MessageConstants.SRV, MessageConstants.ACTION)
     public static final String MESSAGE_INTERFACES_GROUP_ID = "org.ros.rosjava_messages"
     private static final String TARGET_PATH = System.getProperty("user.dir") + File.separator + "build" + File.separator + "project";
-    private static final String RELATIVE_GENERATED_SRC_PATH =  "src" + File.separator + "generated-sources" + File.separator + "java"
+    private static final String RELATIVE_GENERATED_SRC_PATH = "src" + File.separator + "generated-sources" + File.separator + "java"
     private static final String BUILD_GRADLE = "build.gradle"
     private static final String SETTINGS_GRADLE = "settings.gradle"
     private static final String README_MD = "README.md"
@@ -157,7 +158,7 @@ final class JavaMsgGenerationManager {
              apply plugin: 'java-library'
 
             dependencies {
-                compileOnly 'org.ros.rosjava_bootstrap:message_generation:0.3.8'
+                compileOnly 'org.ros.rosjava_bootstrap:message_generation:noetic-0.3.8'
                 compileOnly 'io.netty:netty:3.10.6.Final'
             }
             
@@ -177,23 +178,26 @@ final class JavaMsgGenerationManager {
                     url "https://github.com/SpyrosKou/rosjava_mvn_repo/raw/noetic"
                 }
             }
-            def repositoryDirectory="ROS_MAVEN_DEPLOYMENT_REPOSITORY"
-            def mavenDeploymentRepository = System.getenv(repositoryDirectory)
+            
             publishing {
+                final repositoryDirectory = "ROS_MAVEN_DEPLOYMENT_REPOSITORY"
+                final mavenDeploymentRepositoryProvider = providers.gradleProperty(repositoryDirectory)
+                final mavenDeploymentRepository  = mavenDeploymentRepositoryProvider.getOrElse(null)
+
                 publications {
                     mavenJava(MavenPublication) {
                         from components.java
                     }
                 }
-                if (mavenDeploymentRepository != null && mavenDeploymentRepository != "") {
+                if (mavenDeploymentRepository!=null) {
                     repositories {
                         maven {
-                            name "FileSystemMaven"
-                            url 'file://' + mavenDeploymentRepository
+                            name "GithubRepositoryLocation"
+                            url 'file:////' + mavenDeploymentRepository
                         }
                     }
-                }else{
-                    logger.debug(repositoryDirectory+"not found")
+                } else {
+                    logger.debug(repositoryDirectory + "not found")
                 }
             }
         }
@@ -436,25 +440,33 @@ final class CatkinPackages {
         if (this.catkinPackages.size() == 0) {
             this.workspaces.each { workspace ->
 //                println("Parsing Workspace:" + workspace)
-                Files.walk(Paths.get(workspace))
-                        .filter(path -> path.toFile().isDirectory() && path.toFile().exists())
-                        .map(directory -> directory.resolve("package.xml").toFile())
-                        .filter(Objects::nonNull)
-                        .filter(File::exists)
-                        .filter(File::isFile)
+                if (workspace != null && "null" != workspace) {
+                    var pathForWorkspace = Paths.get(workspace)
+                    if (pathForWorkspace == null || pathForWorkspace.isEmpty()) {
+                        System.err.println("workspace:" + workspace + " has path:" + pathForWorkspace);
+                    } else {
+                        System.out.println("workspace:" + workspace + " has path:" + pathForWorkspace);
+                        Files.walk(pathForWorkspace)
+                                .filter(path -> path.toFile().isDirectory() && path.toFile().exists())
+                                .map(directory -> directory.resolve("package.xml").toFile())
+                                .filter(Objects::nonNull)
+                                .filter(File::exists)
+                                .filter(File::isFile)
 //                        .peek(file -> System.out.println("File:{" + file.getAbsolutePath() + "}"))
-                        .forEach({ file ->
+                                .forEach({ file ->
 //                            println("Parsing: " + file.getAbsolutePath())
-                            def catkinPackage = new CatkinPackage(catkinPluginRoot, file)
-                            if (this.catkinPackages.containsKey(catkinPackage.name)) {
-                                if (this.catkinPackages[catkinPackage.name].version < catkinPackage.version) {
-                                    println("Catkin generate tree: replacing older version of " + catkinPackage.name + "[" + this.catkinPackages[catkinPackage.name].version + "->" + catkinPackage.version + "]")
-                                    catkinPackages[catkinPackage.name] = catkinPackage
-                                }
-                            } else {
-                                catkinPackages.put(catkinPackage.name, catkinPackage)
-                            }
-                        });
+                                    def catkinPackage = new CatkinPackage(catkinPluginRoot, file)
+                                    if (this.catkinPackages.containsKey(catkinPackage.name)) {
+                                        if (this.catkinPackages[catkinPackage.name].version < catkinPackage.version) {
+                                            println("Catkin generate tree: replacing older version of " + catkinPackage.name + "[" + this.catkinPackages[catkinPackage.name].version + "->" + catkinPackage.version + "]")
+                                            catkinPackages[catkinPackage.name] = catkinPackage
+                                        }
+                                    } else {
+                                        catkinPackages.put(catkinPackage.name, catkinPackage)
+                                    }
+                                });
+                    }
+                }
             }
         } else {
             println("ROS Workspaces already parsed. Known packages:" + this.catkinPackages.size());
@@ -580,4 +592,5 @@ final class CatkinPackages {
         }
 
     }
+
 }
