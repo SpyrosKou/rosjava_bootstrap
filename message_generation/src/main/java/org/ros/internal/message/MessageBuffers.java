@@ -26,19 +26,20 @@ import java.nio.ByteOrder;
  * 
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class MessageBuffers {
+public final class MessageBuffers {
 
   static final int ESTIMATED_LENGTH = 256;
 
-  private MessageBuffers() {
+  private  MessageBuffers() {
     // Utility class.
+    throw new UnsupportedOperationException();
   }
 
   /**
    * @return a new {@link ChannelBuffer} for {@link Message} serialization that
    *         grows dynamically
    */
-  public static ChannelBuffer dynamicBuffer() {
+  public static  final ChannelBuffer dynamicBuffer() {
     return ChannelBuffers.dynamicBuffer(ByteOrder.LITTLE_ENDIAN, ESTIMATED_LENGTH);
   }
 }

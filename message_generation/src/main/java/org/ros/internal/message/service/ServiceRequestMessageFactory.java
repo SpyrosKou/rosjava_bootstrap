@@ -21,7 +21,7 @@ import org.ros.internal.message.DefaultMessageFactory;
 import org.ros.internal.message.DefaultMessageInterfaceClassProvider;
 import org.ros.internal.message.Message;
 import org.ros.internal.message.MessageProxyFactory;
-import org.ros.message.MessageDeclaration;
+import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageFactory;
 
@@ -45,8 +45,8 @@ public final class ServiceRequestMessageFactory implements MessageFactory {
   @Override
   public final <T extends Message> T newFromType(String serviceType) {
     ServiceDescription serviceDescription = serviceDescriptionFactory.newFromType(serviceType);
-    MessageDeclaration messageDeclaration =
-        MessageDeclaration.of(serviceDescription.getRequestType(),
+    MessageDeclarationImpl messageDeclaration =
+        MessageDeclarationImpl.of(serviceDescription.getRequestType(),
             serviceDescription.getRequestDefinition());
     return messageProxyFactory.newMessageProxy(messageDeclaration);
   }

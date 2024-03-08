@@ -15,46 +15,53 @@
  */
 
 allprojects {
-  group="org.ros.rosjava_bootstrap"
-  version = "noetic-0.1"
+    group = "org.ros.rosjava_bootstrap"
+    version = "0.3.8"
 }
 
-    subprojects {
-        apply plugin: 'java'
-        apply plugin: 'maven-publish'
-        apply plugin: "idea"
-        apply plugin: "eclipse"
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: "idea"
 
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
-        // These external repositories are copied from bootstrap.gradle.
-        repositories {
-            mavenLocal()
-            mavenCentral()
-        }
-    String repositoryDirectory="ROS_MAVEN_DEPLOYMENT_REPOSITORY"
-    String mavenDeploymentRepository = System.getenv(repositoryDirectory)
+    // These external repositories are copied from bootstrap.gradle.
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    final repositoryDirectory = "ROS_MAVEN_DEPLOYMENT_REPOSITORY"
+    final mavenDeploymentRepositoryProvider = providers.gradleProperty(repositoryDirectory)
+    final mavenDeploymentRepository  = mavenDeploymentRepositoryProvider.getOrElse(null)
+    println(repositoryDirectory + " = " + mavenDeploymentRepository);
     publishing {
-      publications {
-        mavenJava(MavenPublication) {
-          from components.java
+
+
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
         }
-      }
-        if (mavenDeploymentRepository != null && mavenDeploymentRepository != "") {
+        if (mavenDeploymentRepository!=null) {
             repositories {
                 maven {
-                    name "LocalHere"
-                    url 'file://' + mavenDeploymentRepository
+                    name "GithubRepositoryLocation"
+                    url 'file:////' + mavenDeploymentRepository
                 }
             }
-        }else{
-            logger.debug(repositoryDirectory+"not found")
+        } else {
+            logger.debug(repositoryDirectory + "not found")
         }
     }
 
-}
+    test {
+        useJUnitPlatform()
+    }
 
+}
 
 
 defaultTasks 'publish', 'installDist'

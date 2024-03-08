@@ -13,11 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
-apply plugin: 'groovy'
+plugins {
+   id 'groovy'
+}
 
 //noinspection GroovyAssignabilityCheck
 dependencies {
+
+
    implementation gradleApi()
    implementation localGroovy()
 }

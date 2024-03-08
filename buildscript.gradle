@@ -27,13 +27,13 @@ rootProject.buildscript {
                 }
             }
         }
-        maven {
-            url "https://repository.springsource.com/maven/bundles/release"
-            allowInsecureProtocol true
-        }
-        maven {
-            url "https://repository.springsource.com/maven/bundles/external"
-        }
+//        maven {
+//            url "https://repository.springsource.com/maven/bundles/release"
+//            allowInsecureProtocol true
+//        }
+//        maven {
+//            url "https://repository.springsource.com/maven/bundles/external"
+//        }
         if (rosMavenRepository != null) {
             maven {
                 url rosMavenRepository

@@ -23,6 +23,7 @@ public interface MessageGenerationTemplate {
 
   /**
    * @return returns this {@link Message} as a {@link RawMessage}
+   * @param messageSource
    */
   public String applyTemplate(String messageSource);
 }

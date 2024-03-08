@@ -17,7 +17,6 @@
 package org.ros.internal.message.definition;
 
 import com.google.common.base.Preconditions;
-
 import org.ros.exception.RosMessageRuntimeException;
 import org.ros.internal.message.field.PrimitiveFieldType;
 

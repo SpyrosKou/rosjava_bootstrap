@@ -24,6 +24,7 @@ import org.ros.internal.message.Message;
 public interface MessageFactory {
 
   /**
+   * @param <T>
    * @param messageType
    *          the type of message to create
    * @return a new message

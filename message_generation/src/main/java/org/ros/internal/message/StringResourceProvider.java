@@ -16,19 +16,14 @@
 
 package org.ros.internal.message;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import org.ros.exception.RosMessageRuntimeException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -38,7 +33,7 @@ public final class StringResourceProvider {
   private final Map<String, String> cache= new ConcurrentHashMap<>();
 
 
-  public final String get(String resourceName) {
+  public final String get(final String resourceName) {
     if (!has(resourceName)) {
       throw new NoSuchElementException("Resource does not exist: " + resourceName);
     }
@@ -59,11 +54,11 @@ public final class StringResourceProvider {
     return this.cache.get(resourceName);
   }
 
-  public final boolean has(String resourceName) {
+  public final boolean has(final String resourceName) {
     return this.cache.containsKey(resourceName) || getClass().getResource(resourceName) != null;
   }
 
-  public final void addStringToCache(String resourceName, String resourceContent) {
+  public final void addStringToCache(final String resourceName,final  String resourceContent) {
     this.cache.put(resourceName, resourceContent);
   }
 }

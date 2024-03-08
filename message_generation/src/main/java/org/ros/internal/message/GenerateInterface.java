@@ -16,30 +16,28 @@
 
 package org.ros.internal.message;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.ros.exception.RosMessageRuntimeException;
+import org.ros.internal.message.definition.MessageDefinitionReflectionProvider;
+import org.ros.internal.message.definition.MessageDefinitionTupleParser;
+import org.ros.message.MessageDeclarationImpl;
+import org.ros.message.MessageFactory;
+import org.ros.message.MessageIdentifierImpl;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-
-import org.ros.exception.RosMessageRuntimeException;
-import org.ros.internal.message.definition.MessageDefinitionReflectionProvider;
-import org.ros.internal.message.definition.MessageDefinitionTupleParser;
-import org.ros.message.MessageDeclaration;
-import org.ros.message.MessageFactory;
-import org.ros.message.MessageIdentifier;
-
-import com.google.common.collect.Lists;
-
 /**
  * @author d.stonier@gmail.com (Daniel Stonier)
  */
-public class GenerateInterface {
+public final class GenerateInterface {
 
-  private static void writeInterface(MessageDeclaration messageDeclaration, File outputDirectory,
-                                     boolean addConstantsAndMethods, MessageFactory messageFactory) {
+  private static final void writeInterface(final MessageDeclarationImpl messageDeclaration, final File outputDirectory,
+                                           final boolean addConstantsAndMethods, final MessageFactory messageFactory) {
     final MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
     builder.setPackageName(messageDeclaration.getPackage());
     builder.setInterfaceName(messageDeclaration.getName());
@@ -56,35 +54,35 @@ public class GenerateInterface {
     }
   }
 
-  public static void main(String[] args) {
+  public static final void main(String[] args) {
     List<String> arguments = Lists.newArrayList(args);
     if (arguments.size() != 3) {
       System.out
           .println("Incorrect usage, please provide two args: _output_directory_, _pkg_ and _path_to_msg/srv_file_");
       System.exit(1);
     }
-    File outputDirectory = new File(arguments.remove(0));
-    String pkg = arguments.remove(0);
-    File file = new File(arguments.remove(0));
+    final File outputDirectory = new File(arguments.remove(0));
+    final String pkg = arguments.remove(0);
+    final File file = new File(arguments.remove(0));
 
     System.out.println("Output Directory: " + outputDirectory.getAbsolutePath());
     System.out.println("Package: " + pkg);
     System.out.println("Message: " + file.getAbsolutePath());
 
-    String name = FilenameUtils.getBaseName(file.getName());
-    String extension = FilenameUtils.getExtension(file.getName());
+    final String name = FilenameUtils.getBaseName(file.getName());
+    final String extension = FilenameUtils.getExtension(file.getName());
 
     System.out.println("  Name: " + name);
     System.out.println("  Extension: " + extension);
-    String definition;
+    final String definition;
     try {
       definition = FileUtils.readFileToString(file, "US-ASCII");
     } catch (IOException e) {
       throw new RosMessageRuntimeException(e);
     }
-    MessageIdentifier messageIdentifier = MessageIdentifier.of(pkg, name);
-    MessageDeclaration messageDeclaration = new MessageDeclaration(messageIdentifier, definition);
-    MessageDefinitionReflectionProvider messageDefinitionProvider =
+    final MessageIdentifierImpl messageIdentifier = MessageIdentifierImpl.of(pkg, name);
+    final MessageDeclarationImpl messageDeclaration = new MessageDeclarationImpl(messageIdentifier, definition);
+    final MessageDefinitionReflectionProvider messageDefinitionProvider =
         new MessageDefinitionReflectionProvider();
     messageDefinitionProvider.add(messageIdentifier.getType(), definition);
     final MessageFactory messageFactory = new DefaultMessageFactory(messageDefinitionProvider);
@@ -93,10 +91,10 @@ public class GenerateInterface {
     } else if (extension.equals(MessageConstants.SRV)) {
       writeInterface(messageDeclaration, outputDirectory, false, messageFactory);
       List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
-      MessageDeclaration requestDeclaration =
-          MessageDeclaration.of(messageIdentifier.getType() + MessageConstants.REQUEST, requestAndResponse.get(0));
-      MessageDeclaration responseDeclaration =
-          MessageDeclaration
+      final MessageDeclarationImpl requestDeclaration =
+          MessageDeclarationImpl.of(messageIdentifier.getType() + MessageConstants.REQUEST, requestAndResponse.get(0));
+      final MessageDeclarationImpl responseDeclaration =
+          MessageDeclarationImpl
               .of(messageIdentifier.getType() + MessageConstants.RESPONSE, requestAndResponse.get(1));
       writeInterface(requestDeclaration, outputDirectory, true, messageFactory);
       writeInterface(responseDeclaration, outputDirectory, true, messageFactory);

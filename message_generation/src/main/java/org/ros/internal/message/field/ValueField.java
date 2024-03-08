@@ -17,13 +17,12 @@
 package org.ros.internal.message.field;
 
 import com.google.common.base.Preconditions;
-
 import org.jboss.netty.buffer.ChannelBuffer;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-class ValueField<T> extends Field {
+final class ValueField<T> extends Field {
 
   private T value;
 

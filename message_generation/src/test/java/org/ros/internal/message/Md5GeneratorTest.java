@@ -16,18 +16,17 @@
 
 package org.ros.internal.message;
 
-import static org.junit.Assert.assertEquals;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ros.internal.message.definition.MessageDefinitionProviderChain;
-
-import org.junit.Before;
-import org.junit.Test;
 import org.ros.internal.message.service.ServiceDefinitionResourceProvider;
 import org.ros.internal.message.service.ServiceDescription;
 import org.ros.internal.message.service.ServiceDescriptionFactory;
 import org.ros.internal.message.topic.TopicDefinitionResourceProvider;
 import org.ros.internal.message.topic.TopicDescription;
 import org.ros.internal.message.topic.TopicDescriptionFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -37,7 +36,7 @@ public class Md5GeneratorTest {
   private TopicDescriptionFactory topicDescriptionFactory;
   private ServiceDescriptionFactory serviceDescriptionFactory;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     MessageDefinitionProviderChain messageDefinitionProviderChain =
         new MessageDefinitionProviderChain();

@@ -18,256 +18,236 @@ package org.ros.internal.message;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import org.apache.commons.io.FileUtils;
 import org.ros.exception.RosMessageRuntimeException;
+import org.ros.internal.message.action.*;
 import org.ros.internal.message.definition.MessageDefinitionProviderChain;
 import org.ros.internal.message.definition.MessageDefinitionTupleParser;
-import org.ros.internal.message.action.ActionDefinitionFileProvider;
-import org.ros.internal.message.action.ActionGenerationTemplateActionGoal;
-import org.ros.internal.message.action.ActionGenerationTemplateActionResult;
-import org.ros.internal.message.action.ActionGenerationTemplateActionFeedback;
-import org.ros.internal.message.action.ActionGenerationTemplateGoal;
-import org.ros.internal.message.action.ActionGenerationTemplateResult;
-import org.ros.internal.message.action.ActionGenerationTemplateFeedback;
 import org.ros.internal.message.service.ServiceDefinitionFileProvider;
 import org.ros.internal.message.topic.TopicDefinitionFileProvider;
-import org.ros.message.MessageDeclaration;
+import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
 import org.ros.message.MessageIdentifier;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.ListIterator;
+import java.nio.charset.Charset;
+import java.util.*;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
+ * @author Spyros Koukas
  */
-public class GenerateInterfaces {
+public final class GenerateInterfaces {
 
-  private final TopicDefinitionFileProvider topicDefinitionFileProvider;
-  private final ServiceDefinitionFileProvider serviceDefinitionFileProvider;
-  private final ActionDefinitionFileProvider actionDefinitionFileProvider;
-  private final MessageDefinitionProviderChain messageDefinitionProviderChain;
-  private final MessageFactory messageFactory;
+    private final TopicDefinitionFileProvider topicDefinitionFileProvider = new TopicDefinitionFileProvider();
+    private final ServiceDefinitionFileProvider serviceDefinitionFileProvider = new ServiceDefinitionFileProvider();
+    private final MessageDefinitionProviderChain messageDefinitionProviderChain = new MessageDefinitionProviderChain();
+    private final ActionDefinitionFileProvider actionDefinitionFileProvider = new ActionDefinitionFileProvider();
 
-  private final MessageGenerationTemplate actionGenerationTemplateGoal     = new ActionGenerationTemplateGoal();
-  private final MessageGenerationTemplate actionGenerationTemplateResult   = new ActionGenerationTemplateResult();
-  private final MessageGenerationTemplate actionGenerationTemplateFeedback = new ActionGenerationTemplateFeedback();
+    private final MessageFactory messageFactory;
 
-  private final MessageGenerationTemplate actionGenerationTemplateActionGoal     = new ActionGenerationTemplateActionGoal();
-  private final MessageGenerationTemplate actionGenerationTemplateActionResult   = new ActionGenerationTemplateActionResult();
-  private final MessageGenerationTemplate actionGenerationTemplateActionFeedback = new ActionGenerationTemplateActionFeedback();
+    private int successfulInterfaceGenerations = 0;
+    private int failedInterfaceGenerations = 0;
 
-  static private final String ROS_PACKAGE_PATH = "ROS_PACKAGE_PATH";
+    private final MessageGenerationTemplate actionGenerationTemplateGoal = new ActionGenerationTemplateGoal();
+    private final MessageGenerationTemplate actionGenerationTemplateResult = new ActionGenerationTemplateResult();
+    private final MessageGenerationTemplate actionGenerationTemplateFeedback = new ActionGenerationTemplateFeedback();
 
-  public GenerateInterfaces() {
-    messageDefinitionProviderChain = new MessageDefinitionProviderChain();
-    topicDefinitionFileProvider = new TopicDefinitionFileProvider();
-    messageDefinitionProviderChain.addMessageDefinitionProvider(topicDefinitionFileProvider);
-    serviceDefinitionFileProvider = new ServiceDefinitionFileProvider();
-    messageDefinitionProviderChain.addMessageDefinitionProvider(serviceDefinitionFileProvider);
-    actionDefinitionFileProvider = new ActionDefinitionFileProvider();
-    messageDefinitionProviderChain.addMessageDefinitionProvider(actionDefinitionFileProvider);
-    messageFactory = new DefaultMessageFactory(messageDefinitionProviderChain);
-  }
+    private final MessageGenerationTemplate actionGenerationTemplateActionGoal = new ActionGenerationTemplateActionGoal();
+    private final MessageGenerationTemplate actionGenerationTemplateActionResult = new ActionGenerationTemplateActionResult();
+    private final MessageGenerationTemplate actionGenerationTemplateActionFeedback = new ActionGenerationTemplateActionFeedback();
 
-  /**
-   * @param packages
-   *          a list of packages containing the topic types to generate
-   *          interfaces for
-   * @param outputDirectory
-   *          the directory to write the generated interfaces to
-   * @throws IOException
-   */
-  private void writeTopicInterfaces(File outputDirectory, Collection<String> packages)
-      throws IOException {
-    Collection<MessageIdentifier> topicTypes = Sets.newHashSet();
-    if (packages.size() == 0) {
-      packages = topicDefinitionFileProvider.getPackages();
-    }
-    for (String pkg : packages) {
-      Collection<MessageIdentifier> messageIdentifiers =
-          topicDefinitionFileProvider.getMessageIdentifiersByPackage(pkg);
-      if (messageIdentifiers != null) {
-        topicTypes.addAll(messageIdentifiers);
-      }
-    }
-    for (MessageIdentifier topicType : topicTypes) {
-      String definition = messageDefinitionProviderChain.get(topicType.getType());
-      MessageDeclaration messageDeclaration = new MessageDeclaration(topicType, definition);
-      writeInterface(messageDeclaration, outputDirectory, true);
-    }
-  }
 
-  /**
-   * @param packages
-   *          a list of packages containing the topic types to generate
-   *          interfaces for
-   * @param outputDirectory
-   *          the directory to write the generated interfaces to
-   * @throws IOException
-   */
-  private void writeServiceInterfaces(File outputDirectory, Collection<String> packages)
-      throws IOException {
-    Collection<MessageIdentifier> serviceTypes = Sets.newHashSet();
-    if (packages.size() == 0) {
-      packages = serviceDefinitionFileProvider.getPackages();
-    }
-    for (String pkg : packages) {
-      Collection<MessageIdentifier> messageIdentifiers =
-          serviceDefinitionFileProvider.getMessageIdentifiersByPackage(pkg);
-      if (messageIdentifiers != null) {
-        serviceTypes.addAll(messageIdentifiers);
-      }
-    }
-    for (MessageIdentifier serviceType : serviceTypes) {
-      String definition = messageDefinitionProviderChain.get(serviceType.getType());
-      MessageDeclaration serviceDeclaration =
-          MessageDeclaration.of(serviceType.getType(), definition);
-      writeInterface(serviceDeclaration, outputDirectory, false);
-      List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
 
-      MessageDeclaration requestDeclaration =
-          MessageDeclaration.of(serviceType.getType() + "Request", requestAndResponse.get(0));
-      MessageDeclaration responseDeclaration =
-          MessageDeclaration.of(serviceType.getType() + "Response", requestAndResponse.get(1));
-
-      writeInterface(requestDeclaration, outputDirectory, true);
-      writeInterface(responseDeclaration, outputDirectory, true);
-    }
-  }
-
-  /**
-   * @param packages
-   *          a list of packages containing the topic types to generate
-   *          interfaces for
-   * @param outputDirectory
-   *          the directory to write the generated interfaces to
-   * @throws IOException
-   */
-  private void writeActionInterfaces(File outputDirectory, Collection<String> packages)
-          throws IOException {
-    Collection<MessageIdentifier> actionTypes = Sets.newHashSet();
-    if (packages.size() == 0) {
-      packages = actionDefinitionFileProvider.getPackages();
-    }
-    for (String pkg : packages) {
-      Collection<MessageIdentifier> messageIdentifiers =
-              actionDefinitionFileProvider.getMessageIdentifiersByPackage(pkg);
-      if (messageIdentifiers != null) {
-        actionTypes.addAll(messageIdentifiers);
-      }
-    }
-    for (MessageIdentifier actionType : actionTypes) {
-      String definition = messageDefinitionProviderChain.get(actionType.getType());
-      MessageDeclaration actionDeclaration =
-              MessageDeclaration.of(actionType.getType(), definition);
-      writeInterface(actionDeclaration, outputDirectory, false);
-      List<String> goalResultAndFeedback = MessageDefinitionTupleParser.parse(definition, 3);
-
-      MessageDeclaration goalDeclaration = MessageDeclaration.of(
-              actionType.getType() + "Goal",
-              actionGenerationTemplateGoal.applyTemplate(goalResultAndFeedback.get(0))
-      );
-      MessageDeclaration resultDeclaration = MessageDeclaration.of(
-              actionType.getType() + "Result",
-              actionGenerationTemplateResult.applyTemplate(goalResultAndFeedback.get(1))
-      );
-      MessageDeclaration feedbackDeclaration = MessageDeclaration.of(
-              actionType.getType() + "Feedback",
-              actionGenerationTemplateFeedback.applyTemplate(goalResultAndFeedback.get(2))
-      );
-
-      MessageDeclaration actionGoalDeclaration = MessageDeclaration.of(
-              actionType.getType() + "ActionGoal",
-              actionGenerationTemplateActionGoal.applyTemplate(actionType.getType())
-      );
-      MessageDeclaration actionResultDeclaration = MessageDeclaration.of(
-              actionType.getType() + "ActionResult",
-              actionGenerationTemplateActionResult.applyTemplate(actionType.getType())
-      );
-      MessageDeclaration actionFeedbackDeclaration = MessageDeclaration.of(
-              actionType.getType() + "ActionFeedback",
-              actionGenerationTemplateActionFeedback.applyTemplate(actionType.getType())
-      );
-
-      writeInterface(goalDeclaration, outputDirectory, true);
-      writeInterface(resultDeclaration, outputDirectory, true);
-      writeInterface(feedbackDeclaration, outputDirectory, true);
-
-      writeInterface(actionGoalDeclaration, outputDirectory, true);
-      writeInterface(actionResultDeclaration, outputDirectory, true);
-      writeInterface(actionFeedbackDeclaration, outputDirectory, true);
-    }
-  }
-
-  private void writeInterface(MessageDeclaration messageDeclaration, File outputDirectory,
-      boolean addConstantsAndMethods) {
-    MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
-    builder.setPackageName(messageDeclaration.getPackage());
-    builder.setInterfaceName(messageDeclaration.getName());
-    builder.setMessageDeclaration(messageDeclaration);
-    builder.setAddConstantsAndMethods(addConstantsAndMethods);
-    try {
-      String content;
-      content = builder.build(messageFactory);
-      File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
-      FileUtils.writeStringToFile(file, content);
-    } catch (Exception e) {
-      System.out.printf("Failed to generate interface for %s.\n", messageDeclaration.getType());
-      e.printStackTrace();
-    }
-  }
-
-  public void generate(File outputDirectory, Collection<String> packages,
-      Collection<File> packagePath) {
-    for (File directory : packagePath) {
-      topicDefinitionFileProvider.addDirectory(directory);
-      serviceDefinitionFileProvider.addDirectory(directory);
-      actionDefinitionFileProvider.addDirectory(directory);
-    }
-    topicDefinitionFileProvider.update();
-    serviceDefinitionFileProvider.update();
-    actionDefinitionFileProvider.update();
-    try {
-      writeTopicInterfaces(outputDirectory, packages);
-      writeServiceInterfaces(outputDirectory, packages);
-      writeActionInterfaces(outputDirectory, packages);
-    } catch (IOException e) {
-      throw new RosMessageRuntimeException(e);
-    }
-  }
-
-  public static void main(String[] args) {
-    List<String> arguments = Lists.newArrayList(args);
-    if (arguments.size() == 0) {
-      arguments.add(".");
+    public GenerateInterfaces() {
+        this.messageDefinitionProviderChain.addMessageDefinitionProvider(topicDefinitionFileProvider);
+        this.messageDefinitionProviderChain.addMessageDefinitionProvider(serviceDefinitionFileProvider);
+        this.messageDefinitionProviderChain.addMessageDefinitionProvider(actionDefinitionFileProvider);
+        this.messageFactory = new DefaultMessageFactory(messageDefinitionProviderChain);
     }
 
-    String rosPackagePath = System.getenv(ROS_PACKAGE_PATH);
-    // Overwrite with a supplied package path if specified (--package-path=)
-    for (ListIterator<String> iter = arguments.listIterator(); iter.hasNext(); ) {
-      String arg = iter.next();
-      if (arg.contains("--package-path=")) {
-        rosPackagePath = arg.replace("--package-path=", "");
-        iter.remove();
-        break;
-      }
+    /**
+     * @param packages        a list of packages containing the topic types to generate
+     *                        interfaces for
+     * @param outputDirectory the directory to write the generated interfaces to
+     * @throws IOException
+     */
+    private void writeTopicInterfaces(File outputDirectory, final Collection<String> packages) throws IOException {
+        final Set<MessageIdentifier> topicTypes = new HashSet<>();
+        final Set<String> actualPackages = new HashSet<>(packages);
+        if (actualPackages.isEmpty()) {
+            actualPackages.addAll(topicDefinitionFileProvider.getPackages());
+        }
+        for (final String pkg : actualPackages) {
+            final Set<MessageIdentifier> messageIdentifiers =
+                    topicDefinitionFileProvider.getMessageIdentifiersByPackage(pkg);
+            if (messageIdentifiers != null) {
+                topicTypes.addAll(messageIdentifiers);
+            }
+        }
+        for (final MessageIdentifier topicType : topicTypes) {
+            final String definition = this.messageDefinitionProviderChain.get(topicType.getType());
+            final MessageDeclarationImpl messageDeclaration = new MessageDeclarationImpl(topicType, definition);
+            this.writeInterface(messageDeclaration, outputDirectory, true);
+        }
     }
 
-    Collection<File> packagePath = Lists.newArrayList();
-    for (String path : rosPackagePath.split(File.pathSeparator)) {
-      File packageDirectory = new File(path);
-      if (packageDirectory.exists()) {
-        packagePath.add(packageDirectory);
-      }
+    /**
+     * @param packages        a list of packages containing the topic types to generate
+     *                        interfaces for
+     * @param outputDirectory the directory to write the generated interfaces to
+     * @throws IOException
+     */
+    private void writeServiceInterfaces(File outputDirectory, Collection<String> packages)
+            throws IOException {
+        final Set<MessageIdentifier> serviceTypes = Sets.newHashSet();
+        if (packages.size() == 0) {
+            packages = serviceDefinitionFileProvider.getPackages();
+        }
+        for (String pkg : packages) {
+            Set<MessageIdentifier> messageIdentifiers =
+                    serviceDefinitionFileProvider.getMessageIdentifiersByPackage(pkg);
+            if (messageIdentifiers != null) {
+                serviceTypes.addAll(messageIdentifiers);
+            }
+        }
+        for (MessageIdentifier serviceType : serviceTypes) {
+            String definition = messageDefinitionProviderChain.get(serviceType.getType());
+            MessageDeclarationImpl serviceDeclaration =
+                    MessageDeclarationImpl.of(serviceType.getType(), definition);
+            this.writeInterface(serviceDeclaration, outputDirectory, false);
+            List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
+
+            MessageDeclarationImpl requestDeclaration =
+                    MessageDeclarationImpl.of(serviceType.getType() + "Request", requestAndResponse.get(0));
+            MessageDeclarationImpl responseDeclaration =
+                    MessageDeclarationImpl.of(serviceType.getType() + "Response", requestAndResponse.get(1));
+
+            this.writeInterface(requestDeclaration, outputDirectory, true);
+            this.writeInterface(responseDeclaration, outputDirectory, true);
+        }
     }
 
-    GenerateInterfaces generateInterfaces = new GenerateInterfaces();
-    File outputDirectory = new File(arguments.remove(0));
-    generateInterfaces.generate(outputDirectory, arguments, packagePath);
-  }
+    /**
+     * @param packages        a list of packages containing the topic types to generate
+     *                        interfaces for
+     * @param outputDirectory the directory to write the generated interfaces to
+     * @throws IOException
+     */
+    private void writeActionInterfaces(File outputDirectory, Collection<String> packages)
+            throws IOException {
+        final Set<MessageIdentifier> actionTypes = Sets.newHashSet();
+        if (packages.size() == 0) {
+            packages = actionDefinitionFileProvider.getPackages();
+        }
+        for (String pkg : packages) {
+            final Set<MessageIdentifier> messageIdentifiers =
+                    actionDefinitionFileProvider.getMessageIdentifiersByPackage(pkg);
+            if (messageIdentifiers != null) {
+                actionTypes.addAll(messageIdentifiers);
+            }
+        }
+        for (final MessageIdentifier actionType : actionTypes) {
+            final String definition = messageDefinitionProviderChain.get(actionType.getType());
+            final MessageDeclarationImpl actionDeclaration =
+                    MessageDeclarationImpl.of(actionType.getType(), definition);
+            this.writeInterface(actionDeclaration, outputDirectory, false);
+            final List<String> goalResultAndFeedback = MessageDefinitionTupleParser.parse(definition, 3);
+
+            final MessageDeclarationImpl goalDeclaration = MessageDeclarationImpl.of(
+                    actionType.getType() + "Goal",
+                    actionGenerationTemplateGoal.applyTemplate(goalResultAndFeedback.get(0))
+            );
+            final MessageDeclarationImpl resultDeclaration = MessageDeclarationImpl.of(
+                    actionType.getType() + "Result",
+                    actionGenerationTemplateResult.applyTemplate(goalResultAndFeedback.get(1))
+            );
+            final MessageDeclarationImpl feedbackDeclaration = MessageDeclarationImpl.of(
+                    actionType.getType() + "Feedback",
+                    actionGenerationTemplateFeedback.applyTemplate(goalResultAndFeedback.get(2))
+            );
+
+            final MessageDeclarationImpl actionGoalDeclaration = MessageDeclarationImpl.of(
+                    actionType.getType() + "ActionGoal",
+                    actionGenerationTemplateActionGoal.applyTemplate(actionType.getType())
+            );
+            final MessageDeclarationImpl actionResultDeclaration = MessageDeclarationImpl.of(
+                    actionType.getType() + "ActionResult",
+                    actionGenerationTemplateActionResult.applyTemplate(actionType.getType())
+            );
+            final MessageDeclarationImpl actionFeedbackDeclaration = MessageDeclarationImpl.of(
+                    actionType.getType() + "ActionFeedback",
+                    actionGenerationTemplateActionFeedback.applyTemplate(actionType.getType())
+            );
+
+            this.writeInterface(goalDeclaration, outputDirectory, true);
+            this.writeInterface(resultDeclaration, outputDirectory, true);
+            this.writeInterface(feedbackDeclaration, outputDirectory, true);
+
+            this.writeInterface(actionGoalDeclaration, outputDirectory, true);
+            this.writeInterface(actionResultDeclaration, outputDirectory, true);
+            this.writeInterface(actionFeedbackDeclaration, outputDirectory, true);
+        }
+    }
+
+    private final void writeInterface(MessageDeclarationImpl messageDeclaration, File outputDirectory,
+                                      boolean addConstantsAndMethods) {
+        final MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
+        builder.setPackageName(messageDeclaration.getPackage());
+        builder.setInterfaceName(messageDeclaration.getName());
+        builder.setMessageDeclaration(messageDeclaration);
+        builder.setAddConstantsAndMethods(addConstantsAndMethods);
+        try {
+            final String content = builder.build(this.messageFactory);
+            final File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
+            FileUtils.writeStringToFile(file, content, Charset.defaultCharset());
+            this.successfulInterfaceGenerations++;
+        } catch (Exception e) {
+            this.failedInterfaceGenerations++;
+            System.out.printf("Failed to generate interface for %s.\n", messageDeclaration.getType());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @param outputDirectory
+     * @param packages
+     * @param packagePath
+     */
+    public final void generate(
+            final File outputDirectory
+            , final Collection<String> packages
+            , final Collection<File> packagePath) {
+
+        for (final File directory : packagePath) {
+            this.topicDefinitionFileProvider.addDirectory(directory);
+            this.serviceDefinitionFileProvider.addDirectory(directory);
+            this.actionDefinitionFileProvider.addDirectory(directory);
+        }
+        this.topicDefinitionFileProvider.update();
+        this.serviceDefinitionFileProvider.update();
+        this.actionDefinitionFileProvider.update();
+        try {
+            this.writeTopicInterfaces(outputDirectory, packages);
+            this.writeServiceInterfaces(outputDirectory, packages);
+            this.writeActionInterfaces(outputDirectory, packages);
+        } catch (final IOException ioException) {
+            throw new RosMessageRuntimeException(ioException);
+        }
+    }
+
+
+
+    public final int getSuccessfulInterfaceGenerations() {
+        return this.successfulInterfaceGenerations;
+    }
+
+    public final int getFailedInterfaceGenerations() {
+        return this.failedInterfaceGenerations;
+    }
+
+    public final int getTotalInterfaceGenerations() {
+        return this.getSuccessfulInterfaceGenerations() + this.getFailedInterfaceGenerations();
+    }
 }

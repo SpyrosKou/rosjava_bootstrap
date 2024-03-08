@@ -18,7 +18,6 @@ package org.ros.internal.message.field;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import org.ros.exception.RosMessageRuntimeException;
 import org.ros.internal.message.context.MessageContext;
 
@@ -29,62 +28,59 @@ import java.util.Map;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class MessageFields {
+public final class MessageFields {
 
-  private final Map<String, Field> fields;
-  private final Map<String, Field> setters;
-  private final Map<String, Field> getters;
-  private final List<Field> orderedFields;
+  private final Map<String, Field> fields=Maps.newHashMap();
+  private final Map<String, Field> setters=Maps.newHashMap();
+  private final Map<String, Field> getters=Maps.newHashMap();
+  private final List<Field> orderedFields=Lists.newArrayList();
 
-  public MessageFields(MessageContext messageContext) {
-    fields = Maps.newHashMap();
-    setters = Maps.newHashMap();
-    getters = Maps.newHashMap();
-    orderedFields = Lists.newArrayList();
-    for (String name : messageContext.getFieldNames()) {
-      Field field = messageContext.getFieldFactory(name).create();
-      fields.put(name, field);
-      getters.put(messageContext.getFieldGetterName(name), field);
-      setters.put(messageContext.getFieldSetterName(name), field);
-      orderedFields.add(field);
+  public MessageFields(final MessageContext messageContext) {
+
+    for (final String name : messageContext.getFieldNames()) {
+      final Field field = messageContext.getFieldFactory(name).get();
+      this.fields.put(name, field);
+      this.getters.put(messageContext.getFieldGetterName(name), field);
+      this.setters.put(messageContext.getFieldSetterName(name), field);
+      this.orderedFields.add(field);
     }
   }
 
-  public Field getField(String name) {
+  public final Field getField(String name) {
     return fields.get(name);
   }
 
-  public Field getSetterField(String name) {
+  public final Field getSetterField(String name) {
     return setters.get(name);
   }
 
-  public Field getGetterField(String name) {
+  public final Field getGetterField(String name) {
     return getters.get(name);
   }
 
-  public List<Field> getFields() {
+  public final List<Field> getFields() {
     return Collections.unmodifiableList(orderedFields);
   }
 
-  public Object getFieldValue(String name) {
-    Field field = fields.get(name);
+  public final Object getFieldValue(String name) {
+    final Field field = fields.get(name);
     if (field != null) {
       return field.getValue();
     }
-    throw new RosMessageRuntimeException("Uknown field: " + name);
+    throw new RosMessageRuntimeException("Unknown field: " + name);
   }
 
-  public void setFieldValue(String name, Object value) {
-    Field field = fields.get(name);
+  public final void setFieldValue(final String name,final  Object value) {
+    final Field field = fields.get(name);
     if (field != null) {
       field.setValue(value);
     } else {
-      throw new RosMessageRuntimeException("Uknown field: " + name);
+      throw new RosMessageRuntimeException("Unknown field: " + name);
     }
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((fields == null) ? 0 : fields.hashCode());
@@ -93,7 +89,7 @@ public class MessageFields {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public final boolean equals(Object obj) {
     if (this == obj)
       return true;
     if (obj == null)

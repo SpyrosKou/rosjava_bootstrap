@@ -17,7 +17,6 @@
 package org.ros.internal.message.field;
 
 import com.google.common.base.Preconditions;
-
 import org.jboss.netty.buffer.ChannelBuffer;
 
 import java.util.Arrays;
@@ -25,7 +24,7 @@ import java.util.Arrays;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class ShortArrayField extends Field {
+final class ShortArrayField extends Field {
 
   private final int size;
 

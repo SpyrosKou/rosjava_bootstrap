@@ -20,7 +20,7 @@ package org.ros.exception;
  * @author damonkohler@google.com (Damon Kohler)
  * @author d.stonier@gmail.com (Daniel Stonier)
  */
-public class RosMessageRuntimeException extends RuntimeException {
+public final class RosMessageRuntimeException extends RuntimeException {
 
   public RosMessageRuntimeException(final Throwable throwable) {
     super(throwable);

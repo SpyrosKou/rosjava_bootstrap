@@ -16,13 +16,12 @@
 
 package org.ros.internal.message.field;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.junit.jupiter.api.Test;
 import org.ros.internal.message.MessageBuffers;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The following unit tests were created by inspecting the serialization of

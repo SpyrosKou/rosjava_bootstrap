@@ -17,7 +17,6 @@
 package org.ros.internal.message.field;
 
 import com.google.common.base.Preconditions;
-
 import org.jboss.netty.buffer.ChannelBuffer;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import java.util.List;
  * @param <T>
  *          the value type
  */
-public class ListField<T> extends Field {
+final class ListField<T> extends Field {
 
   private List<T> value;
 

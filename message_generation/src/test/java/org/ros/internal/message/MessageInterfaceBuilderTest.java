@@ -16,13 +16,13 @@
 
 package org.ros.internal.message;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ros.internal.message.topic.TopicDefinitionResourceProvider;
-import org.ros.message.MessageDeclaration;
+import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -32,7 +32,7 @@ public class MessageInterfaceBuilderTest {
   private TopicDefinitionResourceProvider topicDefinitionResourceProvider;
   private MessageFactory messageFactory;
 
-  @Before
+  @BeforeEach
   public void before() {
     topicDefinitionResourceProvider = new TopicDefinitionResourceProvider();
     messageFactory = new DefaultMessageFactory(topicDefinitionResourceProvider);
@@ -43,7 +43,7 @@ public class MessageInterfaceBuilderTest {
     MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
     builder.setPackageName("foo");
     builder.setInterfaceName("bar");
-    builder.setMessageDeclaration(MessageDeclaration.of("foo/bar", "int32 foo\nint32 Foo"));
+    builder.setMessageDeclaration(MessageDeclarationImpl.of("foo/bar", "int32 foo\nint32 Foo"));
     builder.setAddConstantsAndMethods(true);
     String result = builder.build(messageFactory);
     assertEquals("package foo;\n\n"

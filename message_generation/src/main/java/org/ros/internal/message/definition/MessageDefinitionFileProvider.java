@@ -17,18 +17,17 @@
 package org.ros.internal.message.definition;
 
 import com.google.common.collect.Maps;
-
-import org.ros.internal.message.StringFileProvider;
-
 import org.apache.commons.io.FilenameUtils;
+import org.ros.internal.message.StringFileProvider;
 import org.ros.message.MessageDefinitionProvider;
 import org.ros.message.MessageIdentifier;
+import org.ros.message.MessageIdentifierImpl;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -36,7 +35,7 @@ import java.util.Map.Entry;
 public class MessageDefinitionFileProvider implements MessageDefinitionProvider {
 
   private final StringFileProvider stringFileProvider;
-  private final Map<String, Collection<MessageIdentifier>> messageIdentifiers;
+  private final Map<String, Set<MessageIdentifier>> messageIdentifiers;
   private final Map<String, String> definitions;
 
   public MessageDefinitionFileProvider(StringFileProvider stringFileProvider) {
@@ -57,7 +56,7 @@ public class MessageDefinitionFileProvider implements MessageDefinitionProvider 
     String filename = file.getAbsolutePath();
     String name = FilenameUtils.getBaseName(filename);
     String pkg = getParentBaseName(getParent(filename));
-    return MessageIdentifier.of(pkg, name);
+    return MessageIdentifierImpl.of(pkg, name);
   }
 
   private void addDefinition(File file, String definition) {
@@ -68,7 +67,7 @@ public class MessageDefinitionFileProvider implements MessageDefinitionProvider 
     }
     definitions.put(topicType.getType(), definition);
     if (!messageIdentifiers.containsKey(topicType.getPackage())) {
-      messageIdentifiers.put(topicType.getPackage(), new HashSet<MessageIdentifier>());
+      messageIdentifiers.put(topicType.getPackage(), new HashSet<>());
     }
     messageIdentifiers.get(topicType.getPackage()).add(topicType);
   }
@@ -80,25 +79,26 @@ public class MessageDefinitionFileProvider implements MessageDefinitionProvider 
    */
   public void update() {
     stringFileProvider.update();
-    for (Entry<File, String> entry : stringFileProvider.getStrings().entrySet()) {
+    for (Entry<File, String> entry : stringFileProvider.getStringMap().entrySet()) {
       addDefinition(entry.getKey(), entry.getValue());
     }
   }
 
   /**
    * @see StringFileProvider#addDirectory(File)
+   * @param directory
    */
   public void addDirectory(File directory) {
     stringFileProvider.addDirectory(directory);
   }
 
   @Override
-  public Collection<String> getPackages() {
+  public Set<String> getPackages() {
     return messageIdentifiers.keySet();
   }
 
   @Override
-  public Collection<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
+  public Set<MessageIdentifier> getMessageIdentifiersByPackage(String pkg) {
     return messageIdentifiers.get(pkg);
   }
 

@@ -17,46 +17,45 @@
 package org.ros.internal.message;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-
-import org.ros.internal.message.definition.MessageDefinitionParser;
-import org.ros.internal.message.definition.MessageDefinitionTupleParser;
-import org.ros.internal.message.definition.MessageDefinitionParser.MessageDefinitionVisitor;
-
 import org.apache.commons.codec.digest.DigestUtils;
+import org.ros.internal.message.definition.MessageDefinitionParser;
+import org.ros.internal.message.definition.MessageDefinitionParser.MessageDefinitionVisitor;
+import org.ros.internal.message.definition.MessageDefinitionTupleParser;
 import org.ros.internal.message.field.PrimitiveFieldType;
 import org.ros.message.MessageDefinitionProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
+ * @author Spyros Koukas
  */
 public final class Md5Generator {
 
   private final MessageDefinitionProvider messageDefinitionProvider;
 
-  public Md5Generator(MessageDefinitionProvider messageDefinitionProvider) {
+  public Md5Generator(final MessageDefinitionProvider messageDefinitionProvider) {
     this.messageDefinitionProvider = messageDefinitionProvider;
   }
 
-  public String generate(String messageType) {
-    String messageDefinition = messageDefinitionProvider.get(messageType);
+  public final String generate(final String messageType) {
+    final String messageDefinition = messageDefinitionProvider.get(messageType);
     Preconditions.checkNotNull(messageDefinition, "No definition for message type: " + messageType);
-    List<String> parts = MessageDefinitionTupleParser.parse(messageDefinition, -1);
-    StringBuilder text = new StringBuilder();
-    for (String part : parts) {
+    final List<String> parts = MessageDefinitionTupleParser.parse(messageDefinition, -1);
+    final StringBuilder text = new StringBuilder();
+    for (final String part : parts) {
       text.append(generateText(messageType, part));
     }
     return DigestUtils.md5Hex(text.toString());
   }
 
-  private String generateText(String messageType, String messageDefinition) {
-    final List<String> constants = Lists.newArrayList();
-    final List<String> variables = Lists.newArrayList();
-    MessageDefinitionVisitor visitor = new MessageDefinitionVisitor() {
+  private final String generateText(String messageType, String messageDefinition) {
+    final List<String> constants = new ArrayList<>();
+    final List<String> variables = new ArrayList<>();
+    final MessageDefinitionVisitor visitor = new MessageDefinitionVisitor() {
       @Override
-      public void variableValue(String type, String name) {
+      public final void variableValue(String type, String name) {
         if (!PrimitiveFieldType.existsFor(type)) {
           type = generate(type);
         }
@@ -64,9 +63,9 @@ public final class Md5Generator {
       }
 
       @Override
-      public void variableList(String type, int size, String name) {
+      public final void variableList(String type, int size, String name) {
         if (!PrimitiveFieldType.existsFor(type)) {
-          String md5Checksum = generate(type);
+          final String md5Checksum = generate(type);
           variables.add(String.format("%s %s\n", md5Checksum, name));
         } else {
           if (size != -1) {
@@ -78,19 +77,19 @@ public final class Md5Generator {
       }
 
       @Override
-      public void constantValue(String type, String name, String value) {
+      public final void constantValue(String type, String name, String value) {
         constants.add(String.format("%s %s=%s\n", type, name, value));
       }
     };
-    MessageDefinitionParser messageDefinitionParser = new MessageDefinitionParser(visitor);
+    final MessageDefinitionParser messageDefinitionParser = new MessageDefinitionParser(visitor);
     messageDefinitionParser.parse(messageType, messageDefinition);
-    String text = "";
-    for (String constant : constants) {
-      text += constant;
+    final StringBuilder stringBuilder=new StringBuilder();
+    for (final String constant : constants) {
+      stringBuilder.append( constant);
     }
-    for (String variable : variables) {
-      text += variable;
+    for (final String variable : variables) {
+      stringBuilder.append( variable);
     }
-    return text.trim();
+    return stringBuilder.toString().trim();
   }
 }

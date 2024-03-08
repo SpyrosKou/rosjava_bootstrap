@@ -34,14 +34,14 @@ public final class MessageProxyInvocationHandler implements InvocationHandler {
   }
 
   @Override
-  public final Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-    String methodName = method.getName();
-    MessageFields mesageFields = messageImpl.getMessageFields();
-    Field getterField = mesageFields.getGetterField(methodName);
+  public final Object invoke(final Object proxy,final  Method method,final  Object[] args) throws Throwable {
+    final String methodName = method.getName();
+    final MessageFields messageFields = messageImpl.getMessageFields();
+    final Field getterField = messageFields.getGetterField(methodName);
     if (getterField != null) {
       return getterField.getValue();
     }
-    Field setterField = mesageFields.getSetterField(methodName);
+    final Field setterField = messageFields.getSetterField(methodName);
     if (setterField != null) {
       setterField.setValue(args[0]);
       return null;

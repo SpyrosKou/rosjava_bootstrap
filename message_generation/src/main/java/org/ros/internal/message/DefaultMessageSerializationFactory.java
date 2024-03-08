@@ -18,17 +18,12 @@ package org.ros.internal.message;
 
 import org.ros.internal.message.service.ServiceRequestMessageFactory;
 import org.ros.internal.message.service.ServiceResponseMessageFactory;
-import org.ros.message.MessageDefinitionProvider;
-import org.ros.message.MessageDeserializer;
-import org.ros.message.MessageFactory;
-import org.ros.message.MessageIdentifier;
-import org.ros.message.MessageSerializationFactory;
-import org.ros.message.MessageSerializer;
+import org.ros.message.*;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class DefaultMessageSerializationFactory implements MessageSerializationFactory {
+public final class DefaultMessageSerializationFactory implements MessageSerializationFactory {
 
   private final MessageFactory topicMessageFactory;
   private final ServiceRequestMessageFactory serviceRequestMessageFactory;
@@ -42,39 +37,39 @@ public class DefaultMessageSerializationFactory implements MessageSerializationF
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends Message> MessageSerializer<T> newMessageSerializer(String messageType) {
+  public final <T extends Message> MessageSerializer<T> newMessageSerializer(String messageType) {
     return (MessageSerializer<T>) new DefaultMessageSerializer();
   }
 
   @Override
-  public <T extends Message> MessageDeserializer<T> newMessageDeserializer(String messageType) {
-    return new DefaultMessageDeserializer<T>(MessageIdentifier.of(messageType),
+  public final  <T extends Message> MessageDeserializer<T> newMessageDeserializer(String messageType) {
+    return new DefaultMessageDeserializer<T>(MessageIdentifierImpl.of(messageType),
         topicMessageFactory);
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends Message> MessageSerializer<T> newServiceRequestSerializer(String serviceType) {
+  public final <T extends Message> MessageSerializer<T> newServiceRequestSerializer(String serviceType) {
     return (MessageSerializer<T>) new DefaultMessageSerializer();
   }
 
   @Override
-  public <T extends Message> org.ros.message.MessageDeserializer<T>
+  public final <T extends Message> org.ros.message.MessageDeserializer<T>
       newServiceRequestDeserializer(String serviceType) {
-    return new DefaultMessageDeserializer<T>(MessageIdentifier.of(serviceType),
+    return new DefaultMessageDeserializer<T>(MessageIdentifierImpl.of(serviceType),
         serviceRequestMessageFactory);
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends Message> org.ros.message.MessageSerializer<T> newServiceResponseSerializer(String serviceType) {
+  public final <T extends Message> org.ros.message.MessageSerializer<T> newServiceResponseSerializer(String serviceType) {
     return (MessageSerializer<T>) new DefaultMessageSerializer();
   }
 
   @Override
-  public <T extends Message> org.ros.message.MessageDeserializer<T> newServiceResponseDeserializer(
+  public final <T extends Message> org.ros.message.MessageDeserializer<T> newServiceResponseDeserializer(
       String serviceType) {
-    return new DefaultMessageDeserializer<T>(MessageIdentifier.of(serviceType),
+    return new DefaultMessageDeserializer<T>(MessageIdentifierImpl.of(serviceType),
         serviceResponseMessageFactory);
   }
 }

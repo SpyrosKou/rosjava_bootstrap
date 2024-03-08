@@ -24,6 +24,7 @@ import org.ros.internal.message.Message;
 public interface MessageSerializationFactory {
 
   /**
+   * @param <T>
    * @param messageType
    *          the type of message that the new {@link MessageSerializer} should
    *          serialize
@@ -40,15 +41,18 @@ public interface MessageSerializationFactory {
   <T extends Message> MessageDeserializer<T> newMessageDeserializer(String messageType);
 
   /**
+   * @param <T>
    * @param serviceType
    *          the type of service that the new {@link MessageSerializer} should
    *          serialize requests for
    * @return a new {@link MessageSerializer} for requests to the provided
    *         service type
+   *
    */
   <T extends Message> MessageSerializer<T> newServiceRequestSerializer(String serviceType);
 
   /**
+   * @param <T>
    * @param serviceType
    *          the type of service that the new {@link MessageDeserializer}
    *          should deserialize requests for
@@ -58,6 +62,7 @@ public interface MessageSerializationFactory {
   <T extends Message> MessageDeserializer<T> newServiceRequestDeserializer(String serviceType);
 
   /**
+   * @param <T>
    * @param serviceType
    *          the type of service that the new {@link MessageSerializer} should
    *          serialize responses for

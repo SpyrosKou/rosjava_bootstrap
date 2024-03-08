@@ -28,5 +28,5 @@ public interface MessageInterfaceClassProvider {
    *          the type of message to provide an interface class for
    * @return the interface class for the specified message type
    */
-  <T> Class<T> get(String messageType);
+  <T extends Message> Class<T> get(String messageType);
 }

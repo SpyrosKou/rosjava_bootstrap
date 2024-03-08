@@ -16,19 +16,20 @@
 
 package org.ros.internal.message.service;
 
+import org.ros.internal.message.Message;
 import org.ros.internal.message.MessageInterfaceClassProvider;
 import org.ros.internal.message.RawMessage;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class ServiceResponseMessageInterfaceClassProvider implements MessageInterfaceClassProvider {
+public final class ServiceResponseMessageInterfaceClassProvider implements MessageInterfaceClassProvider {
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T> Class<T> get(String messageType) {
+  public <T extends Message> Class<T> get(final String messageType) {
     try {
-      String className = messageType.replace("/", ".") + "$Response";
+      final String className = messageType.replace("/", ".") + "$Response";
       return (Class<T>) getClass().getClassLoader().loadClass(className);
     } catch (ClassNotFoundException e) {
       return (Class<T>) RawMessage.class;

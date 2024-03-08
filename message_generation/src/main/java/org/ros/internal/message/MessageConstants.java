@@ -7,11 +7,14 @@ package org.ros.internal.message;
  * @author Spyros Koukas
  */
 public final class MessageConstants {
-    public static final String REQUEST = "Request";
+    static final String REQUEST = "Request";
     public static final String SRV = "srv";
-    public static final String RESPONSE = "Response";
+    static final String RESPONSE = "Response";
     public static final String MSG = "msg";
-    public static final String JAVA = ".java";
+    public static final String ACTION = "action";
+    static final String JAVA = ".java";
+    static final String HEADER_MESSAGE_TYPE = "std_msgs/Header";
+    static final String SEQUENCE_FIELD_NAME = "seq";
 
     private MessageConstants() {
         throw new UnsupportedOperationException();

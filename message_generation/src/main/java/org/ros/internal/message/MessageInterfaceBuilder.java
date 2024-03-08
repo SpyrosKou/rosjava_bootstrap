@@ -18,9 +18,7 @@ package org.ros.internal.message;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-
-
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.ros.exception.RosMessageRuntimeException;
 import org.ros.internal.message.context.MessageContext;
 import org.ros.internal.message.context.MessageContextProvider;
@@ -29,6 +27,7 @@ import org.ros.internal.message.field.FieldType;
 import org.ros.internal.message.field.MessageFields;
 import org.ros.internal.message.field.PrimitiveFieldType;
 import org.ros.message.MessageDeclaration;
+import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
 
 import java.util.Set;
@@ -36,31 +35,30 @@ import java.util.Set;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class MessageInterfaceBuilder {
+public final class MessageInterfaceBuilder {
 
-  private MessageDeclaration messageDeclaration;
+  private MessageDeclarationImpl messageDeclaration;
   private String packageName;
   private String interfaceName;
   private boolean addConstantsAndMethods;
   private String nestedContent;
 
-  // TODO(damonkohler): Upgrade Apache Commons Lang. See
-  // https://issues.apache.org/jira/browse/LANG-437
-  private static String escapeJava(String str) {
+
+  private static final String escapeJava(String str) {
     return StringEscapeUtils.escapeJava(str).replace("\\/", "/").replace("'", "\\'");
   }
 
-  public MessageDeclaration getMessageDeclaration() {
+  public final  MessageDeclaration getMessageDeclaration() {
     return messageDeclaration;
   }
 
-  public MessageInterfaceBuilder setMessageDeclaration(MessageDeclaration messageDeclaration) {
+  public final MessageInterfaceBuilder setMessageDeclaration(MessageDeclarationImpl messageDeclaration) {
     Preconditions.checkNotNull(messageDeclaration);
     this.messageDeclaration = messageDeclaration;
     return this;
   }
 
-  public String getPackageName() {
+  public final String getPackageName() {
     return packageName;
   }
 
@@ -70,42 +68,42 @@ public class MessageInterfaceBuilder {
    *          name should be specified
    * @return this {@link MessageInterfaceBuilder}
    */
-  public MessageInterfaceBuilder setPackageName(String packageName) {
+  public final MessageInterfaceBuilder setPackageName(String packageName) {
     this.packageName = packageName;
     return this;
   }
 
-  public String getInterfaceName() {
+  public final String getInterfaceName() {
     return interfaceName;
   }
 
-  public MessageInterfaceBuilder setInterfaceName(String interfaceName) {
+  public final MessageInterfaceBuilder setInterfaceName(String interfaceName) {
     Preconditions.checkNotNull(interfaceName);
     this.interfaceName = interfaceName;
     return this;
   }
 
-  public boolean getAddConstantsAndMethods() {
+  public final boolean getAddConstantsAndMethods() {
     return addConstantsAndMethods;
   }
 
-  public void setAddConstantsAndMethods(boolean enabled) {
+  public final void setAddConstantsAndMethods(boolean enabled) {
     addConstantsAndMethods = enabled;
   }
 
-  public String getNestedContent() {
+  public final String getNestedContent() {
     return nestedContent;
   }
 
-  public void setNestedContent(String nestedContent) {
+  public final void setNestedContent(String nestedContent) {
     this.nestedContent = nestedContent;
   }
 
-  public String build(MessageFactory messageFactory) {
+  public final String build(final MessageFactory messageFactory) {
     Preconditions.checkNotNull(messageDeclaration);
     Preconditions.checkNotNull(interfaceName);
-    StringBuilder builder = new StringBuilder();
-    if (packageName != null) {
+    final StringBuilder builder = new StringBuilder();
+    if (this.packageName != null) {
       builder.append(String.format("package %s;\n\n", packageName));
     }
     builder.append(String.format(
@@ -115,8 +113,8 @@ public class MessageInterfaceBuilder {
     builder.append(String.format("  static final java.lang.String _DEFINITION = \"%s\";\n",
         escapeJava(messageDeclaration.getDefinition())));
     if (addConstantsAndMethods) {
-      MessageContextProvider messageContextProvider = new MessageContextProvider(messageFactory);
-      MessageContext messageContext = messageContextProvider.get(messageDeclaration);
+      final MessageContextProvider messageContextProvider = new MessageContextProvider(messageFactory);
+      final MessageContext messageContext = messageContextProvider.get(messageDeclaration);
       appendConstants(messageContext, builder);
       appendSettersAndGetters(messageContext, builder);
     }
@@ -129,7 +127,7 @@ public class MessageInterfaceBuilder {
   }
 
   @SuppressWarnings("deprecation")
-  private String getJavaValue(PrimitiveFieldType primitiveFieldType, String value) {
+  private final String getJavaValue(final PrimitiveFieldType primitiveFieldType,final String value) {
     switch (primitiveFieldType) {
       case BOOL:
         return Boolean.valueOf(!value.equals("0") && !value.equals("false")).toString();
@@ -154,31 +152,31 @@ public class MessageInterfaceBuilder {
     }
   }
 
-  private void appendConstants(MessageContext messageContext, StringBuilder builder) {
-    MessageFields messageFields = new MessageFields(messageContext);
-    for (Field field : messageFields.getFields()) {
+  private final void appendConstants(final MessageContext messageContext,final  StringBuilder builder) {
+    final MessageFields messageFields = new MessageFields(messageContext);
+    for (final Field field : messageFields.getFields()) {
       if (field.isConstant()) {
         Preconditions.checkState(field.getType() instanceof PrimitiveFieldType);
         // We use FieldType and cast back to PrimitiveFieldType below to avoid a
         // bug in the Sun JDK: http://gs.sun.com/view_bug.do?bug_id=6522780
-        FieldType fieldType = (FieldType) field.getType();
-        String value = getJavaValue((PrimitiveFieldType) fieldType, field.getValue().toString());
+        final FieldType fieldType = (FieldType) field.getType();
+        final String value = getJavaValue((PrimitiveFieldType) fieldType, field.getValue().toString());
         builder.append(String.format("  static final %s %s = %s;\n", fieldType.getJavaTypeName(),
             field.getName(), value));
       }
     }
   }
 
-  private void appendSettersAndGetters(MessageContext messageContext, StringBuilder builder) {
-    MessageFields messageFields = new MessageFields(messageContext);
-    Set<String> getters = Sets.newHashSet();
-    for (Field field : messageFields.getFields()) {
+  private final void appendSettersAndGetters(MessageContext messageContext, StringBuilder builder) {
+    final MessageFields messageFields = new MessageFields(messageContext);
+    final Set<String> getters = Sets.newHashSet();
+    for (final Field field : messageFields.getFields()) {
       if (field.isConstant()) {
         continue;
       }
-      String type = field.getJavaTypeName();
-      String getter = messageContext.getFieldGetterName(field.getName());
-      String setter = messageContext.getFieldSetterName(field.getName());
+      final String type = field.getJavaTypeName();
+      final String getter = messageContext.getFieldGetterName(field.getName());
+      final String setter = messageContext.getFieldSetterName(field.getName());
       if (getters.contains(getter)) {
         // In the case that two or more message fields have the same name except
         // for capitalization, we only generate a getter and setter pair for the

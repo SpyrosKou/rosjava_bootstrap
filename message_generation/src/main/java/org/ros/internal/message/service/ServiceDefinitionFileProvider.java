@@ -16,11 +16,10 @@
 
 package org.ros.internal.message.service;
 
-import org.ros.internal.message.definition.MessageDefinitionFileProvider;
-
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.ros.internal.message.StringFileProvider;
+import org.ros.internal.message.definition.MessageDefinitionFileProvider;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -28,7 +27,7 @@ import java.io.FileFilter;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class ServiceDefinitionFileProvider extends MessageDefinitionFileProvider {
+public final class ServiceDefinitionFileProvider extends MessageDefinitionFileProvider {
 
   private static final String PARENT = "srv";
   private static final String SUFFIX = "srv";

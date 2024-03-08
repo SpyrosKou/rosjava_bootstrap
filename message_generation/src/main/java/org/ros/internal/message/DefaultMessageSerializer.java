@@ -23,11 +23,11 @@ import org.ros.message.MessageSerializer;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class DefaultMessageSerializer implements MessageSerializer<Message> {
+public final class DefaultMessageSerializer implements MessageSerializer<Message> {
 
   @Override
-  public void serialize(Message message, ChannelBuffer buffer) {
-    for (Field field : message.toRawMessage().getFields()) {
+  public final  void serialize(final Message message,final  ChannelBuffer buffer) {
+    for (final Field field : message.toRawMessage().getFields()) {
       if (!field.isConstant()) {
         field.serialize(buffer);
       }
