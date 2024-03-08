@@ -86,6 +86,7 @@ public class MessageDefinitionFileProvider implements MessageDefinitionProvider 
 
   /**
    * @see StringFileProvider#addDirectory(File)
+   * @param directory
    */
   public void addDirectory(File directory) {
     stringFileProvider.addDirectory(directory);
