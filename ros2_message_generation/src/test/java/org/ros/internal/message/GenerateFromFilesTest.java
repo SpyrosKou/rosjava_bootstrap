@@ -29,18 +29,13 @@ import java.util.List;
  */
 public class GenerateFromFilesTest {
     private static final String targetDir = "build/generated-sources/java";
-    private static final String sourcesDir = "src/test/resources/common_interfaces";
-    private static final String exampleInterfacesPackageDir = "src/test/resources/example_interfaces";
+    private static final String sourcesDir = "src/test/resources/";
     private static File targetDirFile;
 
     private final List<File> packageDirectories = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
-        final File exampleInterfacesPackage = new File(exampleInterfacesPackageDir);
-        Assumptions.assumeTrue(exampleInterfacesPackage.exists());
-        Assumptions.assumeTrue(!exampleInterfacesPackage.isFile());
-        Assumptions.assumeTrue(exampleInterfacesPackage.isDirectory());
 
         final File sourcesFile = new File(sourcesDir);
         Assumptions.assumeTrue(sourcesFile.exists());
@@ -53,7 +48,6 @@ public class GenerateFromFilesTest {
         Assumptions.assumeTrue(!targetDirFile.isFile());
         Assumptions.assumeTrue(targetDirFile.isDirectory());
         this.packageDirectories.addAll(Arrays.stream(sourcesFile.listFiles(File::isDirectory)).toList());
-        this.packageDirectories.add(exampleInterfacesPackage);
     }
 
     @AfterEach
