@@ -25,8 +25,8 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: "idea"
 
-    sourceCompatibility = JavaVersion.VERSION_24
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 
     // These external repositories are copied from bootstrap.gradle.
     repositories {

@@ -30,7 +30,7 @@ application {
 
 dependencies {
    implementation 'org.slf4j:slf4j-api:1.7.36'
-   implementation 'org.codehaus.groovy:groovy-all:3.0.21'
+   implementation 'org.codehaus.groovy:groovy-all:3.0.24'
    implementation project(":ros2_message_generation")
    implementation 'com.google.guava:guava:33.3.1-jre'
    implementation 'commons-io:commons-io:2.16.1'
