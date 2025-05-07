@@ -1,7 +1,7 @@
 # common_interfaces 
 ## Added for testing
 Repository https://github.com/ros2/common_interfaces/ 
-
+The packages have been moved at the same directory level with common_interfaces for tests to work.
 A set of packages which contain common interface files (.msg and .srv).
 
 
