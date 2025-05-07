@@ -19,6 +19,8 @@ package org.ros.internal.message;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.apache.commons.text.StringEscapeUtils;
 import org.ros.exception.RosMessageRuntimeException;
 import org.ros.internal.message.context.MessageContext;
@@ -33,6 +35,7 @@ import org.ros.message.MessageFactory;
 import org.ros2.interfaces.Ros2Interface;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -170,8 +173,8 @@ public final class MessageInterfaceBuilder {
 
     private final void appendConstants(final MessageContext messageContext, final StringBuilder builder) {
         final MessageFields messageFields = new MessageFields(messageContext);
-        final boolean constantsExist=messageFields.getFields().stream().anyMatch(Field::isConstant);
-        if(constantsExist){
+        final boolean constantsExist = messageFields.getFields().stream().anyMatch(Field::isConstant);
+        if (constantsExist) {
             builder.append("\n //--------Constants Definitions Start----------\n\n");
         }
         for (final Field field : messageFields.getFields()) {
@@ -185,7 +188,7 @@ public final class MessageInterfaceBuilder {
                         field.getName(), value));
             }
         }
-        if(constantsExist){
+        if (constantsExist) {
             builder.append("\n //--------Constants Definitions End----------\n\n");
         }
     }
@@ -194,17 +197,26 @@ public final class MessageInterfaceBuilder {
 
         final MessageFields messageFields = new MessageFields(messageContext);
         final List<String> fieldDeclarations = new ArrayList<>(messageFields.getFields().size());
+        final Multimap<String, String> fieldNames = HashMultimap.create();
         for (final Field field : messageFields.getFields()) {
             if (field.isConstant()) {
                 continue;
             }
             final String type = field.getJavaTypeName();
             final String name = field.getName();
+            final String nameToCaps = name.toUpperCase();
+            fieldNames.put(nameToCaps, name);
             final String declaration = String.format("@JsonProperty(\"%s\") %s %s\n", name, type, name);
             fieldDeclarations.add(declaration);
         }
         final StringJoiner stringJoiner = new StringJoiner(",");
         fieldDeclarations.forEach(stringJoiner::add);
+        for (final String nameCaps : fieldNames.keySet()) {
+            final Collection<String> values = fieldNames.get(nameCaps);
+            if (values.size() > 1) {
+                System.err.println("WARNING: Fields:" + values + " have only cap differences with: " + values.stream().findAny().get() + ". This is discouraged in ROS 2.0 ");
+            }
+        }
         return stringJoiner.toString();
     }
 
