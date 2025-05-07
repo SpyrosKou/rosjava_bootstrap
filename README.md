@@ -5,11 +5,11 @@ This repo aims to target the ROS noetic version, in particular it will be used t
 
 This `ROS_MAVEN_DEPLOYMENT_REPOSITORY` gradle property can be set to specific local maven repository directory to publish to.
 
-## Notes
+## Notes   
 This repository is configured as a `gradle` project. 
-
-
 See [rosjava_core](https://github.com/rosjava/rosjava_core) readme.
+
+## Parsed ROS1 Messages   
 
 name | version | dependencies | url                                                                                                                                                                           | description|MSG |SRV|ACTION
 --- | --- | --- |---|---|---  |---|---
