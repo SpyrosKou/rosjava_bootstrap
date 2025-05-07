@@ -3,7 +3,7 @@
 This repo aims to target the ROS noetic version, in particular it will be used to create a set of jar files that include ros noetic dependencies as jars.
 
 
-This `ROS_MAVEN_DEPLOYMENT_REPOSITORY` gradle property can be set to specific local maven repository directory to publish to.
+The `ROS_MAVEN_DEPLOYMENT_REPOSITORY` gradle property can be set to specific local maven repository directory to publish to.
 
 ## Notes   
 This repository is configured as a `gradle` project. 
