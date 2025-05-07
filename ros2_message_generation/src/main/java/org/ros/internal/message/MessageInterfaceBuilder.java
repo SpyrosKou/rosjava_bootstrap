@@ -214,7 +214,7 @@ public final class MessageInterfaceBuilder {
         for (final String nameCaps : fieldNames.keySet()) {
             final Collection<String> values = fieldNames.get(nameCaps);
             if (values.size() > 1) {
-                System.err.println("WARNING: Fields:" + values + " have only cap differences with: " + values.stream().findAny().get() + ". This is discouraged in ROS 2.0 ");
+                System.err.println("WARNING: Interface:["+messageContext.getType()+"] fields:" + values + " have only cap differences with: " + values.stream().findAny().get() + ". This is discouraged in ROS 2.0 ");
             }
         }
         return stringJoiner.toString();
