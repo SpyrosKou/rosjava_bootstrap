@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2025 Spyros Koukas.
  * Copyright (C) 2011 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -36,7 +37,7 @@ import java.util.*;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
- * @author Spyros Koukas
+ * @author https://github.com/SpyrosKou/ Spyros Koukas
  */
 public final class GenerateInterfaces {
 

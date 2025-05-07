@@ -1,16 +1,18 @@
 
 ## About
-This repo aims to target the ROS noetic version, in particular it will be used to create a set of jar files that include ros noetic dependencies as jars.
+This repo targets ROS2 and ROS1.
+
+For ROS1 this repo targets ROS noetic version, in particular it will be used to create a set of jar files that include ros noetic dependencies as jars.
+For ROS1 noetic see the `noetic` branch.
 
 
-This `ROS_MAVEN_DEPLOYMENT_REPOSITORY` gradle property can be set to specific local maven repository directory to publish to.
+The `ROS_MAVEN_DEPLOYMENT_REPOSITORY` gradle property can be set to specific local maven repository directory to publish to.
+
 ## Notes
-### [Bazel](https://bazel.build) usage
-This fork, kept the `bazel` related files as they were.  
-Currently this repository has been updated and used as a `gradle` project, without using the existing `bazel` legacy. 
-
-
+This repository is configured as a `gradle` project.
 See [rosjava_core](https://github.com/rosjava/rosjava_core) readme.
+
+## Parsed ROS1 Messages
 
 name | version | dependencies | url                                                                                                                                                                           | description|MSG |SRV|ACTION
 --- | --- | --- |---|---|---  |---|---

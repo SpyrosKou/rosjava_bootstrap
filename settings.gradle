@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2025 Spyros Koukas
  * Copyright (C) 2013 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,7 +15,6 @@
  * the License.
  */
 
-//include 'gradle_plugins'
-include 'message_generation'
-include 'gradle_plugins'
-include 'ros_packages_parser'
+include 'ros2_message_generation'
+include 'ros2_messages_core'
+include 'ros2_packages_parser'
