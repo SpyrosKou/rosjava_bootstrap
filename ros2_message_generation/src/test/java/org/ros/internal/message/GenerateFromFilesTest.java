@@ -15,10 +15,7 @@
  */
 package org.ros.internal.message;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -80,6 +77,7 @@ public class GenerateFromFilesTest {
         }
         final GenerateInterfaces interfacesGenerator = new GenerateInterfaces();
         interfacesGenerator.generate(targetDirFile, packages, sources);
+        Assertions.assertEquals(0,interfacesGenerator.getFailedInterfaceGenerations(),"Failed to generate some interfaces");
     }
 
 }
