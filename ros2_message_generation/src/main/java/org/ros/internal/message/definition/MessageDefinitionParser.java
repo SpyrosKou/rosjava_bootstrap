@@ -32,10 +32,11 @@ import java.io.StringReader;
  * @author damonkohler@google.com (Damon Kohler)
  * @author https://github.com/SpyrosKou (Spyros Koukas)
  */
-public class MessageDefinitionParser {
+public final class MessageDefinitionParser {
 
     private final MessageDefinitionVisitor visitor;
     private final String BOUND_DEFINITION = "<=";
+    private final String INTERFACE_DEFINITION_SEPARATOR = "---";
 
     public interface MessageDefinitionVisitor {
         /**
@@ -79,7 +80,7 @@ public class MessageDefinitionParser {
      * @param messageType       the type of message defined (e.g. std_msgs/String)
      * @param messageDefinition the message definition (e.g. "string data")
      */
-    public void parse(String messageType, String messageDefinition) {
+    public final void parse(String messageType, String messageDefinition) {
         Preconditions.checkNotNull(messageType);
         Preconditions.checkNotNull(messageDefinition);
         BufferedReader reader = new BufferedReader(new StringReader(messageDefinition));
@@ -94,7 +95,7 @@ public class MessageDefinitionParser {
                 if (line.startsWith("#")) {
                     continue;
                 }
-                if (line.length() > 0) {
+                if (line.length() > 0 && !this.isDivisor(line)) {
                     parseField(messageType, line);
                 }
             }
@@ -103,77 +104,87 @@ public class MessageDefinitionParser {
         }
     }
 
-    private void parseField(String messageType, String fieldDefinition) {
+    private final boolean isDivisor(final String line) {
+        return INTERFACE_DEFINITION_SEPARATOR.equals(line);
+    }
+
+
+    private final void parseField(String messageType, String fieldDefinition) {
         // TODO(damonkohler): Regex input validation.
-        String[] typeAndName = fieldDefinition.split("\\s+", 2);
-        Preconditions.checkState(typeAndName.length == 2,
-                String.format("Invalid field definition: \"%s\"", fieldDefinition));
-        String type = typeAndName[0];
-        String name = typeAndName[1];
-        String value = null;
-        if (name.contains("=") && (!name.contains("#") || name.indexOf('#') > name.indexOf('='))) {
-            String[] nameAndValue = name.split("=", 2);
-            name = nameAndValue[0].trim();
-            value = nameAndValue[1].trim();
-        } else if (name.contains("#")) {
-            // Stripping comments from constants is deferred until we also know the
-            // type since strings are handled differently.
-            Preconditions.checkState(!name.startsWith("#"), String.format(
-                    "Fields must define a name. Field definition in %s was: \"%s\"", messageType,
-                    fieldDefinition));
-            name = name.substring(0, name.indexOf('#'));
-            name = name.trim();
-        }
-        final boolean array;
-        int size = -1;
-        if (type.endsWith("]")) {
-            final int leftBracketIndex = type.lastIndexOf('[');
-            final int rightBracketIndex = type.lastIndexOf(']');
-            array = true;
-            if (rightBracketIndex - leftBracketIndex > 1) {
-                final String sizePart = type.substring(leftBracketIndex + 1, rightBracketIndex + 1).trim();
-                if (sizePart.startsWith(BOUND_DEFINITION)) {
-                    size = Integer.parseInt(sizePart.substring(sizePart.lastIndexOf(BOUND_DEFINITION) + 1, rightBracketIndex));
+        try {
+            String[] typeAndName = fieldDefinition.split("\\s+", 2);
+            Preconditions.checkState(typeAndName.length == 2,
+                    String.format("Invalid field definition: \"%s\"", fieldDefinition));
+            String type = typeAndName[0];
+            String name = typeAndName[1];
+            String value = null;
+            if (name.contains("=") && (!name.contains("#") || name.indexOf('#') > name.indexOf('='))) {
+                String[] nameAndValue = name.split("=", 2);
+                name = nameAndValue[0].trim();
+                value = nameAndValue[1].trim();
+            } else if (name.contains("#")) {
+                // Stripping comments from constants is deferred until we also know the
+                // type since strings are handled differently.
+                Preconditions.checkState(!name.startsWith("#"), String.format(
+                        "Fields must define a name. Field definition in %s was: \"%s\"", messageType,
+                        fieldDefinition));
+                name = name.substring(0, name.indexOf('#'));
+                name = name.trim();
+            }
+            final boolean array;
+            int size = -1;
+            if (type.endsWith("]")) {
+                final int leftBracketIndex = type.lastIndexOf('[');
+                final int rightBracketIndex = type.lastIndexOf(']');
+                array = true;
+                if (rightBracketIndex - leftBracketIndex > 1) {
+                    final String sizePart = type.substring(leftBracketIndex + 1, rightBracketIndex + 1).trim();
+                    if (sizePart.startsWith(BOUND_DEFINITION)) {
+                        final int sizePartRightBracketIndex = sizePart.lastIndexOf(']');
+                        size = Integer.parseInt(sizePart.substring(sizePart.lastIndexOf(BOUND_DEFINITION) + BOUND_DEFINITION.length(), sizePartRightBracketIndex));
+                    } else {
+                        size = Integer.parseInt(type.substring(leftBracketIndex + 1, rightBracketIndex));
+                    }
+                }
+                type = type.substring(0, leftBracketIndex);
+            } else {
+                array = false;
+            }
+            if (type.endsWith(BOUND_DEFINITION)) {
+                final int boundDefinitionIndex = type.lastIndexOf(BOUND_DEFINITION);
+                type = type.substring(0, boundDefinitionIndex);
+            }
+            if (type.equals("Header")) {
+                // The header field is treated as though it were a built-in and silently
+                // expanded to "std_msgs/Header."
+                Preconditions.checkState(name.equals("header"), "Header field must be named \"header.\"");
+                type = "std_msgs/Header";
+            } else if (!PrimitiveFieldType.existsFor(type) && !type.contains("/")) {
+                // Handle package relative message names.
+                type = messageType.substring(0, messageType.lastIndexOf('/') + 1) + type;
+            }
+            if (value != null) {
+                if (array) {
+                    // TODO(damonkohler): Handle array constants?
+                    throw new UnsupportedOperationException("Array constants are not supported.");
+                }
+                // Comments inline with string constants are treated as data.
+                if ((!type.equals(PrimitiveFieldType.STRING.getName()) && value.contains("#"))
+                        || (!type.equals(PrimitiveFieldType.WSTRING.getName()) && value.contains("#"))) {
+                    Preconditions.checkState(!value.startsWith("#"), "Constants must define a value.");
+                    value = value.substring(0, value.indexOf('#'));
+                    value = value.trim();
+                }
+                visitor.constantValue(type, name, value);
+            } else {
+                if (array) {
+                    visitor.variableList(type, size, name);
                 } else {
-                    size = Integer.parseInt(type.substring(leftBracketIndex + 1, rightBracketIndex));
+                    visitor.variableValue(type, name);
                 }
             }
-            type = type.substring(0, leftBracketIndex);
-        }else{
-            array = false;
-        }
-        if(type.endsWith(BOUND_DEFINITION)){
-            final int boundDefinitionIndex = type.lastIndexOf(BOUND_DEFINITION);
-            type = type.substring(0, boundDefinitionIndex);
-        }
-        if (type.equals("Header")) {
-            // The header field is treated as though it were a built-in and silently
-            // expanded to "std_msgs/Header."
-            Preconditions.checkState(name.equals("header"), "Header field must be named \"header.\"");
-            type = "std_msgs/Header";
-        } else if (!PrimitiveFieldType.existsFor(type) && !type.contains("/")) {
-            // Handle package relative message names.
-            type = messageType.substring(0, messageType.lastIndexOf('/') + 1) + type;
-        }
-        if (value != null) {
-            if (array) {
-                // TODO(damonkohler): Handle array constants?
-                throw new UnsupportedOperationException("Array constants are not supported.");
-            }
-            // Comments inline with string constants are treated as data.
-            if ((!type.equals(PrimitiveFieldType.STRING.getName()) && value.contains("#"))
-                    || (!type.equals(PrimitiveFieldType.WSTRING.getName()) && value.contains("#"))) {
-                Preconditions.checkState(!value.startsWith("#"), "Constants must define a value.");
-                value = value.substring(0, value.indexOf('#'));
-                value = value.trim();
-            }
-            visitor.constantValue(type, name, value);
-        } else {
-            if (array) {
-                visitor.variableList(type, size, name);
-            } else {
-                visitor.variableValue(type, name);
-            }
+        } catch (final RuntimeException runtimeException) {
+            throw new RuntimeException("Error on fieldDefinition:{" + fieldDefinition + "} messageType:{" + messageType + "}", runtimeException);
         }
     }
 }
