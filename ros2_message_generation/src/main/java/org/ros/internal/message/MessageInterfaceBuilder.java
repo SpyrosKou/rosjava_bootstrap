@@ -125,13 +125,13 @@ public final class MessageInterfaceBuilder {
         builder.append("\n");
 
         builder.append(String.format(
-                "public record %s(\n %s\n) extends %s {\n", interfaceName, fieldsDeclarations, Ros2Interface.class.getName()));
-        builder.append("\n //--------Constants Definitions Start----------\n\n");
+                "public record %s(\n %s) extends %s {\n", interfaceName, fieldsDeclarations, Ros2Interface.class.getName()));
+
         this.appendConstants(messageContext, builder);
-        builder.append("\n //--------Constants Definitions End----------\n\n");
-        builder.append(String.format("  static final java.lang.String _TYPE = \"%s\";\n",
+
+        builder.append(String.format("public static final java.lang.String _TYPE = \"%s\";\n",
                 messageDeclaration.getType()));
-        builder.append(String.format("  static final java.lang.String _DEFINITION = \"%s\";\n",
+        builder.append(String.format("public static final java.lang.String _DEFINITION = \"%s\";\n",
                 escapeJava(messageDeclaration.getDefinition())));
         if (nestedContent != null) {
             builder.append("\n");
@@ -170,6 +170,10 @@ public final class MessageInterfaceBuilder {
 
     private final void appendConstants(final MessageContext messageContext, final StringBuilder builder) {
         final MessageFields messageFields = new MessageFields(messageContext);
+        final boolean constantsExist=messageFields.getFields().stream().anyMatch(Field::isConstant);
+        if(constantsExist){
+            builder.append("\n //--------Constants Definitions Start----------\n\n");
+        }
         for (final Field field : messageFields.getFields()) {
             if (field.isConstant()) {
                 Preconditions.checkState(field.getType() instanceof PrimitiveFieldType);
@@ -180,6 +184,9 @@ public final class MessageInterfaceBuilder {
                 builder.append(String.format("public static final %s %s = %s;\n", fieldType.getJavaTypeName(),
                         field.getName(), value));
             }
+        }
+        if(constantsExist){
+            builder.append("\n //--------Constants Definitions End----------\n\n");
         }
     }
 
