@@ -17,7 +17,6 @@
 
 package org.ros.internal.message;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.ros.exception.RosMessageRuntimeException;
@@ -185,10 +184,9 @@ public final class GenerateInterfaces {
             this.writeInterface(goalDeclaration, outputDirectory, true);
             this.writeInterface(resultDeclaration, outputDirectory, true);
             this.writeInterface(feedbackDeclaration, outputDirectory, true);
-
-            this.writeInterface(actionGoalDeclaration, outputDirectory, true);
-            this.writeInterface(actionResultDeclaration, outputDirectory, true);
-            this.writeInterface(actionFeedbackDeclaration, outputDirectory, true);
+//            this.writeInterface(actionGoalDeclaration, outputDirectory, true);
+//            this.writeInterface(actionResultDeclaration, outputDirectory, true);
+//            this.writeInterface(actionFeedbackDeclaration, outputDirectory, true);
         }
     }
 
