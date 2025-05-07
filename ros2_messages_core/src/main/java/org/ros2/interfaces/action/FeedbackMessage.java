@@ -18,6 +18,7 @@ package org.ros2.interfaces.action;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.ros2.interfaces.Ros2Interface;
+import org.ros2.interfaces.Ros2InterfaceDefinition;
 import org.ros2.interfaces.Ros2InterfaceType;
 //TODO replace goal_id type with UUID
 
@@ -59,7 +60,7 @@ public record FeedbackMessage<T extends Ros2Interface>(@JsonProperty("goal_id") 
 
     @Override
     @JsonIgnore
-    public final String completeDefinition() {
-        return this.feedback().completeDefinition();
+    public final Ros2InterfaceDefinition parentDefinition() {
+        return this.feedback().parentDefinition();
     }
 }

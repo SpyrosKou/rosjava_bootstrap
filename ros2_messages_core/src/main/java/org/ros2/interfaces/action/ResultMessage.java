@@ -18,6 +18,7 @@ package org.ros2.interfaces.action;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.ros2.interfaces.Ros2Interface;
+import org.ros2.interfaces.Ros2InterfaceDefinition;
 import org.ros2.interfaces.Ros2InterfaceType;
 
 /**
@@ -59,7 +60,7 @@ public record ResultMessage<T extends Ros2Interface>(@JsonProperty("status") byt
 
     @Override
     @JsonIgnore
-    public final String completeDefinition() {
-        return this.result().completeDefinition();
+    public final Ros2InterfaceDefinition parentDefinition() {
+        return this.result().parentDefinition();
     }
 }

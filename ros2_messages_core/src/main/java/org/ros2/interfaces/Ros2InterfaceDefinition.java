@@ -15,8 +15,6 @@
  */
 package org.ros2.interfaces;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * Models a service or action high-level ROS2 interface.
  * @author Spyros Koukas
@@ -30,10 +28,16 @@ public interface Ros2InterfaceDefinition {
    Ros2InterfaceType interfaceType();
 
     /**
-     * The name of this interface e.g. `example_interfaces/srv/AddTwoInts` `
+     * The name of this interface e.g. `example_interfaces/srv/AddTwoInts`
     * @return
     */
    String interfaceName();
+
+   /**
+    * The package name of this interface e.g. `example_interfaces`
+    * @return
+    */
+   String packageName();
 
    /**
     * For actions or services, this method returns the complete definition of the service and action respectively.
