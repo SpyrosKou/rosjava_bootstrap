@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public class TopicDefinitionResourceProvider implements MessageDefinitionProvider {
+public final class TopicDefinitionResourceProvider implements MessageDefinitionProvider {
 
   private final StringResourceProvider stringResourceProvider;
 
