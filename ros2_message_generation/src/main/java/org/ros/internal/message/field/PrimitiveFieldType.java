@@ -595,6 +595,50 @@ public enum PrimitiveFieldType implements FieldType {
       return "java.lang.String";
     }
   },
+  WSTRING {
+    @SuppressWarnings("unchecked")
+    @Override
+    public String getDefaultValue() {
+      return "";
+    }
+
+    @Override
+    public Field newVariableList(String name, int size) {
+      return ListField.newVariable(this, name);
+    }
+
+    @Override
+    public int getSerializedSize() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> void serialize(T value, ChannelBuffer buffer) {
+      Preconditions.checkArgument(value instanceof String);
+      byte[] bytes = ((String) value).getBytes(DEFAULT_CHARSET);
+      buffer.writeInt(bytes.length);
+      buffer.writeBytes(bytes);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public String deserialize(ChannelBuffer buffer) {
+      int length = buffer.readInt();
+      ByteBuffer stringBuffer = buffer.readSlice(length).toByteBuffer();
+      return DEFAULT_CHARSET.decode(stringBuffer).toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public String parseFromString(String value) {
+      return value;
+    }
+
+    @Override
+    public String getJavaTypeName() {
+      return "java.lang.String";
+    }
+  },
   TIME {
     @SuppressWarnings("unchecked")
     @Override
