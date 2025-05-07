@@ -30,6 +30,9 @@ archivesBaseName = 'ros2_message_generation'
 
 //noinspection GroovyAssignabilityCheck
 dependencies {
+
+  implementation project(':ros2_messages_core')
+
   implementation 'io.netty:netty:3.10.6.Final'
   implementation 'com.google.guava:guava:33.3.1-jre'
   implementation 'commons-codec:commons-codec:1.17.0'
