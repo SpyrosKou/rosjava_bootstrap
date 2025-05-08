@@ -150,7 +150,7 @@ public final class MessageDefinitionParser {
             } else {
                 array = false;
             }
-            if (type.endsWith(BOUND_DEFINITION)) {
+            if (type.indexOf(BOUND_DEFINITION) < type.indexOf("[") || type.contains(BOUND_DEFINITION) && !type.contains("[")) {
                 final int boundDefinitionIndex = type.lastIndexOf(BOUND_DEFINITION);
                 type = type.substring(0, boundDefinitionIndex);
             }
