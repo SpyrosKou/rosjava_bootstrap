@@ -71,8 +71,6 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
             builder.append(String.format("package %s;\n\n", packageName));
         }
 
-//        builder.append("import " + javaImplementingInterface.getCanonicalName() + ";\n");
-//        builder.append("import " + javaDefinitionInterface.getCanonicalName() + ";\n");
         if (this.isMessageInterface()) {
             builder.append("import " + javaDefinitionClassName + ";\n");
         } else {
@@ -80,7 +78,7 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
         }
         builder.append("import " + JsonIgnore.class.getCanonicalName() + ";\n");
         builder.append("import " + JsonProperty.class.getCanonicalName() + ";\n");
-        this.getJavaTypeNamesToImport(messageContext).forEach(typeName -> builder.append("import " + typeName + ";\n"));
+//        this.getJavaTypeNamesToImport(messageContext).forEach(typeName -> builder.append("import " + typeName + ";\n"));
 
         builder.append("\n");
 
@@ -89,14 +87,14 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
 
         this.appendConstants(messageContext, builder);
 
-        builder.append(String.format("public static final String INTERFACE_TYPE = \"%s\";\n",
+        builder.append(String.format("public static final java.lang.String INTERFACE_TYPE = \"%s\";\n",
                 messageDeclaration.getType()));
 //        builder.append(String.format("public static final String INTERFACE_DEFINITION = \"%s\";\n",
 //                JavaStringEscaper.escapeJava(messageDeclaration.getDefinition())));
 
-        builder.append(" @JsonIgnore\n @Override\n public final String interfaceType(){ return INTERFACE_TYPE;}\n");
+        builder.append(" @JsonIgnore\n @Override\n public final java.lang.String interfaceType(){ return INTERFACE_TYPE;}\n");
 
-        builder.append(" @JsonIgnore\n public static final String getInterfaceType(){ return INTERFACE_TYPE;}\n");
+        builder.append(" @JsonIgnore\n public static final java.lang.String getInterfaceType(){ return INTERFACE_TYPE;}\n");
 
         this.getJavaTopLevelDefinitionCode(builder);
 
@@ -172,6 +170,16 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
         }
     }
 
+    /**
+     * @deprecated there is the possibility of conflict. e.g. std_msgs.msg.String with java.lang.String.
+     * This can be fixd, but does it worth the effort?
+     *
+     * @param messageContext the message context to get the types from
+     *
+     * @return a set of all the types that need to be imported for the given
+     *         message context
+     */
+    @Deprecated
     private final Set<String> getJavaTypeNamesToImport(MessageContext messageContext) {
         final Set<String> unprocessedJavaTypes = new HashSet<>();
         unprocessedJavaTypes.add(String.class.getCanonicalName());
