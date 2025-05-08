@@ -50,9 +50,7 @@ public final class MessageInterfaceBuilder {
     private String nestedContent;
 
 
-    private static final String escapeJava(String str) {
-        return StringEscapeUtils.escapeJava(str).replace("\\/", "/").replace("'", "\\'");
-    }
+
 
 
     public final MessageInterfaceBuilder setMessageDeclaration(final MessageDeclarationImpl messageDeclaration) {
@@ -130,7 +128,7 @@ public final class MessageInterfaceBuilder {
         builder.append(String.format("public static final java.lang.String _TYPE = \"%s\";\n",
                 messageDeclaration.getType()));
         builder.append(String.format("public static final java.lang.String _DEFINITION = \"%s\";\n",
-                escapeJava(messageDeclaration.getDefinition())));
+                JavaStringEscaper.escapeJava(messageDeclaration.getDefinition())));
         if (nestedContent != null) {
             builder.append("\n");
             builder.append(nestedContent);
@@ -148,7 +146,7 @@ public final class MessageInterfaceBuilder {
                 return value + "f";
             case STRING:
             case WSTRING:
-                return "\"" + escapeJava(value) + "\"";
+                return "\"" + JavaStringEscaper.escapeJava(value) + "\"";
             case BYTE:
             case CHAR:
             case INT8:
