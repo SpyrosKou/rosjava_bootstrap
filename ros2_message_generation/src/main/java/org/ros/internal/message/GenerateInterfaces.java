@@ -33,7 +33,10 @@ import org.ros2.interfaces.Ros2InterfaceType;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author damonkohler@google.com (Damon Kohler)
@@ -58,7 +61,6 @@ public final class GenerateInterfaces {
     private final MessageGenerationTemplate actionGenerationTemplateActionGoal = new ActionGenerationTemplateActionGoal();
     private final MessageGenerationTemplate actionGenerationTemplateActionResult = new ActionGenerationTemplateActionResult();
     private final MessageGenerationTemplate actionGenerationTemplateActionFeedback = new ActionGenerationTemplateActionFeedback();
-
 
 
     public GenerateInterfaces() {
@@ -90,7 +92,7 @@ public final class GenerateInterfaces {
         for (final MessageIdentifier topicType : topicTypes) {
             final String definition = this.messageDefinitionProviderChain.get(topicType.getType());
             final MessageDeclarationImpl messageDeclaration = new MessageDeclarationImpl(topicType, definition);
-            this.writeInterface(messageDeclaration, outputDirectory, true,Ros2InterfaceType.MESSAGE);
+            this.writeInterface(messageDeclaration, outputDirectory, true, Ros2InterfaceType.MESSAGE);
         }
     }
 
@@ -106,8 +108,8 @@ public final class GenerateInterfaces {
         if (packages.size() == 0) {
             packages = serviceDefinitionFileProvider.getPackages();
         }
-        for (String pkg : packages) {
-            Set<MessageIdentifier> messageIdentifiers =
+        for (final String pkg : packages) {
+            final Set<MessageIdentifier> messageIdentifiers =
                     serviceDefinitionFileProvider.getMessageIdentifiersByPackage(pkg);
             if (messageIdentifiers != null) {
                 serviceTypes.addAll(messageIdentifiers);
@@ -117,16 +119,18 @@ public final class GenerateInterfaces {
             final String definition = messageDefinitionProviderChain.get(serviceType.getType());
             MessageDeclarationImpl serviceDeclaration =
                     MessageDeclarationImpl.of(serviceType.getType(), definition);
-            this.writeInterface(serviceDeclaration, outputDirectory, false,Ros2InterfaceType.SERVICE);
+            final String requestType = serviceType.getName() + "Request";
+            final String responseType = serviceType.getName() + "Response";
+            this.writeServiceInterfaceDefinition(serviceDeclaration, outputDirectory, requestType, responseType);
             List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
 
             MessageDeclarationImpl requestDeclaration =
-                    MessageDeclarationImpl.of(serviceType.getType() + "Request", requestAndResponse.get(0));
+                    MessageDeclarationImpl.of(requestType, requestAndResponse.get(0));
             MessageDeclarationImpl responseDeclaration =
-                    MessageDeclarationImpl.of(serviceType.getType() + "Response", requestAndResponse.get(1));
+                    MessageDeclarationImpl.of(responseType, requestAndResponse.get(1));
 
-            this.writeInterface(requestDeclaration, outputDirectory, true,Ros2InterfaceType.SERVICE_REQUEST);
-            this.writeInterface(responseDeclaration, outputDirectory, true,Ros2InterfaceType.SERVICE_RESPONSE);
+            this.writeInterface(requestDeclaration, outputDirectory, true, Ros2InterfaceType.SERVICE_REQUEST);
+            this.writeInterface(responseDeclaration, outputDirectory, true, Ros2InterfaceType.SERVICE_RESPONSE);
         }
     }
 
@@ -153,7 +157,7 @@ public final class GenerateInterfaces {
             final String definition = messageDefinitionProviderChain.get(actionType.getType());
             final MessageDeclarationImpl actionDeclaration =
                     MessageDeclarationImpl.of(actionType.getType(), definition);
-            this.writeInterface(actionDeclaration, outputDirectory, false,Ros2InterfaceType.ACTION);
+            this.writeInterface(actionDeclaration, outputDirectory, false, Ros2InterfaceType.ACTION);
             final List<String> goalResultAndFeedback = MessageDefinitionTupleParser.parse(definition, 3);
 
             final MessageDeclarationImpl goalDeclaration = MessageDeclarationImpl.of(
@@ -182,12 +186,31 @@ public final class GenerateInterfaces {
                     actionGenerationTemplateActionFeedback.applyTemplate(actionType.getType())
             );
 
-            this.writeInterface(goalDeclaration, outputDirectory, true,Ros2InterfaceType.ACTION_GOAL);
-            this.writeInterface(resultDeclaration, outputDirectory, true,Ros2InterfaceType.ACTION_RESULT);
-            this.writeInterface(feedbackDeclaration, outputDirectory, true,Ros2InterfaceType.ACTION_FEEDBACK);
+            this.writeInterface(goalDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_GOAL);
+            this.writeInterface(resultDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_RESULT);
+            this.writeInterface(feedbackDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_FEEDBACK);
 //            this.writeInterface(actionGoalDeclaration, outputDirectory, true);
 //            this.writeInterface(actionResultDeclaration, outputDirectory, true);
 //            this.writeInterface(actionFeedbackDeclaration, outputDirectory, true);
+        }
+    }
+
+    private final void writeServiceInterfaceDefinition(final MessageDeclarationImpl messageDeclaration, final File outputDirectory, final String requestType, final String responseType) {
+        final ServiceInterfaceDefinitionContentCreator contentCreator = new ServiceInterfaceDefinitionContentCreator(
+                messageDeclaration
+                , requestType
+                , responseType
+        );
+
+        try {
+            final String content = contentCreator.build(this.messageFactory);
+            final File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
+            FileUtils.writeStringToFile(file, content, Charset.defaultCharset());
+            this.successfulInterfaceGenerations++;
+        } catch (Exception e) {
+            this.failedInterfaceGenerations++;
+            System.err.printf("Failed to generate interface for %s.\n", messageDeclaration.getType());
+            e.printStackTrace();
         }
     }
 
@@ -236,7 +259,6 @@ public final class GenerateInterfaces {
             throw new RosMessageRuntimeException(ioException);
         }
     }
-
 
 
     public final int getSuccessfulInterfaceGenerations() {
