@@ -36,20 +36,10 @@ public interface Ros2Interface{
    String interfaceName();
 
    /**
-    * The definition of this interface part.
-    * For actions Goals, Feedback and Results would have different partial definitions.
-    * For services Request and Response would have different partial definitions.
-    * For topics, this method returns the definition of the topic.
-    * @return
-    */
-   @JsonIgnore
-   String definition();
-
-   /**
     * For actions or services, this method returns the complete definition of the service and action respectively.
     * For topics, this method returns the definition of the topic.
     * @return
     */
    @JsonIgnore
-   Ros2InterfaceDefinition parentDefinition();
+   Ros2InterfaceDefinition topLevelDefinition();
 }

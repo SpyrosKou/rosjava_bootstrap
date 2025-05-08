@@ -47,20 +47,10 @@ public record FeedbackMessage<T extends Ros2Interface>(@JsonProperty("goal_id") 
         return this.feedback().interfaceName() + TYPE_POSTFIX;
     }
 
-    /**
-     * Returns a generated {@link Ros2Interface#definition()}
-     *
-     * @return
-     */
-    @Override
-    @JsonIgnore
-    public final String definition() {
-        return TYPE_DEFINITION + this.feedback().definition() + "\n";
-    }
 
     @Override
     @JsonIgnore
-    public final Ros2InterfaceDefinition parentDefinition() {
-        return this.feedback().parentDefinition();
+    public final Ros2InterfaceDefinition topLevelDefinition() {
+        return this.feedback().topLevelDefinition();
     }
 }

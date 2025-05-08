@@ -47,20 +47,9 @@ public record ResultMessage<T extends Ros2Interface>(@JsonProperty("status") byt
         return this.result().interfaceName() + TYPE_POSTFIX;
     }
 
-    /**
-     * Returns a generated {@link Ros2Interface#definition()}
-     *
-     * @return
-     */
     @Override
     @JsonIgnore
-    public final String definition() {
-        return TYPE_DEFINITION + this.result().definition() + "\n";
-    }
-
-    @Override
-    @JsonIgnore
-    public final Ros2InterfaceDefinition parentDefinition() {
-        return this.result().parentDefinition();
+    public final Ros2InterfaceDefinition topLevelDefinition() {
+        return this.result().topLevelDefinition();
     }
 }

@@ -40,9 +40,9 @@ public interface Ros2InterfaceDefinition {
    String packageName();
 
    /**
-    * For actions or services, this method returns the complete definition of the service and action respectively.
-    * For topics, this method returns the definition of the topic.
+    * This method returns the interface definition of the message, service or action.
+    * The definition is the content of the *.msg, *.srv or *.action file that defined the interface.
     * @return
     */
-   String completeDefinition();
+   String definition();
 }

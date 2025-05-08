@@ -16,11 +16,11 @@
 package org.ros2.interfaces;
 
 /**
- * Models a service or action high-level ROS2 interface.
+ * Models a message, service or action ROS2 interface definition.
  *
  * @author Spyros Koukas
  */
 public record Ros2InterfaceDefinitionRecord(Ros2InterfaceType interfaceType, String packageName, String interfaceName,
-                                     String completeDefinition) implements Ros2InterfaceDefinition {
+                                     String definition) implements Ros2InterfaceDefinition {
 
 }
