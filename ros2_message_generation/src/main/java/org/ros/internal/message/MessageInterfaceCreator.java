@@ -17,6 +17,7 @@
 
 package org.ros.internal.message;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
@@ -69,16 +70,17 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
             builder.append(String.format("package %s;\n\n", packageName));
         }
 
-        builder.append("import " + javaImplementingInterface.getCanonicalName() + ";\n");
-        builder.append("import " + javaDefinitionInterface.getCanonicalName() + ";\n");
-        builder.append("import " + javaDefinitionClassName + ";\n");
+//        builder.append("import " + javaImplementingInterface.getCanonicalName() + ";\n");
+//        builder.append("import " + javaDefinitionInterface.getCanonicalName() + ";\n");
+        builder.append("import " + messageDeclaration.getPackage() + "." + javaDefinitionClassName + ";\n");
+        builder.append("import " + JsonIgnore.class.getCanonicalName() + ";\n");
         builder.append("import " + JsonProperty.class.getCanonicalName() + ";\n");
         builder.append("import " + String.class.getCanonicalName() + ";\n");
 
         builder.append("\n");
 
         builder.append(String.format(
-                "public record %s(\n %s) extends %s {\n", interfaceName, fieldsDeclarations, javaImplementingInterface.getName()));
+                "public record %s(\n %s) implements %s {\n", interfaceName, fieldsDeclarations, javaImplementingInterface.getCanonicalName()));
 
         this.appendConstants(messageContext, builder);
 
@@ -89,7 +91,7 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
 
         builder.append(" @JsonIgnore\n @Override\n public final String interfaceType(){ return INTERFACE_TYPE;}\n");
 
-        builder.append(" @JsonIgnore\n @Override\n public static final String getInterfaceType(){ return INTERFACE_TYPE;}\n");
+        builder.append(" @JsonIgnore\n public static final String getInterfaceType(){ return INTERFACE_TYPE;}\n");
 
         this.getJavaTopLevelDefinitionCode(builder);
 
@@ -107,10 +109,11 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
                     , this.messageDeclaration.getPackage()
                     , this.messageDeclaration.getType()
                     , this.messageDeclaration.getDefinition()));
-            builder.append(String.format("  public static final %s getTopLevelDefinition(){ return TOP_LEVEL_DEFINITION_INSTANCE;}\n", this.javaDefinitionInterface.getName()));
-            builder.append(String.format(" @JsonIgnore\n @Override\n public final %s topLevelDefinition(){ return TOP_LEVEL_DEFINITION_INSTANCE;}\n", this.javaDefinitionInterface.getName()));
+            builder.append(String.format("  public static final %s getTopLevelDefinition(){ return TOP_LEVEL_DEFINITION_INSTANCE;}\n", this.javaDefinitionInterface.getCanonicalName()));
+            builder.append(String.format(" @JsonIgnore\n @Override\n public final %s topLevelDefinition(){ return TOP_LEVEL_DEFINITION_INSTANCE;}\n", this.javaDefinitionInterface.getCanonicalName()));
         } else {
-            builder.append(String.format(" @JsonIgnore\n @Override\n public final %s topLevelDefinition(){ return %s.get();}\n", this.javaDefinitionInterface.getName(), this.javaDefinitionClassName));
+
+            builder.append(String.format(" @JsonIgnore\n @Override\n public final %s topLevelDefinition(){ return %s.get();}\n", this.javaDefinitionInterface.getCanonicalName(), this.javaDefinitionClassName));
         }
     }
 

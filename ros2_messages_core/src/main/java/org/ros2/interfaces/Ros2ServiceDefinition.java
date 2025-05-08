@@ -30,12 +30,12 @@ public interface Ros2ServiceDefinition extends Ros2InterfaceDefinition {
     * The name of the request interface type e.g. `example_interfaces/srv/AddTwoIntsRequest`
     * @return
     */
-   Class<Ros2ServiceRequestInterface> requestClass();
+   <REQUEST extends Ros2ServiceRequestInterface> Class<REQUEST> requestClass();
 
    /**
     * The name of the request interface type e.g. `example_interfaces/srv/AddTwoIntsResponse`
     * @return
     */
-   Class<Ros2ServiceResponseInterface> responseClass();
+   <RESPONSE extends Ros2ServiceResponseInterface> Class<RESPONSE> responseClass();
 
 }

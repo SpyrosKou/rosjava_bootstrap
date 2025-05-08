@@ -28,7 +28,11 @@ import java.util.List;
  * @author Spyros Koukas
  */
 public class GenerateFromFilesTest {
-    private static final String targetDir = "build/generated-sources/java";
+//    private static final String targetDir = "build/generated-sources/java";
+
+    private static final String targetDir = "src/generated-test-sources/java";
+
+
     private static final String sourcesDir = "src/test/resources/";
     private static File targetDirFile;
 

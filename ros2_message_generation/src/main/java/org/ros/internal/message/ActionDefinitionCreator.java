@@ -54,7 +54,7 @@ public final record ActionDefinitionCreator(
         builder.append("\n\n\n");
 
         builder.append(String.format(
-                "public final class %s implements %s {\n\n\n",messageDeclaration.getName(), Ros2ActionDefinition.class.getName()));
+                "public final class %s implements %s {\n\n\n",messageDeclaration.getName(), Ros2ActionDefinition.class.getSimpleName()));
 
         builder.append(" /**\n *\n * Singleton access \n *\n **/\n");
         builder.append(String.format(

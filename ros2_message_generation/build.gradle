@@ -28,6 +28,8 @@ plugins{
 }
 archivesBaseName = 'ros2_message_generation'
 
+sourceSets.test.java.srcDirs "src" + File.separator + "generated-test-sources" + File.separator + "java"
+
 //noinspection GroovyAssignabilityCheck
 dependencies {
 

@@ -50,11 +50,11 @@ public final record ServiceDefinitionCreator(
         builder.append("\n\n\n");
 
         builder.append(String.format(
-                "public final class %s implements %s {\n\n\n",messageDeclaration.getName(), Ros2ServiceDefinition.class.getName()));
+                "public final class %s implements %s {\n\n\n",messageDeclaration.getName(), Ros2ServiceDefinition.class.getSimpleName()));
 
         builder.append(" /**\n *\n * Singleton access \n *\n **/\n");
         builder.append(String.format(
-                " private %s %s(){};",messageDeclaration.getName(),messageDeclaration.getName()));
+                " private %s(){};",messageDeclaration.getName(),messageDeclaration.getName()));
 
         builder.append(" /**\n *\n * A singleton instance \n *\n **/\n");
         builder.append(String.format(
@@ -82,11 +82,14 @@ public final record ServiceDefinitionCreator(
                 JavaStringEscaper.escapeJava(messageDeclaration.getDefinition())));
 
         builder.append(" /**\n *\n * The class modeling the request of the service  e.g. the contents of `example_interfaces/srv/AddTwoIntsRequest' \n *\n **/\n");
-        builder.append(String.format(" public static final Class<Ros2ServiceRequestInterface> REQUEST_CLASS = %s.class;\n\n\n",requestClass));
+        builder.append(String.format(" public static final Class<%s> REQUEST_CLASS = %s.class;\n\n\n",requestClass,requestClass));
 
         builder.append(" /**\n *\n * The class modeling the response of the service  e.g. the contents of `example_interfaces/srv/AddTwoIntsResponse' \n *\n **/\n");
-        builder.append(String.format(" public static final Class<Ros2ServiceResponseInterface> RESPONSE_CLASS = %s.class;\n\n\n",responseClass));
-        //Static methods
+        builder.append(String.format(" public static final Class<%s> RESPONSE_CLASS = %s.class;\n\n\n",responseClass,responseClass));
+
+
+
+        //Static methods ***********************************************************************************************
         builder.append(" /**\n *\n * The type of the interface e.g. `example_interfaces/srv/AddTwoInts' \n *\n **/\n");
         builder.append(" public static final String getInterfaceType(){ return INTERFACE_TYPE;}\n\n");
 
@@ -100,11 +103,13 @@ public final record ServiceDefinitionCreator(
         builder.append(" public static final String getDefinition(){ return DEFINITION;}\n\n");
 
         builder.append(" /**\n *\n * The class modeling the request of the service  e.g. the contents of `example_interfaces/srv/AddTwoIntsRequest' \n *\n **/\n");
-        builder.append(" public static final Class<Ros2ServiceRequestInterface> getRequestClass(){ return REQUEST_CLASS;}\n\n");
+        builder.append(String.format(" public static final Class<%s> getRequestClass(){ return REQUEST_CLASS;}\n\n",requestClass));
 
         builder.append(" /**\n *\n * The class modeling the response of the service  e.g. the contents of `example_interfaces/srv/AddTwoIntsResponse' \n *\n **/\n");
-        builder.append(" public static final Class<Ros2ServiceResponseInterface> getResponseClass(){ return RESPONSE_CLASS;}\n\n");
-        //Instance methods
+        builder.append(String.format(" public static final Class<%s> getResponseClass(){ return RESPONSE_CLASS;}\n\n",responseClass));
+
+
+        //Instance methods *********************************************************************************************
         builder.append(" /**\n *\n * The type of the interface e.g. `example_interfaces/srv/AddTwoInts' \n *\n **/\n");
         builder.append(" public final String interfaceType(){ return INTERFACE_TYPE;}\n\n");
 
@@ -118,10 +123,10 @@ public final record ServiceDefinitionCreator(
         builder.append(" public final String definition(){ return DEFINITION;}\n\n");
 
         builder.append(" /**\n *\n * The class modeling the request of the service  e.g. the contents of `example_interfaces/srv/AddTwoIntsRequest' \n *\n **/\n");
-        builder.append(" public final Class<Ros2ServiceRequestInterface> requestClass(){ return REQUEST_CLASS;}\n\n");
+        builder.append(String.format(" public final Class<%s> requestClass(){ return REQUEST_CLASS;}\n\n",requestClass));
 
         builder.append(" /**\n *\n * The class modeling the response of the service  e.g. the contents of `example_interfaces/srv/AddTwoIntsResponse' \n *\n **/\n");
-        builder.append(" public final Class<Ros2ServiceResponseInterface> responseClass(){ return RESPONSE_CLASS;}\n\n");
+        builder.append(String.format(" public final Class<%s> responseClass(){ return RESPONSE_CLASS;}\n\n",responseClass));
 
         //close class
         builder.append("\n}\n");
