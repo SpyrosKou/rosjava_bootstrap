@@ -58,7 +58,7 @@ public final record ActionDefinitionCreator(
 
         builder.append(" /**\n *\n * Singleton access \n *\n **/\n");
         builder.append(String.format(
-                " private %s %s(){};",messageDeclaration.getName(),messageDeclaration.getName()));
+                " private %s(){};",messageDeclaration.getName()));
 
         builder.append(" /**\n *\n * A singleton instance \n *\n **/\n");
         builder.append(String.format(
@@ -86,13 +86,14 @@ public final record ActionDefinitionCreator(
                 JavaStringEscaper.escapeJava(messageDeclaration.getDefinition())));
 
         builder.append(" /**\n *\n * The class modeling the goal of the action  e.g. `example_interfaces/action/FibonacciGoal' \n *\n **/\n");
-        builder.append(String.format(" public static final Class<Ros2ActionGoalInterface> GOAL_CLASS = %s.class;\n\n\n",goalClass));
+        builder.append(String.format(" public static final Class<%s> GOAL_CLASS = %s.class;\n\n\n",goalClass,goalClass));
 
         builder.append(" /**\n *\n * The class modeling the feedback of the action  e.g. `example_interfaces/action/FibonacciFeedback' \n *\n **/\n");
-        builder.append(String.format(" public static final Class<Ros2ActionFeedbackInterface> FEEDBACK_CLASS = %s.class;\n\n\n",feedbackClass));
+        builder.append(String.format(" public static final Class<%s> FEEDBACK_CLASS = %s.class;\n\n\n",feedbackClass,feedbackClass));
 
         builder.append(" /**\n *\n * The class modeling the result of the action  e.g. `example_interfaces/action/FibonacciResult' \n *\n **/\n");
-        builder.append(String.format(" public static final Class<Ros2ActionResultInterface> RESULT_CLASS = %s.class;\n\n\n",resultClass));
+        builder.append(String.format(" public static final Class<%s> RESULT_CLASS = %s.class;\n\n\n",resultClass,resultClass));
+
         //Static methods
         builder.append(" /**\n *\n * The type of the interface e.g. <a href=\"https://docs.ros2.org/foxy/api/example_interfaces/action/Fibonacci.html\">example_interfaces/action/Fibonacci</a>. \n *\n **/\n");
         builder.append(" public static final String getInterfaceType(){ return INTERFACE_TYPE;}\n\n");
@@ -107,13 +108,14 @@ public final record ActionDefinitionCreator(
         builder.append(" public static final String getDefinition(){ return DEFINITION;}\n\n");
 
         builder.append(" /**\n *\n * The class modeling the goal of the action  e.g. `example_interfaces/action/FibonacciGoal' \n *\n **/\n");
-        builder.append(" public static final Class<Ros2ActionGoalInterface> getGoalClass(){ return GOAL_CLASS;}\n\n");
+        builder.append(String.format(" public static final Class<%s> getGoalClass(){ return GOAL_CLASS;}\n\n",goalClass));
 
         builder.append(" /**\n *\n * The class modeling the feedback of the action  e.g. `example_interfaces/action/FibonacciFeedback' \n *\n **/\n");
-        builder.append(" public static final Class<Ros2ActionFeedbackInterface> getFeedbackClass(){ return FEEDBACK_CLASS;}\n\n");
+        builder.append(String.format(" public static final Class<%s> getFeedbackClass(){ return FEEDBACK_CLASS;}\n\n",feedbackClass));
 
         builder.append(" /**\n *\n * The class modeling the result of the action  e.g. `example_interfaces/action/FibonacciResult' \n *\n **/\n");
-        builder.append(" public static final Class<Ros2ActionResultInterface> getResultClass(){ return RESULT_CLASS;}\n\n");
+        builder.append(String.format(" public static final Class<%s> getResultClass(){ return RESULT_CLASS;}\n\n",resultClass));
+
         //Instance methods
         builder.append(" /**\n *\n * The type of the interface e.g. <a href=\"https://docs.ros2.org/foxy/api/example_interfaces/action/Fibonacci.html\">example_interfaces/action/Fibonacci</a>. \n *\n **/\n");
         builder.append(" public final String interfaceType(){ return INTERFACE_TYPE;}\n\n");
@@ -128,13 +130,13 @@ public final record ActionDefinitionCreator(
         builder.append(" public final String definition(){ return DEFINITION;}\n\n");
 
         builder.append(" /**\n *\n * The class modeling the goal of the action  e.g. `example_interfaces/action/FibonacciGoal' \n *\n **/\n");
-        builder.append(" public final Class<Ros2ActionGoalInterface> goalClass(){ return GOAL_CLASS;}\n\n");
+        builder.append(String.format(" public final Class<%s> goalClass(){ return GOAL_CLASS;}\n\n",goalClass));
 
         builder.append(" /**\n *\n * The class modeling the feedback of the action  e.g. `example_interfaces/action/FibonacciFeedback' \n *\n **/\n");
-        builder.append(" public static final Class<Ros2ActionFeedbackInterface> feedbackClass(){ return FEEDBACK_CLASS;}\n\n");
+        builder.append(String.format(" public final Class<%s> feedbackClass(){ return FEEDBACK_CLASS;}\n\n",feedbackClass));
 
         builder.append(" /**\n *\n * The class modeling the result of the action  e.g. `example_interfaces/action/FibonacciResult' \n *\n **/\n");
-        builder.append(" public final Class<Ros2ActionResultInterface> resultClass(){ return RESULT_CLASS;}\n\n");
+        builder.append(String.format(" public final Class<%s> resultClass(){ return RESULT_CLASS;}\n\n",resultClass));
 
         //close class
         builder.append("\n}\n");

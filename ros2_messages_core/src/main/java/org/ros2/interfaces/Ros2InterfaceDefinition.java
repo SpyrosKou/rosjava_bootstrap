@@ -15,6 +15,8 @@
  */
 package org.ros2.interfaces;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Models a service or action high-level ROS2 interface.
  * @author Spyros Koukas
@@ -25,6 +27,7 @@ public interface Ros2InterfaceDefinition {
     * It should be a  {@link Ros2InterfaceCategory#MESSAGE} or a {@link Ros2InterfaceCategory#ACTION} or a {@link Ros2InterfaceCategory#SERVICE}.
     * @return
     */
+   @JsonIgnore
    Ros2InterfaceCategory interfaceCategory();
 
     /**

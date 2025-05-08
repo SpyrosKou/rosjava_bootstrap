@@ -15,6 +15,8 @@
  */
 package org.ros2.interfaces;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Models a service ROS2 interface.
  * @author Spyros Koukas
@@ -22,6 +24,7 @@ package org.ros2.interfaces;
 public interface Ros2ServiceDefinition extends Ros2InterfaceDefinition {
 
    @Override
+   @JsonIgnore
    public default Ros2InterfaceCategory interfaceCategory(){
       return Ros2InterfaceCategory.SERVICE;
    }
@@ -30,12 +33,14 @@ public interface Ros2ServiceDefinition extends Ros2InterfaceDefinition {
     * The name of the request interface type e.g. `example_interfaces/srv/AddTwoIntsRequest`
     * @return
     */
+   @JsonIgnore
    <REQUEST extends Ros2ServiceRequestInterface> Class<REQUEST> requestClass();
 
    /**
     * The name of the request interface type e.g. `example_interfaces/srv/AddTwoIntsResponse`
     * @return
     */
+   @JsonIgnore
    <RESPONSE extends Ros2ServiceResponseInterface> Class<RESPONSE> responseClass();
 
 }

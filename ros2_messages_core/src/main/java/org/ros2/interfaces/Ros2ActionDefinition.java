@@ -15,28 +15,44 @@
  */
 package org.ros2.interfaces;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Models an action ROS2 interface.
+ *
  * @author Spyros Koukas
  */
 public interface Ros2ActionDefinition extends Ros2InterfaceDefinition {
 
-   /**
-    * The class that models the Goal of the action
-    * @return
-    */
-   Class<Ros2ActionGoalInterface> goalClass();
+    @Override
+    @JsonIgnore
+    public default Ros2InterfaceCategory interfaceCategory() {
+        return Ros2InterfaceCategory.ACTION;
+    }
 
-   /**
-    * The class that models the Feedback of the action
-    * @return
-    */
-   Class<Ros2ActionFeedbackInterface> feedbackClass();
+    /**
+     * The class that models the Goal of the action
+     *
+     * @return
+     */
+    @JsonIgnore
+    <GOAL extends Ros2ActionGoalInterface> Class<GOAL> goalClass();
 
-   /**
-    * The class that models the Result of the action
-    * @return
-    */
-   Class<Ros2ActionResultInterface> resultClass();
+
+    /**
+     * The class that models the Feedback of the action
+     *
+     * @return
+     */
+    @JsonIgnore
+    <FEEDBACK extends Ros2ActionFeedbackInterface> Class<FEEDBACK> feedbackClass();
+
+    /**
+     * The class that models the Result of the action
+     *
+     * @return
+     */
+    @JsonIgnore
+    <RESULT extends Ros2ActionResultInterface> Class<RESULT> resultClass();
 
 }
