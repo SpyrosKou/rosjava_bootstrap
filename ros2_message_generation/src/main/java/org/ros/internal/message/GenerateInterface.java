@@ -92,10 +92,10 @@ public final class GenerateInterface {
       writeInterface(messageDeclaration, outputDirectory, false, messageFactory);
       List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
       final MessageDeclarationImpl requestDeclaration =
-          MessageDeclarationImpl.of(messageIdentifier.getType() + MessageConstants.REQUEST, requestAndResponse.get(0));
+          MessageDeclarationImpl.of(messageIdentifier.getType() + MessageConstants.REQUEST_POSTFIX, requestAndResponse.get(0));
       final MessageDeclarationImpl responseDeclaration =
           MessageDeclarationImpl
-              .of(messageIdentifier.getType() + MessageConstants.RESPONSE, requestAndResponse.get(1));
+              .of(messageIdentifier.getType() + MessageConstants.RESPONSE_POSTFIX, requestAndResponse.get(1));
       writeInterface(requestDeclaration, outputDirectory, true, messageFactory);
       writeInterface(responseDeclaration, outputDirectory, true, messageFactory);
     }

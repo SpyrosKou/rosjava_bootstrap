@@ -119,14 +119,14 @@ public final class GenerateInterfaces {
             final String definition = messageDefinitionProviderChain.get(serviceType.getType());
             MessageDeclarationImpl serviceDeclaration =
                     MessageDeclarationImpl.of(serviceType.getType(), definition);
-            final String requestPlainType = serviceType.getName() + "Request";
-            final String responsePlainType = serviceType.getName() + "Response";
+            final String requestPlainType = serviceType.getName() + MessageConstants.REQUEST_POSTFIX;
+            final String responsePlainType = serviceType.getName() + MessageConstants.RESPONSE_POSTFIX;
             this.writeServiceInterfaceDefinition(serviceDeclaration, outputDirectory, requestPlainType, responsePlainType);
             List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
 
 
-            final String requestType = serviceType.getType() + "Request";
-            final String responseType = serviceType.getType() + "Response";
+            final String requestType = serviceType.getType() + MessageConstants.REQUEST_POSTFIX;
+            final String responseType = serviceType.getType() + MessageConstants.RESPONSE_POSTFIX;
             MessageDeclarationImpl requestDeclaration =
                     MessageDeclarationImpl.of(requestType, requestAndResponse.get(0));
             MessageDeclarationImpl responseDeclaration =
@@ -161,15 +161,15 @@ public final class GenerateInterfaces {
             final String definition = messageDefinitionProviderChain.get(actionType.getType());
             final MessageDeclarationImpl actionDeclaration =
                     MessageDeclarationImpl.of(actionType.getType(), definition);
-            final String goalPlainType = actionType.getName() + "Goal";
-            final String feedbackPlainType = actionType.getName() + "Feedback";
-            final String resultPlainType = actionType.getName() + "Result";
+            final String goalPlainType = actionType.getName() + MessageConstants.GOAL_POSTFIX;
+            final String feedbackPlainType = actionType.getName() + MessageConstants.FEEDBACK_POSTFIX;
+            final String resultPlainType = actionType.getName() + MessageConstants.RESULT_POSTFIX;
             this.writeActionInterfaceDefinition(actionDeclaration, outputDirectory, goalPlainType, feedbackPlainType, resultPlainType);
             final List<String> goalResultAndFeedback = MessageDefinitionTupleParser.parse(definition, 3);
             {
-                final String goalType = actionType.getType() + "Goal";
-                final String feedbackType = actionType.getType() + "Feedback";
-                final String resultType = actionType.getType() + "Result";
+                final String goalType = actionType.getType() + MessageConstants.GOAL_POSTFIX;
+                final String feedbackType = actionType.getType() + MessageConstants.FEEDBACK_POSTFIX;
+                final String resultType = actionType.getType() + MessageConstants.RESULT_POSTFIX;
                 final MessageDeclarationImpl goalDeclaration = MessageDeclarationImpl.of(
                         goalType,
                         actionGenerationTemplateGoal.applyTemplate(goalResultAndFeedback.get(0))
@@ -216,7 +216,7 @@ public final class GenerateInterfaces {
         builder.setAddConstantsAndMethods(addConstantsAndMethods);
         try {
             final String content = builder.build(this.messageFactory);
-            final File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
+            final File file = new File(outputDirectory, messageDeclaration.getType() + MessageConstants.JAVA);
             FileUtils.writeStringToFile(file, content, Charset.defaultCharset());
             this.successfulInterfaceGenerations++;
         } catch (Exception e) {
@@ -248,7 +248,7 @@ public final class GenerateInterfaces {
 
         try {
             final String content = contentCreator.build(this.messageFactory);
-            final File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
+            final File file = new File(outputDirectory, messageDeclaration.getType() + MessageConstants.JAVA);
             FileUtils.writeStringToFile(file, content, Charset.defaultCharset());
             this.successfulInterfaceGenerations++;
         } catch (Exception e) {
@@ -279,7 +279,7 @@ public final class GenerateInterfaces {
 
         try {
             final String content = contentCreator.build(this.messageFactory);
-            final File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
+            final File file = new File(outputDirectory, messageDeclaration.getType() + MessageConstants.JAVA);
             FileUtils.writeStringToFile(file, content, Charset.defaultCharset());
             this.successfulInterfaceGenerations++;
         } catch (Exception e) {

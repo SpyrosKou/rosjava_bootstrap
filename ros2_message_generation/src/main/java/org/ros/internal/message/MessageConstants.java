@@ -22,9 +22,14 @@ package org.ros.internal.message;
  * @author Spyros Koukas
  */
 public final class MessageConstants {
-    static final String REQUEST = "Request";
+    public static final String REQUEST_POSTFIX = "Request";
+    public static final String RESPONSE_POSTFIX = "Response";
+    public static final String GOAL_POSTFIX = "Goal";
+    public static final String FEEDBACK_POSTFIX = "Feedback";
+    public static final String RESULT_POSTFIX = "Result";
+
     public static final String SRV = "srv";
-    static final String RESPONSE = "Response";
+
     public static final String MSG = "msg";
     public static final String ACTION = "action";
     static final String JAVA = ".java";
