@@ -34,10 +34,8 @@ import org.ros.message.MessageFactory;
 import org.ros2.interfaces.Ros2InterfaceCategory;
 import org.ros2.interfaces.Ros2InterfaceDefinitionRecord;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author https://github.com/SpyrosKou Spyros Koukas
@@ -50,6 +48,9 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
         , Class<?> javaDefinitionInterface
         , String javaDefinitionClassName) {
 
+    private final boolean isMessageInterface() {
+        return Ros2InterfaceDefinitionRecord.class.getCanonicalName().equals(this.javaDefinitionClassName);
+    }
 
     public final String build(final MessageFactory messageFactory) {
         Preconditions.checkNotNull(messageDeclaration);
@@ -72,10 +73,14 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
 
 //        builder.append("import " + javaImplementingInterface.getCanonicalName() + ";\n");
 //        builder.append("import " + javaDefinitionInterface.getCanonicalName() + ";\n");
-        builder.append("import " + messageDeclaration.getPackage() + "." + javaDefinitionClassName + ";\n");
+        if (this.isMessageInterface()) {
+            builder.append("import " + javaDefinitionClassName + ";\n");
+        } else {
+            builder.append("import " + messageDeclaration.getPackage() + "." + javaDefinitionClassName + ";\n");
+        }
         builder.append("import " + JsonIgnore.class.getCanonicalName() + ";\n");
         builder.append("import " + JsonProperty.class.getCanonicalName() + ";\n");
-        builder.append("import " + String.class.getCanonicalName() + ";\n");
+        this.getJavaTypeNamesToImport(messageContext).forEach(typeName -> builder.append("import " + typeName + ";\n"));
 
         builder.append("\n");
 
@@ -100,15 +105,15 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
     }
 
     private final void getJavaTopLevelDefinitionCode(final StringBuilder builder) {
-        if (this.javaDefinitionClassName == Ros2InterfaceDefinitionRecord.class.getCanonicalName()) {
+        if (this.isMessageInterface()) {
 
-            builder.append(String.format(" public final %s TOP_LEVEL_DEFINITION_INSTANCE=$s(%s,$s,$s,$s);\n"
+            builder.append(String.format(" public static final %s TOP_LEVEL_DEFINITION_INSTANCE = new %s(%s,\"%s\",\"%s\",\"%s\");\n"
                     , this.javaDefinitionClassName
                     , this.javaDefinitionClassName
                     , Ros2InterfaceCategory.class.getCanonicalName() + ".MESSAGE"
                     , this.messageDeclaration.getPackage()
                     , this.messageDeclaration.getType()
-                    , this.messageDeclaration.getDefinition()));
+                    , JavaStringEscaper.escapeJava(this.messageDeclaration.getDefinition())));
             builder.append(String.format("  public static final %s getTopLevelDefinition(){ return TOP_LEVEL_DEFINITION_INSTANCE;}\n", this.javaDefinitionInterface.getCanonicalName()));
             builder.append(String.format(" @JsonIgnore\n @Override\n public final %s topLevelDefinition(){ return TOP_LEVEL_DEFINITION_INSTANCE;}\n", this.javaDefinitionInterface.getCanonicalName()));
         } else {
@@ -165,6 +170,42 @@ public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclar
         if (constantsExist) {
             builder.append("\n //--------Constants Definitions End----------\n\n");
         }
+    }
+
+    private final Set<String> getJavaTypeNamesToImport(MessageContext messageContext) {
+        final Set<String> unprocessedJavaTypes = new HashSet<>();
+        unprocessedJavaTypes.add(String.class.getCanonicalName());
+        final MessageFields messageFields = new MessageFields(messageContext);
+        unprocessedJavaTypes.addAll(messageFields.getFields().stream().map(Field::getJavaTypeName).filter(type -> type.contains(".")).collect(Collectors.toSet()));
+        final Set<String> nestedTypes = new HashSet<>();
+        for (final String rawJavaType : unprocessedJavaTypes) {
+            this.getNestedTypes(nestedTypes, rawJavaType,rawJavaType);
+        }
+        return nestedTypes;
+    }
+
+    private Set<String> getNestedTypes(final Set<String> types, String typeString,String initialTypeString) {
+        final String trimmedType = typeString.trim();
+        if ("".equals(trimmedType)) {
+            return types;
+        } else {
+            if (trimmedType.contains("<") && trimmedType.contains(">")) {
+                final String type = trimmedType.substring(0, trimmedType.indexOf("<"));
+                types.add(type);
+                final String innerType = trimmedType.substring(trimmedType.indexOf("<") + 1, trimmedType.lastIndexOf(">"));
+                return getNestedTypes(types, innerType,initialTypeString);
+            } else {
+                if (trimmedType.contains("<") || trimmedType.contains(">")) {
+                    System.err.println("WARNING: [" + initialTypeString + "] contains invalid type:" + trimmedType+" in "+this.messageDeclaration.getType());
+                    throw new RuntimeException("Cannot parse:" + trimmedType+"from:"+initialTypeString+" in "+this.messageDeclaration.getType());
+                } else {
+                    types.add(trimmedType);
+                    return types;
+                }
+            }
+
+        }
+
     }
 
     private final String createRecordConstructorSignature(MessageContext messageContext) {
