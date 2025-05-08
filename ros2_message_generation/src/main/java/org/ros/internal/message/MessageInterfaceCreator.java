@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.apache.commons.text.StringEscapeUtils;
 import org.ros.exception.RosMessageRuntimeException;
 import org.ros.internal.message.context.MessageContext;
 import org.ros.internal.message.context.MessageContextProvider;
@@ -31,7 +30,8 @@ import org.ros.internal.message.field.MessageFields;
 import org.ros.internal.message.field.PrimitiveFieldType;
 import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
-import org.ros2.interfaces.Ros2Interface;
+import org.ros2.interfaces.Ros2InterfaceCategory;
+import org.ros2.interfaces.Ros2InterfaceDefinitionRecord;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,67 +42,21 @@ import java.util.StringJoiner;
  * @author https://github.com/SpyrosKou Spyros Koukas
  * @author damonkohler@google.com (Damon Kohler)
  */
-public final class MessageInterfaceBuilder {
+public final record MessageInterfaceCreator(MessageDeclarationImpl messageDeclaration
+        , String packageName
+        , String interfaceName
+        , Class<?> javaImplementingInterface
+        , Class<?> javaDefinitionInterface
+        , String javaDefinitionClassName) {
 
-    private MessageDeclarationImpl messageDeclaration;
-    private String packageName;
-    private String interfaceName;
-    private String nestedContent;
-
-
-
-
-
-    public final MessageInterfaceBuilder setMessageDeclaration(final MessageDeclarationImpl messageDeclaration) {
-        Preconditions.checkNotNull(messageDeclaration);
-        this.messageDeclaration = messageDeclaration;
-        return this;
-    }
-
-    public final String getPackageName() {
-        return packageName;
-    }
-
-    /**
-     * @param packageName the package name of the interface or {@code null} if no package
-     *                    name should be specified
-     * @return this {@link MessageInterfaceBuilder}
-     */
-    public final MessageInterfaceBuilder setPackageName(String packageName) {
-        this.packageName = packageName;
-        return this;
-    }
-
-    public final String getInterfaceName() {
-        return interfaceName;
-    }
-
-    public final MessageInterfaceBuilder setInterfaceName(String interfaceName) {
-        Preconditions.checkNotNull(interfaceName);
-        this.interfaceName = interfaceName;
-        return this;
-    }
-
-    /**
-     * @param enabled
-     * @deprecated to be removed, does nothing
-     */
-    @Deprecated
-    final void setAddConstantsAndMethods(boolean enabled) {
-        //assert enabled;
-    }
-
-    public final String getNestedContent() {
-        return nestedContent;
-    }
-
-    public final void setNestedContent(String nestedContent) {
-        this.nestedContent = nestedContent;
-    }
 
     public final String build(final MessageFactory messageFactory) {
         Preconditions.checkNotNull(messageDeclaration);
+        Preconditions.checkNotNull(packageName);
         Preconditions.checkNotNull(interfaceName);
+        Preconditions.checkNotNull(javaImplementingInterface);
+        Preconditions.checkNotNull(javaDefinitionInterface);
+        Preconditions.checkNotNull(javaDefinitionClassName);
         final StringBuilder builder = new StringBuilder();
 
 
@@ -115,27 +69,51 @@ public final class MessageInterfaceBuilder {
             builder.append(String.format("package %s;\n\n", packageName));
         }
 
-        builder.append("import " + Ros2Interface.class.getCanonicalName() + ";\n");
+        builder.append("import " + javaImplementingInterface.getCanonicalName() + ";\n");
+        builder.append("import " + javaDefinitionInterface.getCanonicalName() + ";\n");
+        builder.append("import " + javaDefinitionClassName + ";\n");
         builder.append("import " + JsonProperty.class.getCanonicalName() + ";\n");
+        builder.append("import " + String.class.getCanonicalName() + ";\n");
 
         builder.append("\n");
 
         builder.append(String.format(
-                "public record %s(\n %s) extends %s {\n", interfaceName, fieldsDeclarations, Ros2Interface.class.getName()));
+                "public record %s(\n %s) extends %s {\n", interfaceName, fieldsDeclarations, javaImplementingInterface.getName()));
 
         this.appendConstants(messageContext, builder);
 
-        builder.append(String.format("public static final java.lang.String _TYPE = \"%s\";\n",
+        builder.append(String.format("public static final String INTERFACE_TYPE = \"%s\";\n",
                 messageDeclaration.getType()));
-        builder.append(String.format("public static final java.lang.String _DEFINITION = \"%s\";\n",
-                JavaStringEscaper.escapeJava(messageDeclaration.getDefinition())));
-        if (nestedContent != null) {
-            builder.append("\n");
-            builder.append(nestedContent);
-        }
+//        builder.append(String.format("public static final String INTERFACE_DEFINITION = \"%s\";\n",
+//                JavaStringEscaper.escapeJava(messageDeclaration.getDefinition())));
+
+        builder.append(" @JsonIgnore\n @Override\n public final String interfaceType(){ return INTERFACE_TYPE;}\n");
+
+        builder.append(" @JsonIgnore\n @Override\n public static final String getInterfaceType(){ return INTERFACE_TYPE;}\n");
+
+        this.getJavaTopLevelDefinitionCode(builder);
+
         builder.append("}\n");
         return builder.toString();
     }
+
+    private final void getJavaTopLevelDefinitionCode(final StringBuilder builder) {
+        if (this.javaDefinitionClassName == Ros2InterfaceDefinitionRecord.class.getCanonicalName()) {
+
+            builder.append(String.format(" public final %s TOP_LEVEL_DEFINITION_INSTANCE=$s(%s,$s,$s,$s);\n"
+                    , this.javaDefinitionClassName
+                    , this.javaDefinitionClassName
+                    , Ros2InterfaceCategory.class.getCanonicalName() + ".MESSAGE"
+                    , this.messageDeclaration.getPackage()
+                    , this.messageDeclaration.getType()
+                    , this.messageDeclaration.getDefinition()));
+            builder.append(String.format("  public static final %s getTopLevelDefinition(){ return TOP_LEVEL_DEFINITION_INSTANCE;}\n", this.javaDefinitionInterface.getName()));
+            builder.append(String.format(" @JsonIgnore\n @Override\n public final %s topLevelDefinition(){ return TOP_LEVEL_DEFINITION_INSTANCE;}\n", this.javaDefinitionInterface.getName()));
+        } else {
+            builder.append(String.format(" @JsonIgnore\n @Override\n public final %s topLevelDefinition(){ return %s.get();}\n", this.javaDefinitionInterface.getName(), this.javaDefinitionClassName));
+        }
+    }
+
 
     @SuppressWarnings("deprecation")
     private final String getJavaValue(final PrimitiveFieldType primitiveFieldType, final String value) {
@@ -207,7 +185,7 @@ public final class MessageInterfaceBuilder {
         for (final String nameCaps : fieldNames.keySet()) {
             final Collection<String> values = fieldNames.get(nameCaps);
             if (values.size() > 1) {
-                System.err.println("WARNING: Interface:["+messageContext.getType()+"] fields:" + values + " have only cap differences with: " + values.stream().findAny().get() + ". This is discouraged in ROS 2.0 ");
+                System.err.println("WARNING: Interface:[" + messageContext.getType() + "] fields:" + values + " have only cap differences with: " + values.stream().findAny().get() + ". This is discouraged in ROS 2.0 ");
             }
         }
         return stringJoiner.toString();

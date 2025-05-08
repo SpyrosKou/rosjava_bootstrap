@@ -22,18 +22,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public interface Ros2Interface{
    /**
-    * The {@link Ros2InterfaceType} of this interface
+    * The {@link Ros2InterfaceCategory} of this interface
     * @return
     */
    @JsonIgnore
-   Ros2InterfaceType interfaceType();
+   Ros2InterfaceCategory interfaceCategory();
 
    /**
-    * The name of this interface e.g. `example_interfaces/msg/String`
+    * The type of this interface e.g. `example_interfaces/msg/String`
     * @return
     */
    @JsonIgnore
-   String interfaceName();
+   String interfaceType();
 
    /**
     * For actions or services, this method returns the complete definition of the service and action respectively.

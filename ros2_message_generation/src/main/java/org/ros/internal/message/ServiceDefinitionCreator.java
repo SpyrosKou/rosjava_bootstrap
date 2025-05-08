@@ -52,6 +52,18 @@ public final record ServiceDefinitionCreator(
         builder.append(String.format(
                 "public final class %s implements %s {\n\n\n",messageDeclaration.getName(), Ros2ServiceDefinition.class.getName()));
 
+        builder.append(" /**\n *\n * Singleton access \n *\n **/\n");
+        builder.append(String.format(
+                " private %s %s(){};",messageDeclaration.getName(),messageDeclaration.getName()));
+
+        builder.append(" /**\n *\n * A singleton instance \n *\n **/\n");
+        builder.append(String.format(
+                " public static final %s INSTANCE= new %s();",messageDeclaration.getName(),messageDeclaration.getName()));
+
+        builder.append(" /**\n *\n * Get the singleton instance \n *\n **/\n");
+        builder.append(String.format(
+                " public static final %s get(){return INSTANCE;}",messageDeclaration.getName()));
+
         //Constants
         builder.append(" /**\n *\n * The type of the interface e.g. `example_interfaces/srv/AddTwoInts' \n *\n **/\n");
         builder.append(String.format(" public static final String INTERFACE_TYPE = \"%s\";\n\n\n",

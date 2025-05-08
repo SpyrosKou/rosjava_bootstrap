@@ -20,7 +20,10 @@ package org.ros2.interfaces;
  *
  * @author Spyros Koukas
  */
-public record Ros2InterfaceDefinitionRecord(Ros2InterfaceType interfaceType, String packageName, String interfaceName,
-                                     String definition) implements Ros2InterfaceDefinition {
+public record Ros2InterfaceDefinitionRecord(
+          Ros2InterfaceCategory interfaceCategory
+        , String packageName
+        , String interfaceType
+        , String definition) implements Ros2InterfaceDefinition {
 
 }

@@ -20,7 +20,7 @@ package org.ros2.interfaces;
  * The type of interface modelled
  * @author Spyros Koukas
  */
-public enum Ros2InterfaceType{
+public enum Ros2InterfaceCategory {
     /**
      * The type of interface modeled is a ros2 msg. Msgs can be reused in services and actions definitions or used to declare topics e.g.<a href="https://docs.ros2.org/foxy/api/example_interfaces/msg/String.html">example_interfaces/msg/String</a>.
      */

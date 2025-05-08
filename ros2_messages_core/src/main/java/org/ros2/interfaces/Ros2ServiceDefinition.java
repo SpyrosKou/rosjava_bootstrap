@@ -22,8 +22,8 @@ package org.ros2.interfaces;
 public interface Ros2ServiceDefinition extends Ros2InterfaceDefinition {
 
    @Override
-   public default Ros2InterfaceType interfaceType(){
-      return Ros2InterfaceType.SERVICE;
+   public default Ros2InterfaceCategory interfaceCategory(){
+      return Ros2InterfaceCategory.SERVICE;
    }
 
    /**

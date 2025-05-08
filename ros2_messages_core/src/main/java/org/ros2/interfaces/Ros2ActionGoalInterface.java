@@ -22,13 +22,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public interface Ros2ActionGoalInterface extends Ros2Interface {
    /**
-    * The {@link Ros2InterfaceType} of this interface
+    * The {@link Ros2InterfaceCategory} of this interface
     * @return
     */
    @JsonIgnore
    @Override
-   public default Ros2InterfaceType interfaceType(){
-      return Ros2InterfaceType.ACTION_GOAL;
+   public default Ros2InterfaceCategory interfaceCategory(){
+      return Ros2InterfaceCategory.ACTION_GOAL;
    }
 
 

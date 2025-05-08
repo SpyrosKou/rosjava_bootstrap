@@ -21,17 +21,17 @@ package org.ros2.interfaces;
  */
 public interface Ros2InterfaceDefinition {
    /**
-    * The {@link Ros2InterfaceType} of this interface.
-    * It should be a  {@link Ros2InterfaceType#MESSAGE} or a {@link Ros2InterfaceType#ACTION} or a {@link Ros2InterfaceType#SERVICE}.
+    * The {@link Ros2InterfaceCategory} of this interface.
+    * It should be a  {@link Ros2InterfaceCategory#MESSAGE} or a {@link Ros2InterfaceCategory#ACTION} or a {@link Ros2InterfaceCategory#SERVICE}.
     * @return
     */
-   Ros2InterfaceType interfaceType();
+   Ros2InterfaceCategory interfaceCategory();
 
     /**
-     * The name of this interface e.g. `example_interfaces/srv/AddTwoInts`
+     * The type of this interface e.g. `example_interfaces/srv/AddTwoInts`
     * @return
     */
-   String interfaceName();
+   String interfaceType();
 
    /**
     * The package name of this interface e.g. `example_interfaces`

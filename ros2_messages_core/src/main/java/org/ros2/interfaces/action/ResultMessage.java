@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.ros2.interfaces.Ros2Interface;
 import org.ros2.interfaces.Ros2InterfaceDefinition;
-import org.ros2.interfaces.Ros2InterfaceType;
+import org.ros2.interfaces.Ros2InterfaceCategory;
 
 /**
  * @author Spyros Koukas
@@ -32,19 +32,19 @@ public record ResultMessage<T extends Ros2Interface>(@JsonProperty("status") byt
 
     @Override
     @JsonIgnore
-    public final Ros2InterfaceType interfaceType() {
-        return Ros2InterfaceType.ACTION_FEEDBACK_WRAPPER;
+    public final Ros2InterfaceCategory interfaceCategory() {
+        return Ros2InterfaceCategory.ACTION_FEEDBACK_WRAPPER;
     }
 
     /**
-     * Returns a generated {@link Ros2Interface#interfaceName()}
+     * Returns a generated {@link Ros2Interface#interfaceType()}
      *
      * @return
      */
     @Override
     @JsonIgnore
-    public final String interfaceName() {
-        return this.result().interfaceName() + TYPE_POSTFIX;
+    public final String interfaceType() {
+        return this.result().interfaceType() + TYPE_POSTFIX;
     }
 
     @Override

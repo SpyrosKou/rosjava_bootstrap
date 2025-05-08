@@ -17,10 +17,14 @@
 
 package org.ros.internal.message;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.ros.exception.RosMessageRuntimeException;
-import org.ros.internal.message.action.*;
+import org.ros.internal.message.action.ActionDefinitionFileProvider;
+import org.ros.internal.message.action.ActionGenerationTemplateFeedback;
+import org.ros.internal.message.action.ActionGenerationTemplateGoal;
+import org.ros.internal.message.action.ActionGenerationTemplateResult;
 import org.ros.internal.message.definition.MessageDefinitionProviderChain;
 import org.ros.internal.message.definition.MessageDefinitionTupleParser;
 import org.ros.internal.message.service.ServiceDefinitionFileProvider;
@@ -28,7 +32,7 @@ import org.ros.internal.message.topic.TopicDefinitionFileProvider;
 import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
 import org.ros.message.MessageIdentifier;
-import org.ros2.interfaces.Ros2InterfaceType;
+import org.ros2.interfaces.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,9 +62,9 @@ public final class GenerateInterfaces {
     private final MessageGenerationTemplate actionGenerationTemplateResult = new ActionGenerationTemplateResult();
     private final MessageGenerationTemplate actionGenerationTemplateFeedback = new ActionGenerationTemplateFeedback();
 
-    private final MessageGenerationTemplate actionGenerationTemplateActionGoal = new ActionGenerationTemplateActionGoal();
-    private final MessageGenerationTemplate actionGenerationTemplateActionResult = new ActionGenerationTemplateActionResult();
-    private final MessageGenerationTemplate actionGenerationTemplateActionFeedback = new ActionGenerationTemplateActionFeedback();
+//    private final MessageGenerationTemplate actionGenerationTemplateActionGoal = new ActionGenerationTemplateActionGoal();
+//    private final MessageGenerationTemplate actionGenerationTemplateActionResult = new ActionGenerationTemplateActionResult();
+//    private final MessageGenerationTemplate actionGenerationTemplateActionFeedback = new ActionGenerationTemplateActionFeedback();
 
 
     public GenerateInterfaces() {
@@ -92,7 +96,7 @@ public final class GenerateInterfaces {
         for (final MessageIdentifier topicType : topicTypes) {
             final String definition = this.messageDefinitionProviderChain.get(topicType.getType());
             final MessageDeclarationImpl messageDeclaration = new MessageDeclarationImpl(topicType, definition);
-            this.writeInterface(messageDeclaration, outputDirectory, true, Ros2InterfaceType.MESSAGE);
+            this.writeInterface(messageDeclaration, outputDirectory, Ros2MessageInterface.class, Ros2InterfaceDefinition.class, Ros2InterfaceDefinitionRecord.class.getName());
         }
     }
 
@@ -131,10 +135,8 @@ public final class GenerateInterfaces {
                     MessageDeclarationImpl.of(requestType, requestAndResponse.get(0));
             MessageDeclarationImpl responseDeclaration =
                     MessageDeclarationImpl.of(responseType, requestAndResponse.get(1));
-
-            this.writeInterface(requestDeclaration, outputDirectory, true, Ros2InterfaceType.SERVICE_REQUEST);
-            this.writeInterface(responseDeclaration, outputDirectory, true, Ros2InterfaceType.SERVICE_RESPONSE);
-
+            this.writeInterface(requestDeclaration, outputDirectory, Ros2ServiceRequestInterface.class, Ros2ServiceDefinition.class, serviceDeclaration.getName());
+            this.writeInterface(responseDeclaration, outputDirectory, Ros2ServiceResponseInterface.class, Ros2ServiceDefinition.class, serviceDeclaration.getName());
         }
     }
 
@@ -196,9 +198,10 @@ public final class GenerateInterfaces {
 //                    actionGenerationTemplateActionFeedback.applyTemplate(actionType.getType())
 //            );
 
-                this.writeInterface(goalDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_GOAL);
-                this.writeInterface(resultDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_RESULT);
-                this.writeInterface(feedbackDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_FEEDBACK);
+
+                this.writeInterface(goalDeclaration, outputDirectory, Ros2ActionGoalInterface.class, Ros2ActionDefinition.class, actionDeclaration.getName());
+                this.writeInterface(resultDeclaration, outputDirectory, Ros2ActionResultInterface.class, Ros2ActionDefinition.class, actionDeclaration.getName());
+                this.writeInterface(feedbackDeclaration, outputDirectory, Ros2ActionFeedbackInterface.class, Ros2ActionDefinition.class, actionDeclaration.getName());
 //            this.writeInterface(actionGoalDeclaration, outputDirectory, true);
 //            this.writeInterface(actionResultDeclaration, outputDirectory, true);
 //            this.writeInterface(actionFeedbackDeclaration, outputDirectory, true);
@@ -207,13 +210,26 @@ public final class GenerateInterfaces {
     }
 
 
-    private final void writeInterface(final MessageDeclarationImpl messageDeclaration, final File outputDirectory,
-                                      final boolean addConstantsAndMethods, final Ros2InterfaceType ros2InterfaceType) {
-        final MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
-        builder.setPackageName(messageDeclaration.getPackage());
-        builder.setInterfaceName(messageDeclaration.getName());
-        builder.setMessageDeclaration(messageDeclaration);
-        builder.setAddConstantsAndMethods(addConstantsAndMethods);
+    private final void writeInterface(
+            final MessageDeclarationImpl messageDeclaration
+            , final File outputDirectory
+            , final Class<?> javaImplementingInterface
+            , final Class<?> javaDefinitionInterface
+            , final String javaDefinitionClassName) {
+        Preconditions.checkNotNull(messageDeclaration);
+        Preconditions.checkNotNull(outputDirectory);
+        Preconditions.checkNotNull(javaImplementingInterface);
+        Preconditions.checkNotNull(javaDefinitionInterface);
+        Preconditions.checkNotNull(javaDefinitionClassName);
+
+        final MessageInterfaceCreator builder = new MessageInterfaceCreator(
+                messageDeclaration
+                , messageDeclaration.getPackage()
+                , messageDeclaration.getName()
+                , javaImplementingInterface
+                , javaDefinitionInterface
+                , javaDefinitionClassName);
+
         try {
             final String content = builder.build(this.messageFactory);
             final File file = new File(outputDirectory, messageDeclaration.getType() + MessageConstants.JAVA);
