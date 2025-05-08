@@ -53,7 +53,7 @@ final class MessageContextBuilder implements MessageDefinitionVisitor {
   }
 
   @Override
-  public final void variableList(final String type, final int size, final String name) {
+  public final void variableList(final String type, final int size, final String name,final int dimensions) {
     final FieldType fieldType = getFieldType(type);
     this.messageContext.addFieldFactory(name, () -> fieldType.newVariableList(name, size));
   }

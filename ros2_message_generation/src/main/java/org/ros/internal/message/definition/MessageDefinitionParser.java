@@ -59,11 +59,12 @@ public final class MessageDefinitionParser {
         /**
          * Called for each array in the message definition.
          *
-         * @param type the type of the array
-         * @param size the size of the array or -1 if the size is unbounded
-         * @param name the name of the array
+         * @param type       the type of the array
+         * @param size       the size of the array or -1 if the size is unbounded
+         * @param name       the name of the array
+         * @param dimensions the dimensions of the array
          */
-        void variableList(String type, int size, String name);
+        void variableList(String type, int size, String name, int dimensions);
     }
 
     /**
@@ -115,7 +116,7 @@ public final class MessageDefinitionParser {
             String[] typeAndName = fieldDefinition.split("\\s+", 2);
             Preconditions.checkState(typeAndName.length == 2,
                     String.format("Invalid field definition: \"%s\"", fieldDefinition));
-            String type = typeAndName[0];
+            String type = typeAndName[0].trim();
             String name = typeAndName[1];
             String value = null;
             if (name.contains("=") && (!name.contains("#") || name.indexOf('#') > name.indexOf('='))) {
@@ -131,12 +132,15 @@ public final class MessageDefinitionParser {
                 name = name.substring(0, name.indexOf('#'));
                 name = name.trim();
             }
-            final boolean array;
+
+
+            final int arraySize;
             int size = -1;
             if (type.endsWith("]")) {
                 final int leftBracketIndex = type.lastIndexOf('[');
                 final int rightBracketIndex = type.lastIndexOf(']');
-                array = true;
+                arraySize = Math.toIntExact(type.chars().filter(ch -> ch == ']').count());
+
                 if (rightBracketIndex - leftBracketIndex > 1) {
                     final String sizePart = type.substring(leftBracketIndex + 1, rightBracketIndex + 1).trim();
                     if (sizePart.startsWith(BOUND_DEFINITION)) {
@@ -148,12 +152,14 @@ public final class MessageDefinitionParser {
                 }
                 type = type.substring(0, leftBracketIndex);
             } else {
-                array = false;
+
+                arraySize = 0;
             }
             if (type.indexOf(BOUND_DEFINITION) < type.indexOf("[") || type.contains(BOUND_DEFINITION) && !type.contains("[")) {
                 final int boundDefinitionIndex = type.lastIndexOf(BOUND_DEFINITION);
                 type = type.substring(0, boundDefinitionIndex);
             }
+
             if (type.equals("Header")) {
                 // The header field is treated as though it were a built-in and silently
                 // expanded to "std_msgs/Header."
@@ -164,7 +170,7 @@ public final class MessageDefinitionParser {
                 type = messageType.substring(0, messageType.lastIndexOf('/') + 1) + type;
             }
             if (value != null) {
-                if (array) {
+                if (arraySize > 0) {
                     // TODO(damonkohler): Handle array constants?
                     throw new UnsupportedOperationException("Array constants are not supported.");
                 }
@@ -177,9 +183,18 @@ public final class MessageDefinitionParser {
                 }
                 visitor.constantValue(type, name, value);
             } else {
-                if (array) {
-                    visitor.variableList(type, size, name);
+                if (arraySize > 0) {
+                    //Strip default values
+                    if (name.contains(" ")) {
+                        name = name.substring(0, name.indexOf(" "));
+                        name = name.trim();
+                    }
+                    visitor.variableList(type, size, name, arraySize);
                 } else {
+                    if (name.contains(" ")) {
+                        name = name.substring(0, name.indexOf(" "));
+                        name = name.trim();
+                    }
                     visitor.variableValue(type, name);
                 }
             }

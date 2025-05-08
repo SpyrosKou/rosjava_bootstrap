@@ -63,7 +63,7 @@ public final class Md5Generator {
       }
 
       @Override
-      public final void variableList(String type, int size, String name) {
+      public final void variableList(String type, int size, String name,final int dimensions) {
         if (!PrimitiveFieldType.existsFor(type)) {
           final String md5Checksum = generate(type);
           variables.add(String.format("%s %s\n", md5Checksum, name));
