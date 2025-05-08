@@ -119,11 +119,14 @@ public final class GenerateInterfaces {
             final String definition = messageDefinitionProviderChain.get(serviceType.getType());
             MessageDeclarationImpl serviceDeclaration =
                     MessageDeclarationImpl.of(serviceType.getType(), definition);
-            final String requestType = serviceType.getName() + "Request";
-            final String responseType = serviceType.getName() + "Response";
-            this.writeServiceInterfaceDefinition(serviceDeclaration, outputDirectory, requestType, responseType);
+            final String requestPlainType = serviceType.getName() + "Request";
+            final String responsePlainType = serviceType.getName() + "Response";
+            this.writeServiceInterfaceDefinition(serviceDeclaration, outputDirectory, requestPlainType, responsePlainType);
             List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
 
+
+            final String requestType = serviceType.getType() + "Request";
+            final String responseType = serviceType.getType() + "Response";
             MessageDeclarationImpl requestDeclaration =
                     MessageDeclarationImpl.of(requestType, requestAndResponse.get(0));
             MessageDeclarationImpl responseDeclaration =
@@ -131,6 +134,7 @@ public final class GenerateInterfaces {
 
             this.writeInterface(requestDeclaration, outputDirectory, true, Ros2InterfaceType.SERVICE_REQUEST);
             this.writeInterface(responseDeclaration, outputDirectory, true, Ros2InterfaceType.SERVICE_RESPONSE);
+
         }
     }
 
@@ -157,46 +161,86 @@ public final class GenerateInterfaces {
             final String definition = messageDefinitionProviderChain.get(actionType.getType());
             final MessageDeclarationImpl actionDeclaration =
                     MessageDeclarationImpl.of(actionType.getType(), definition);
-            this.writeInterface(actionDeclaration, outputDirectory, false, Ros2InterfaceType.ACTION);
+            final String goalPlainType = actionType.getName() + "Goal";
+            final String feedbackPlainType = actionType.getName() + "Feedback";
+            final String resultPlainType = actionType.getName() + "Result";
+            this.writeActionInterfaceDefinition(actionDeclaration, outputDirectory, goalPlainType, feedbackPlainType, resultPlainType);
             final List<String> goalResultAndFeedback = MessageDefinitionTupleParser.parse(definition, 3);
+            {
+                final String goalType = actionType.getType() + "Goal";
+                final String feedbackType = actionType.getType() + "Feedback";
+                final String resultType = actionType.getType() + "Result";
+                final MessageDeclarationImpl goalDeclaration = MessageDeclarationImpl.of(
+                        goalType,
+                        actionGenerationTemplateGoal.applyTemplate(goalResultAndFeedback.get(0))
+                );
+                final MessageDeclarationImpl resultDeclaration = MessageDeclarationImpl.of(
+                        resultType,
+                        actionGenerationTemplateResult.applyTemplate(goalResultAndFeedback.get(1))
+                );
+                final MessageDeclarationImpl feedbackDeclaration = MessageDeclarationImpl.of(
+                        feedbackType,
+                        actionGenerationTemplateFeedback.applyTemplate(goalResultAndFeedback.get(2))
+                );
 
-            final MessageDeclarationImpl goalDeclaration = MessageDeclarationImpl.of(
-                    actionType.getType() + "Goal",
-                    actionGenerationTemplateGoal.applyTemplate(goalResultAndFeedback.get(0))
-            );
-            final MessageDeclarationImpl resultDeclaration = MessageDeclarationImpl.of(
-                    actionType.getType() + "Result",
-                    actionGenerationTemplateResult.applyTemplate(goalResultAndFeedback.get(1))
-            );
-            final MessageDeclarationImpl feedbackDeclaration = MessageDeclarationImpl.of(
-                    actionType.getType() + "Feedback",
-                    actionGenerationTemplateFeedback.applyTemplate(goalResultAndFeedback.get(2))
-            );
+//            final MessageDeclarationImpl actionGoalDeclaration = MessageDeclarationImpl.of(
+//                    actionType.getType() + "ActionGoal",
+//                    actionGenerationTemplateActionGoal.applyTemplate(actionType.getType())
+//            );
+//            final MessageDeclarationImpl actionResultDeclaration = MessageDeclarationImpl.of(
+//                    actionType.getType() + "ActionResult",
+//                    actionGenerationTemplateActionResult.applyTemplate(actionType.getType())
+//            );
+//            final MessageDeclarationImpl actionFeedbackDeclaration = MessageDeclarationImpl.of(
+//                    actionType.getType() + "ActionFeedback",
+//                    actionGenerationTemplateActionFeedback.applyTemplate(actionType.getType())
+//            );
 
-            final MessageDeclarationImpl actionGoalDeclaration = MessageDeclarationImpl.of(
-                    actionType.getType() + "ActionGoal",
-                    actionGenerationTemplateActionGoal.applyTemplate(actionType.getType())
-            );
-            final MessageDeclarationImpl actionResultDeclaration = MessageDeclarationImpl.of(
-                    actionType.getType() + "ActionResult",
-                    actionGenerationTemplateActionResult.applyTemplate(actionType.getType())
-            );
-            final MessageDeclarationImpl actionFeedbackDeclaration = MessageDeclarationImpl.of(
-                    actionType.getType() + "ActionFeedback",
-                    actionGenerationTemplateActionFeedback.applyTemplate(actionType.getType())
-            );
-
-            this.writeInterface(goalDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_GOAL);
-            this.writeInterface(resultDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_RESULT);
-            this.writeInterface(feedbackDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_FEEDBACK);
+                this.writeInterface(goalDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_GOAL);
+                this.writeInterface(resultDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_RESULT);
+                this.writeInterface(feedbackDeclaration, outputDirectory, true, Ros2InterfaceType.ACTION_FEEDBACK);
 //            this.writeInterface(actionGoalDeclaration, outputDirectory, true);
 //            this.writeInterface(actionResultDeclaration, outputDirectory, true);
 //            this.writeInterface(actionFeedbackDeclaration, outputDirectory, true);
+            }
         }
     }
 
+
+    private final void writeInterface(final MessageDeclarationImpl messageDeclaration, final File outputDirectory,
+                                      final boolean addConstantsAndMethods, final Ros2InterfaceType ros2InterfaceType) {
+        final MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
+        builder.setPackageName(messageDeclaration.getPackage());
+        builder.setInterfaceName(messageDeclaration.getName());
+        builder.setMessageDeclaration(messageDeclaration);
+        builder.setAddConstantsAndMethods(addConstantsAndMethods);
+        try {
+            final String content = builder.build(this.messageFactory);
+            final File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
+            FileUtils.writeStringToFile(file, content, Charset.defaultCharset());
+            this.successfulInterfaceGenerations++;
+        } catch (Exception e) {
+            this.failedInterfaceGenerations++;
+            System.out.printf("Failed to generate interface for %s.\n", messageDeclaration.getType());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Generates and writes the Java service interface definition for a service based
+     * on the provided message declaration, request type, and response type. This method
+     * creates the service interface content and saves it to a file within the specified
+     * output directory, using a name derived from the message type.
+     *
+     * @param messageDeclaration the message declaration containing the details necessary
+     *                           to generate the service interface
+     * @param outputDirectory    the directory where the generated service interface file
+     *                           will be stored
+     * @param requestType        the message type for the request part of the service
+     * @param responseType       the message type for the response part of the service
+     */
     private final void writeServiceInterfaceDefinition(final MessageDeclarationImpl messageDeclaration, final File outputDirectory, final String requestType, final String responseType) {
-        final ServiceInterfaceDefinitionContentCreator contentCreator = new ServiceInterfaceDefinitionContentCreator(
+        final ServiceDefinitionCreator contentCreator = new ServiceDefinitionCreator(
                 messageDeclaration
                 , requestType
                 , responseType
@@ -214,21 +258,33 @@ public final class GenerateInterfaces {
         }
     }
 
-    private final void writeInterface(final MessageDeclarationImpl messageDeclaration, final File outputDirectory,
-                                      final boolean addConstantsAndMethods, final Ros2InterfaceType ros2InterfaceType) {
-        final MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
-        builder.setPackageName(messageDeclaration.getPackage());
-        builder.setInterfaceName(messageDeclaration.getName());
-        builder.setMessageDeclaration(messageDeclaration);
-        builder.setAddConstantsAndMethods(addConstantsAndMethods);
+    /**
+     * Writes the Java interface definition for an action based on the provided message declaration,
+     * to the specified output directory. This method generates the interface content and writes
+     * it into a file with a name derived from the message type.
+     *
+     * @param messageDeclaration the message declaration containing details used to generate the interface
+     * @param outputDirectory    the directory where the generated interface file will be written
+     * @param goalType           the message type for the goal part of the action
+     * @param feedbackType       the message type for the feedback part of the action
+     * @param resultType         the message type for the result part of the action
+     */
+    private final void writeActionInterfaceDefinition(final MessageDeclarationImpl messageDeclaration, final File outputDirectory, final String goalType, final String feedbackType, final String resultType) {
+        final ActionDefinitionCreator contentCreator = new ActionDefinitionCreator(
+                messageDeclaration
+                , goalType
+                , feedbackType
+                , resultType
+        );
+
         try {
-            final String content = builder.build(this.messageFactory);
+            final String content = contentCreator.build(this.messageFactory);
             final File file = new File(outputDirectory, messageDeclaration.getType() + ".java");
             FileUtils.writeStringToFile(file, content, Charset.defaultCharset());
             this.successfulInterfaceGenerations++;
         } catch (Exception e) {
             this.failedInterfaceGenerations++;
-            System.out.printf("Failed to generate interface for %s.\n", messageDeclaration.getType());
+            System.err.printf("Failed to generate interface for %s.\n", messageDeclaration.getType());
             e.printStackTrace();
         }
     }

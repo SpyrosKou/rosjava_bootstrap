@@ -22,10 +22,11 @@ import org.ros.message.MessageFactory;
 import org.ros2.interfaces.Ros2ServiceDefinition;
 
 /**
+ * Generates ROS2 Service Definition classes
  * @author https://github.com/SpyrosKou Spyros Koukas
  *
  */
-public final record ServiceInterfaceDefinitionContentCreator(
+public final record ServiceDefinitionCreator(
         MessageDeclarationImpl messageDeclaration
         , String requestClass
         , String responseClass) {
@@ -69,10 +70,10 @@ public final record ServiceInterfaceDefinitionContentCreator(
                 JavaStringEscaper.escapeJava(messageDeclaration.getDefinition())));
 
         builder.append(" /**\n *\n * The class modeling the request of the service  e.g. the contents of `example_interfaces/srv/AddTwoIntsRequest' \n *\n **/\n");
-        builder.append(String.format(" public static final Class<Ros2ServiceRequestInterface> REQUEST_CLASS = %s;\n\n\n",requestClass));
+        builder.append(String.format(" public static final Class<Ros2ServiceRequestInterface> REQUEST_CLASS = %s.class;\n\n\n",requestClass));
 
         builder.append(" /**\n *\n * The class modeling the response of the service  e.g. the contents of `example_interfaces/srv/AddTwoIntsResponse' \n *\n **/\n");
-        builder.append(String.format(" public static final Class<Ros2ServiceResponseInterface> RESPONSE_CLASS = %s;\n\n\n",responseClass));
+        builder.append(String.format(" public static final Class<Ros2ServiceResponseInterface> RESPONSE_CLASS = %s.class;\n\n\n",responseClass));
         //Static methods
         builder.append(" /**\n *\n * The type of the interface e.g. `example_interfaces/srv/AddTwoInts' \n *\n **/\n");
         builder.append(" public static final String getInterfaceType(){ return INTERFACE_TYPE;}\n\n");
