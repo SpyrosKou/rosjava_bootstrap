@@ -28,6 +28,7 @@ import org.ros.internal.message.topic.TopicDefinitionFileProvider;
 import org.ros.message.MessageDeclarationImpl;
 import org.ros.message.MessageFactory;
 import org.ros.message.MessageIdentifier;
+import org.ros2.interfaces.Ros2InterfaceType;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,7 +90,7 @@ public final class GenerateInterfaces {
         for (final MessageIdentifier topicType : topicTypes) {
             final String definition = this.messageDefinitionProviderChain.get(topicType.getType());
             final MessageDeclarationImpl messageDeclaration = new MessageDeclarationImpl(topicType, definition);
-            this.writeInterface(messageDeclaration, outputDirectory, true);
+            this.writeInterface(messageDeclaration, outputDirectory, true,Ros2InterfaceType.MESSAGE);
         }
     }
 
@@ -112,11 +113,11 @@ public final class GenerateInterfaces {
                 serviceTypes.addAll(messageIdentifiers);
             }
         }
-        for (MessageIdentifier serviceType : serviceTypes) {
-            String definition = messageDefinitionProviderChain.get(serviceType.getType());
+        for (final MessageIdentifier serviceType : serviceTypes) {
+            final String definition = messageDefinitionProviderChain.get(serviceType.getType());
             MessageDeclarationImpl serviceDeclaration =
                     MessageDeclarationImpl.of(serviceType.getType(), definition);
-            this.writeInterface(serviceDeclaration, outputDirectory, false);
+            this.writeInterface(serviceDeclaration, outputDirectory, false,Ros2InterfaceType.SERVICE);
             List<String> requestAndResponse = MessageDefinitionTupleParser.parse(definition, 2);
 
             MessageDeclarationImpl requestDeclaration =
@@ -124,8 +125,8 @@ public final class GenerateInterfaces {
             MessageDeclarationImpl responseDeclaration =
                     MessageDeclarationImpl.of(serviceType.getType() + "Response", requestAndResponse.get(1));
 
-            this.writeInterface(requestDeclaration, outputDirectory, true);
-            this.writeInterface(responseDeclaration, outputDirectory, true);
+            this.writeInterface(requestDeclaration, outputDirectory, true,Ros2InterfaceType.SERVICE_REQUEST);
+            this.writeInterface(responseDeclaration, outputDirectory, true,Ros2InterfaceType.SERVICE_RESPONSE);
         }
     }
 
@@ -152,7 +153,7 @@ public final class GenerateInterfaces {
             final String definition = messageDefinitionProviderChain.get(actionType.getType());
             final MessageDeclarationImpl actionDeclaration =
                     MessageDeclarationImpl.of(actionType.getType(), definition);
-            this.writeInterface(actionDeclaration, outputDirectory, false);
+            this.writeInterface(actionDeclaration, outputDirectory, false,Ros2InterfaceType.ACTION);
             final List<String> goalResultAndFeedback = MessageDefinitionTupleParser.parse(definition, 3);
 
             final MessageDeclarationImpl goalDeclaration = MessageDeclarationImpl.of(
@@ -181,17 +182,17 @@ public final class GenerateInterfaces {
                     actionGenerationTemplateActionFeedback.applyTemplate(actionType.getType())
             );
 
-            this.writeInterface(goalDeclaration, outputDirectory, true);
-            this.writeInterface(resultDeclaration, outputDirectory, true);
-            this.writeInterface(feedbackDeclaration, outputDirectory, true);
+            this.writeInterface(goalDeclaration, outputDirectory, true,Ros2InterfaceType.ACTION_GOAL);
+            this.writeInterface(resultDeclaration, outputDirectory, true,Ros2InterfaceType.ACTION_RESULT);
+            this.writeInterface(feedbackDeclaration, outputDirectory, true,Ros2InterfaceType.ACTION_FEEDBACK);
 //            this.writeInterface(actionGoalDeclaration, outputDirectory, true);
 //            this.writeInterface(actionResultDeclaration, outputDirectory, true);
 //            this.writeInterface(actionFeedbackDeclaration, outputDirectory, true);
         }
     }
 
-    private final void writeInterface(MessageDeclarationImpl messageDeclaration, File outputDirectory,
-                                      boolean addConstantsAndMethods) {
+    private final void writeInterface(final MessageDeclarationImpl messageDeclaration, final File outputDirectory,
+                                      final boolean addConstantsAndMethods, final Ros2InterfaceType ros2InterfaceType) {
         final MessageInterfaceBuilder builder = new MessageInterfaceBuilder();
         builder.setPackageName(messageDeclaration.getPackage());
         builder.setInterfaceName(messageDeclaration.getName());
