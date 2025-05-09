@@ -12,6 +12,10 @@ Changelog
 * Renamed packages_parser -> ros2_packages_parser
 * Completely new representation in records, annotated with @JacksonProperty
 * Includes metadata about each interface
-* Tests using example_interfaces(https://github.com/ros2/example_interfaces) , common_interfaces(https://github.com/ros2/common_interfaces/ )  and rcl_interfaces (https://github.com/ros2/rcl_interfaces)
+* Tests using example_interfaces(https://github.com/ros2/example_interfaces) , common_interfaces(https://github.com/ros2/common_interfaces/ )  ,unique_identifier_msgs(https://github.com/ros2/unique_identifier_msgs) and rcl_interfaces (https://github.com/ros2/rcl_interfaces)
 * Fields whose name differs only in the caps are allowed but warned. e.g. Foo and foo. Instead of keeping only the first one which was the previous behaviour.interface
 * Serialization and MD5 are out of scope
+* Parses bounded arrays of 1 dimension e.g. string[<=7] and bounded types e.g. string<=4.
+* Bounds on arrays and types are not enforced or checked
+* Supports wstring
+
