@@ -18,6 +18,7 @@ package org.ros2.interfaces;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
+ * Models a ROS2 Feedback interface definition, which is the feedback part as defined in the action definition.
  * @author Spyros Koukas
  */
 public interface Ros2ActionFeedbackInterface extends Ros2Interface {

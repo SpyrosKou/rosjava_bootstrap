@@ -18,6 +18,7 @@ package org.ros2.interfaces;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
+ * Generic interface marking each generated ROS2 interface
  * @author Spyros Koukas
  */
 public interface Ros2Interface{

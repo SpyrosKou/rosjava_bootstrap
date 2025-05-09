@@ -18,6 +18,7 @@ package org.ros2.interfaces;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
+ * Models a ROS2 Result interface definition, which is the result part as defined in the action definition.
  * @author Spyros Koukas
  */
 public interface Ros2ActionResultInterface extends Ros2Interface {

@@ -17,7 +17,7 @@ package org.ros2.interfaces;
 
 
 /**
- * The type of interface modelled
+ * The type of interface modeled
  * @author Spyros Koukas
  */
 public enum Ros2InterfaceCategory {
