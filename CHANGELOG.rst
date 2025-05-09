@@ -18,4 +18,5 @@ Changelog
 * Parses bounded arrays of 1 dimension e.g. string[<=7] and bounded types e.g. string<=4.
 * Bounds on arrays and types are not enforced or checked
 * Supports wstring
+* Interfaces with default values are now parsed but default values are ignored.
 
