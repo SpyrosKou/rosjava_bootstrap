@@ -24,7 +24,7 @@ plugins {
 
 
 application {
-   mainClass = 'org.ros.catking_package_msg.JavaMsgGenerationManager'
+   mainClass = 'org.ros2.catking_package_msg.JavaMsgGenerationManager'
 }
 
 

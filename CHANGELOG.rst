@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1 ROS2 (2025-05-07)
+0.1.0 ROS2 (2025-05-07)
 ------------------
 * Initial fork from 0.3.8 noetic
 * Start as a 'new' ROS2 oriented version, targeting ROS2 Jazzy

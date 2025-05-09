@@ -45,13 +45,13 @@ import java.util.stream.Collectors
 
 final class JavaMsgGenerationManager {
 //    private static final Set<String> INTERFACE_DIRECTORIES = CopyOnWriteArraySet.of(MessageConstants.MSG, MessageConstants.SRV, MessageConstants.ACTION)
-    public static final String MESSAGE_INTERFACES_GROUP_ID = "org.ros.rosjava_messages"
+    public static final String MESSAGE_INTERFACES_GROUP_ID = "org.ros2.rosjava_messages"
     private static final String TARGET_PATH = System.getProperty("user.dir") + File.separator + "build" + File.separator + "project";
     private static final String RELATIVE_GENERATED_SRC_PATH = "src" + File.separator + "generated-sources" + File.separator + "java"
     private static final String BUILD_GRADLE = "build.gradle"
     private static final String SETTINGS_GRADLE = "settings.gradle"
     private static final String README_MD = "README.md"
-    private static final String MESSAGE_GENERATION_VERSION = "0.3.8"
+    private static final String MESSAGE_GENERATION_VERSION = "0.1.0"
     /*
      * Possibly should check for existence of these properties and
      * be lazy if they're already defined.
@@ -146,7 +146,7 @@ final class JavaMsgGenerationManager {
          * the License.
          */
          
-         group "org.ros.rosjava_messages"
+         group "org.ros2.rosjava_messages"
          description "This project creates ROS Java Interfaces for ROS Noetic messages"
         
         
@@ -155,7 +155,7 @@ final class JavaMsgGenerationManager {
              apply plugin: 'java-library'
 
             dependencies {
-                compileOnly 'org.ros.rosjava_bootstrap:message_generation:0.3.8'
+                compileOnly 'org.ros2.rosjava_bootstrap:message_generation:0.1.0'
                 compileOnly 'io.netty:netty:3.10.6.Final'
             }
             
@@ -245,7 +245,7 @@ This repository contains the source code for building the ROS Java interfaces fo
 # Usage of the generated java artifacts and dependencies
 The java artifacts have two `compileOnly` gradle dependency that translates into `runtime` dependencies in maven
 These are:   
-- 'org.ros.rosjava_bootstrap:message_generation:0.3.8'.   
+- 'org.ros2.rosjava_bootstrap:message_generation:0.1.0'.   
 - 'io.netty:netty:3.10.6.Final'.   
    
 It is possible to use these ROS Java artifacts with different implementations and/or versions of these dependencies.   
@@ -323,7 +323,7 @@ In particular, a maven repository named `FileSystemMaven`will be added together 
                 return "    api project(\":" + catkinPackageIterator.name + "\")"
             } else {
                 /* println("  External: " + d) */
-                return "    api org.ros.rosjava_messages:" + catkinPackageIterator + ":" + catkinPackageIterator.version + "+"
+                return "    api org.ros2.rosjava_messages:" + catkinPackageIterator + ":" + catkinPackageIterator.version + "+"
             }
         }).collect(Collectors.toSet());
         final String licence =

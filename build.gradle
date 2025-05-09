@@ -16,8 +16,8 @@
  */
 
 allprojects {
-    group = "org.ros.rosjava_bootstrap"
-    version = "0.1"
+    group = "org.ros2.rosjava_bootstrap"
+    version = "0.1.0"
 }
 
 subprojects {

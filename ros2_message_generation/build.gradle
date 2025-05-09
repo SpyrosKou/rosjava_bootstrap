@@ -58,4 +58,4 @@ java {
   withSourcesJar()
   withJavadocJar()
 }
-mainClassName = "org.ros.internal.message.GenerateInterfaces"
+mainClassName = "org.ros2.internal.message.GenerateInterfaces"

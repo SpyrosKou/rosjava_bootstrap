@@ -46,6 +46,6 @@ rootProject.buildscript {
         jcenter()
     }
     dependencies {
-        classpath "org.ros.rosjava_bootstrap:gradle_plugins:[0.3,0.4)"
+        classpath "org.ros2.rosjava_bootstrap:gradle_plugins:[0.3,0.4)"
     }
 }
